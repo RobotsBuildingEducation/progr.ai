@@ -151,6 +151,12 @@ function Step({ step, onNext, onBack }) {
           </Button>
         )}
       </HStack>
+      {messages.length > 0 && !feedback && (
+        <Box mt={4} p={4} borderWidth={1} borderRadius="lg" width="100%">
+          <Text fontWeight="bold">Feedback:</Text>
+          <Text>{messages[messages.length - 1]?.content}</Text>
+        </Box>
+      )}
       {feedback && (
         <Box mt={4} p={4} borderWidth={1} borderRadius="lg" width="100%">
           <Text color={isCorrect ? "green.500" : "red.500"}>{feedback}</Text>
