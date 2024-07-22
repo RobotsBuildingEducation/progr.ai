@@ -10,11 +10,11 @@ import {
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import { useChatCompletion } from "./hooks/useChatCompletion";
+import { TerminalComponent } from "./elements/TerminalComponent";
 
-// Define the steps with a single question and answer per step
 const steps = [
   {
-    title: "Welcome to Progr!",
+    title: "Welcome to the Program-AI App!",
     description:
       "Press 'Let's start' to begin your journey in learning how to code.",
   },
@@ -33,8 +33,19 @@ const steps = [
     description:
       "In this step, you will learn how to declare a variable in JavaScript.",
     isCode: true,
+    isTerminal: false,
     question: {
       questionText: "How do you declare a variable in JavaScript?",
+      answer: "",
+    },
+  },
+  {
+    title: "Step 3: Terminal Code Example",
+    description: "In this step, you will type your code as if in a terminal.",
+    isCode: true,
+    isTerminal: true,
+    question: {
+      questionText: "Type a command using the command line",
       answer: "",
     },
   },
@@ -50,13 +61,7 @@ function Step({ step, onNext, onBack }) {
     response_format: { type: "json_object" },
   });
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-    setIsCorrect(null); // Reset correctness state when input changes
-    setFeedback(""); // Reset feedback state when input changes
-  };
-
-  const handleCodeChange = (value) => {
+  const handleInputChange = (value) => {
     setInputValue(value);
     setIsCorrect(null); // Reset correctness state when input changes
     setFeedback(""); // Reset feedback state when input changes
@@ -110,19 +115,22 @@ function Step({ step, onNext, onBack }) {
         <Input
           placeholder="Type your response here..."
           value={inputValue}
-          onChange={handleInputChange}
+          onChange={(e) => handleInputChange(e.target.value)}
         />
       )}
-      {step.isCode && (
+      {step.isCode && !step.isTerminal && (
         <Box width="100%" height="400px">
           <MonacoEditor
             height="400px"
             language="javascript"
             theme="light"
             value={inputValue}
-            onChange={handleCodeChange}
+            onChange={handleInputChange}
           />
         </Box>
+      )}
+      {step.isCode && step.isTerminal && (
+        <TerminalComponent input={inputValue} onChange={setInputValue} />
       )}
       <HStack spacing={4}>
         {onBack && (
@@ -130,7 +138,7 @@ function Step({ step, onNext, onBack }) {
             Back
           </Button>
         )}
-        {step.title === "Welcome to Progr!" ? (
+        {step.title === "Welcome to the Program-AI App!" ? (
           <Button colorScheme="teal" onClick={onNext}>
             Let's start
           </Button>
@@ -183,6 +191,7 @@ function App() {
       {currentStepIndex < steps.length ? (
         <Step
           step={steps[currentStepIndex]}
+          step={steps[3]}
           onNext={handleNextClick}
           onBack={currentStepIndex > 0 ? handleBackClick : null}
         />
