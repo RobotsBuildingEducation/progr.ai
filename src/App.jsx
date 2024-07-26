@@ -35,14 +35,13 @@ const phraseToSymbolMap = {
 };
 
 const applySymbolMappings = (text) => {
-  let modifiedText = text;
+  let modifiedText = text.toLowerCase();
   Object.keys(phraseToSymbolMap).forEach((phrase) => {
     const regex = new RegExp(`\\b${phrase}\\b`, "gi");
     modifiedText = modifiedText.replace(regex, phraseToSymbolMap[phrase]);
   });
   return modifiedText;
 };
-
 const VoiceInput = ({ value, onChange, isCodeEditor }) => {
   const {
     transcript,
@@ -53,10 +52,10 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
   const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
-    let modifiedTranscript = transcript;
+    let modifiedTranscript = transcript.toLowerCase();
 
     if (isCodeEditor) {
-      modifiedTranscript = applySymbolMappings(transcript);
+      modifiedTranscript = applySymbolMappings(modifiedTranscript);
     }
 
     if (listening) {
@@ -77,9 +76,9 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
   const handleVoiceStop = () => {
     setIsListening(false);
     SpeechRecognition.stopListening();
-    let finalTranscript = transcript;
+    let finalTranscript = transcript.toLowerCase();
     if (isCodeEditor) {
-      finalTranscript = applySymbolMappings(transcript);
+      finalTranscript = applySymbolMappings(finalTranscript);
     }
     onChange(finalTranscript);
   };
@@ -94,7 +93,7 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
             language="javascript"
             theme="light"
             value={value}
-            onChange={(value) => onChange(value)}
+            onChange={(value) => onChange(value.toLowerCase())}
             options={{
               wordWrap: "on",
               scrollBeyondLastLine: false,
@@ -105,7 +104,7 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
       ) : (
         <Input
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange(e.target.value.toLowerCase())}
           placeholder="Type your response or use voice..."
           width="100%"
         />
@@ -206,7 +205,7 @@ function TerminalComponent({ inputValue, setInputValue, isSending }) {
 
   useEffect(() => {
     if (isSending) {
-      executeCommand(inputValue);
+      executeCommand(inputValue.toLowerCase());
     }
   }, [isSending]);
 
