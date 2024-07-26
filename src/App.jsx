@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime";
+import "@babel/polyfill";
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -7,10 +9,119 @@ import {
   Input,
   HStack,
   Progress,
+  Spinner,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 import { useChatCompletion } from "./hooks/useChatCompletion";
+
+const phraseToSymbolMap = {
+  equals: "=",
+  equal: "=",
+  plus: "+",
+  minus: "-",
+  asterisk: "*",
+  slash: "/",
+  "open parenthesis": "(",
+  "close parenthesis": ")",
+  "open bracket": "[",
+  "close bracket": "]",
+  "open brace": "{",
+  "close brace": "}",
+  semicolon: ";",
+};
+
+const applySymbolMappings = (text) => {
+  let modifiedText = text;
+  Object.keys(phraseToSymbolMap).forEach((phrase) => {
+    const regex = new RegExp(`\\b${phrase}\\b`, "gi");
+    modifiedText = modifiedText.replace(regex, phraseToSymbolMap[phrase]);
+  });
+  return modifiedText;
+};
+
+const VoiceInput = ({ value, onChange, isCodeEditor }) => {
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+  const [isListening, setIsListening] = useState(false);
+
+  useEffect(() => {
+    let modifiedTranscript = transcript;
+
+    if (isCodeEditor) {
+      modifiedTranscript = applySymbolMappings(transcript);
+    }
+
+    if (listening) {
+      onChange(modifiedTranscript);
+    }
+  }, [transcript, listening, onChange, isCodeEditor]);
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Your browser doesn't support speech recognition.</span>;
+  }
+
+  const handleVoiceStart = () => {
+    setIsListening(true);
+    resetTranscript();
+    SpeechRecognition.startListening({ continuous: true });
+  };
+
+  const handleVoiceStop = () => {
+    setIsListening(false);
+    SpeechRecognition.stopListening();
+    let finalTranscript = transcript;
+    if (isCodeEditor) {
+      finalTranscript = applySymbolMappings(transcript);
+    }
+    onChange(finalTranscript);
+  };
+
+  return (
+    <HStack spacing={4} alignItems="center" width="100%">
+      {isCodeEditor ? (
+        <Box width="100%" height="400px" position="relative">
+          <MonacoEditor
+            height="100%"
+            width="100%"
+            language="javascript"
+            theme="light"
+            value={value}
+            onChange={(value) => onChange(value)}
+            options={{
+              wordWrap: "on",
+              scrollBeyondLastLine: false,
+              automaticLayout: true,
+            }}
+          />
+        </Box>
+      ) : (
+        <Input
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Type your response or use voice..."
+          width="100%"
+        />
+      )}
+      <Button onClick={isListening ? handleVoiceStop : handleVoiceStart}>
+        {isListening ? "Stop" : "Voice"}
+      </Button>
+      {isListening && (
+        <HStack spacing={2} alignItems="center">
+          <Spinner size="sm" />
+          <Text>Listening...</Text>
+        </HStack>
+      )}
+    </HStack>
+  );
+};
 
 const steps = [
   {
@@ -236,27 +347,34 @@ function TerminalComponent({ inputValue, setInputValue, isSending }) {
   };
 
   return (
-    <ReactBash
-      structure={structure}
-      history={history}
-      prefix={`user@mock-terminal:${cwd}$`}
-    />
+    <>
+      <VoiceInput
+        value={inputValue.toLowerCase()}
+        onChange={setInputValue}
+        isCodeEditor={false}
+      />
+      <ReactBash
+        structure={structure}
+        history={history}
+        prefix={`user@mock-terminal:${cwd}$`}
+      />
+    </>
   );
 }
 
 function Step({ step, onNext, onBack }) {
   const [inputValue, setInputValue] = useState(step?.question?.answer || "");
   const [isSending, setIsSending] = useState(false);
-  const [isCorrect, setIsCorrect] = useState(null); // New state for checking correctness
-  const [feedback, setFeedback] = useState(""); // New state for storing feedback
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [feedback, setFeedback] = useState("");
   const { messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
   });
 
   const handleInputChange = (value) => {
     setInputValue(value);
-    setIsCorrect(null); // Reset correctness state when input changes
-    setFeedback(""); // Reset feedback state when input changes
+    setIsCorrect(null);
+    setFeedback("");
   };
 
   const handleAnswerClick = async () => {
@@ -264,7 +382,9 @@ function Step({ step, onNext, onBack }) {
     try {
       const response = await submitPrompt([
         {
-          content: `The user is answering the following question "${step.question.questionText}" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }`,
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }" with the following answer "${inputValue.toLowerCase()}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }`,
           role: "user",
         },
       ]);
@@ -294,44 +414,32 @@ function Step({ step, onNext, onBack }) {
   }, [messages]);
 
   useEffect(() => {
-    // Clear input fields when moving to the next question
     setInputValue(step?.question?.answer || "");
   }, [step]);
 
   return (
-    <VStack spacing={4}>
+    <VStack spacing={4} width="100%">
       <Text fontSize="2xl">{step.title}</Text>
       <Text>{step.description}</Text>
       {step.question && <Text>{step.question.questionText}</Text>}
       {step.isText && (
-        <Input
-          placeholder="Type your response here..."
+        <VoiceInput
           value={inputValue}
-          onChange={(e) => handleInputChange(e.target.value)}
+          onChange={handleInputChange}
+          isCodeEditor={false}
         />
       )}
       {step.isCode && !step.isTerminal && (
-        <Box width="100%" height="400px">
-          <MonacoEditor
-            height="400px"
-            language="javascript"
-            theme="light"
-            value={inputValue}
-            onChange={handleInputChange}
-          />
-        </Box>
+        <VoiceInput
+          value={inputValue}
+          onChange={handleInputChange}
+          isCodeEditor={true}
+        />
       )}
       {step.isCode && step.isTerminal && (
-        <Box>
-          <Input
-            placeholder="Enter command"
-            value={inputValue}
-            onChange={(e) => handleInputChange(e.target.value)}
-          />
-          <br />
-          <br />
+        <Box width="100%">
           <TerminalComponent
-            inputValue={inputValue}
+            inputValue={inputValue.toLowerCase()}
             setInputValue={setInputValue}
             isSending={isSending}
           />
