@@ -8,7 +8,6 @@ import {
   VStack,
   Input,
   HStack,
-  Progress,
   Spinner,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
@@ -16,6 +15,14 @@ import ReactBash from "react-bash";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+
 import { useChatCompletion } from "./hooks/useChatCompletion";
 
 const phraseToSymbolMap = {
@@ -42,7 +49,37 @@ const applySymbolMappings = (text) => {
   });
   return modifiedText;
 };
-const VoiceInput = ({ value, onChange, isCodeEditor }) => {
+
+const AwardScreen = () => {
+  const navigate = useNavigate();
+
+  const handleRestart = () => {
+    navigate("/step/0"); // Navigate to the first step to restart the quiz
+  };
+
+  return (
+    <Box textAlign="center" p={5}>
+      <Text fontSize="2xl" fontWeight="bold">
+        Congratulations!
+      </Text>
+      <Text>You have completed the quiz. Well done!</Text>
+      <Button mt={4} colorScheme="teal" onClick={handleRestart}>
+        Restart Quiz
+      </Button>
+    </Box>
+  );
+};
+
+const VoiceInput = ({
+  value,
+  onChange,
+  isCodeEditor,
+  isTextInput = false,
+  resetVoiceState,
+  useVoice = false,
+  isTerminal = false,
+  stopListening,
+}) => {
   const {
     transcript,
     listening,
@@ -63,7 +100,13 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
     }
   }, [transcript, listening, onChange, isCodeEditor]);
 
-  if (!browserSupportsSpeechRecognition) {
+  useEffect(() => {
+    if (!listening && isListening) {
+      setIsListening(false);
+    }
+  }, [listening]);
+
+  if (!browserSupportsSpeechRecognition && useVoice) {
     return <span>Your browser doesn't support speech recognition.</span>;
   }
 
@@ -82,6 +125,19 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
     }
     onChange(finalTranscript);
   };
+
+  useEffect(() => {
+    if (resetVoiceState) {
+      setIsListening(false);
+      SpeechRecognition.stopListening();
+    }
+  }, [resetVoiceState]);
+
+  useEffect(() => {
+    if (stopListening && isListening) {
+      handleVoiceStop();
+    }
+  }, [stopListening]);
 
   return (
     <HStack spacing={4} alignItems="center" width="100%">
@@ -109,10 +165,13 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
           width="100%"
         />
       )}
-      <Button onClick={isListening ? handleVoiceStop : handleVoiceStart}>
-        {isListening ? "Stop" : "Voice"}
-      </Button>
-      {isListening && (
+      {!isTextInput && (useVoice || isTerminal) ? (
+        <Button onClick={isListening ? handleVoiceStop : handleVoiceStart}>
+          {isListening ? "Stop" : "Voice"}
+        </Button>
+      ) : null}
+
+      {isListening && (useVoice || isTerminal) && (
         <HStack spacing={2} alignItems="center">
           <Spinner size="sm" />
           <Text>Listening...</Text>
@@ -121,46 +180,6 @@ const VoiceInput = ({ value, onChange, isCodeEditor }) => {
     </HStack>
   );
 };
-
-const steps = [
-  {
-    title: "Welcome to the Program-AI App!",
-    description:
-      "Press 'Let's start' to begin your journey in learning how to code.",
-  },
-  {
-    title: "Step 1: Introduction to Variables",
-    description:
-      "In this step, you will learn about variables and how to use them in your code.",
-    isText: true,
-    question: {
-      questionText: "What is a variable?",
-      answer: "",
-    },
-  },
-  {
-    title: "Step 2: Declaring Variables in JavaScript",
-    description:
-      "In this step, you will learn how to declare a variable in JavaScript.",
-    isCode: true,
-    isTerminal: false,
-    question: {
-      questionText: "How do you declare a variable in JavaScript?",
-      answer: "",
-    },
-  },
-  {
-    title: "Step 3: Terminal Code Example",
-    description: "In this step, you will type your code as if in a terminal.",
-    isCode: true,
-    isTerminal: true,
-    question: {
-      questionText: "Type a command using the command line",
-      answer: "",
-    },
-  },
-  // Add more steps as needed
-];
 
 const fileSystem = {
   "/": {
@@ -193,7 +212,14 @@ const envVariables = {
   PATH: "/usr/bin:/bin:/usr/sbin:/sbin",
 };
 
-function TerminalComponent({ inputValue, setInputValue, isSending }) {
+function TerminalComponent({
+  inputValue,
+  setInputValue,
+  isSending,
+  isTerminal,
+  resetVoiceState,
+  stopListening,
+}) {
   const [structure, setStructure] = useState(fileSystem);
   const [history, setHistory] = useState([
     {
@@ -351,6 +377,9 @@ function TerminalComponent({ inputValue, setInputValue, isSending }) {
         value={inputValue.toLowerCase()}
         onChange={setInputValue}
         isCodeEditor={false}
+        isTerminal={isTerminal}
+        resetVoiceState={resetVoiceState}
+        stopListening={stopListening}
       />
       <ReactBash
         structure={structure}
@@ -361,14 +390,21 @@ function TerminalComponent({ inputValue, setInputValue, isSending }) {
   );
 }
 
-function Step({ step, onNext, onBack }) {
-  const [inputValue, setInputValue] = useState(step?.question?.answer || "");
+const Step = ({ currentStep }) => {
+  const { stepIndex } = useParams();
+  const currentStepIndex = parseInt(stepIndex, 10);
+  const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
   const [feedback, setFeedback] = useState("");
-  const { messages, submitPrompt } = useChatCompletion({
+  const [resetVoiceState, setResetVoiceState] = useState(false);
+  const [stopListening, setStopListening] = useState(false);
+  const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
   });
+  const navigate = useNavigate();
+
+  const step = steps[currentStep];
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -378,6 +414,8 @@ function Step({ step, onNext, onBack }) {
 
   const handleAnswerClick = async () => {
     setIsSending(true);
+    setResetVoiceState(true);
+    setStopListening(true);
     try {
       const response = await submitPrompt([
         {
@@ -399,6 +437,7 @@ function Step({ step, onNext, onBack }) {
       console.error("Error fetching answer:", error);
     }
     setIsSending(false);
+    setResetVoiceState(false);
   };
 
   useEffect(() => {
@@ -413,8 +452,28 @@ function Step({ step, onNext, onBack }) {
   }, [messages]);
 
   useEffect(() => {
-    setInputValue(step?.question?.answer || "");
+    setInputValue("");
+    setFeedback("");
+    setIsCorrect(null);
+    resetMessages();
   }, [step]);
+
+  const handleNextClick = () => {
+    if (isCorrect) {
+      if (currentStep === steps.length - 1) {
+        navigate("/award"); // Navigate to the award screen if it's the last step
+      } else {
+        navigate(`/step/${currentStep + 1}`);
+      }
+    }
+    if (currentStep === 0) {
+      navigate(`/step/${1}`);
+    }
+  };
+
+  const handleBackClick = () => {
+    navigate(`/step/${currentStep - 1}`);
+  };
 
   return (
     <VStack spacing={4} width="100%">
@@ -426,6 +485,10 @@ function Step({ step, onNext, onBack }) {
           value={inputValue}
           onChange={handleInputChange}
           isCodeEditor={false}
+          isTextInput={true}
+          resetVoiceState={resetVoiceState}
+          useVoice={false}
+          stopListening={stopListening}
         />
       )}
       {step.isCode && !step.isTerminal && (
@@ -433,6 +496,9 @@ function Step({ step, onNext, onBack }) {
           value={inputValue}
           onChange={handleInputChange}
           isCodeEditor={true}
+          resetVoiceState={resetVoiceState}
+          useVoice={true}
+          stopListening={stopListening}
         />
       )}
       {step.isCode && step.isTerminal && (
@@ -441,17 +507,20 @@ function Step({ step, onNext, onBack }) {
             inputValue={inputValue.toLowerCase()}
             setInputValue={setInputValue}
             isSending={isSending}
+            isTerminal={true}
+            stopListening={stopListening}
+            resetVoiceState={resetVoiceState}
           />
         </Box>
       )}
       <HStack spacing={4}>
-        {onBack && (
-          <Button colorScheme="teal" onClick={onBack}>
+        {currentStep > 0 && (
+          <Button colorScheme="teal" onClick={handleBackClick}>
             Back
           </Button>
         )}
         {step.title === "Welcome to the Program-AI App!" ? (
-          <Button colorScheme="teal" onClick={onNext}>
+          <Button colorScheme="teal" onClick={handleNextClick}>
             Let's start
           </Button>
         ) : (
@@ -465,8 +534,8 @@ function Step({ step, onNext, onBack }) {
             </Button>
           )
         )}
-        {isCorrect === true && (
-          <Button colorScheme="teal" onClick={onNext}>
+        {isCorrect && (
+          <Button colorScheme="teal" onClick={handleNextClick}>
             Next Step
           </Button>
         )}
@@ -484,32 +553,67 @@ function Step({ step, onNext, onBack }) {
       )}
     </VStack>
   );
-}
+};
+
+const steps = [
+  {
+    title: "Welcome to the Program-AI App!",
+    description:
+      "Press 'Let's start' to begin your journey in learning how to code.",
+  },
+  {
+    title: "Step 1: Introduction to Variables",
+    description:
+      "In this step, you will learn about variables and how to use them in your code.",
+    isText: true,
+    question: {
+      questionText: "What is a variable?",
+      answer:
+        "A variable is a storage location identified by a memory address and a symbolic name.",
+    },
+  },
+  {
+    title: "Step 2: Declaring Variables in JavaScript",
+    description:
+      "In this step, you will learn how to declare a variable in JavaScript.",
+    isCode: true,
+    isTerminal: false,
+    question: {
+      questionText: "How do you declare a variable in JavaScript?",
+      answer:
+        "You declare a variable using var, let, or const followed by the variable name.",
+    },
+  },
+  {
+    title: "Step 3: Terminal Code Example",
+    description: "In this step, you will type your code as if in a terminal.",
+    isCode: true,
+    isTerminal: true,
+    question: {
+      questionText: "Type a command using the command line",
+      answer: "Commands are used to perform specific tasks in the terminal.",
+    },
+  },
+  // Add more steps as needed
+];
 
 function App() {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
-
-  const handleNextClick = () => {
-    setCurrentStepIndex((prevIndex) => prevIndex + 1);
-  };
-
-  const handleBackClick = () => {
-    setCurrentStepIndex((prevIndex) => prevIndex - 1);
-  };
-
   return (
-    <Box textAlign="center" fontSize="xl" p={5}>
-      <Progress value={(currentStepIndex / steps.length) * 100} mb={4} />
-      {currentStepIndex < steps.length ? (
-        <Step
-          step={steps[currentStepIndex]}
-          onNext={handleNextClick}
-          onBack={currentStepIndex > 0 ? handleBackClick : null}
-        />
-      ) : (
-        <Text>Congratulations! You've completed all the steps.</Text>
-      )}
-    </Box>
+    <Router>
+      <Box textAlign="center" fontSize="xl" p={5}>
+        <Routes>
+          <Route path="/" element={<Step currentStep={0} />} />
+          {steps.map((_, index) => (
+            <Route
+              key={index}
+              path={`/step/${index}`}
+              element={<Step currentStep={index} />}
+            />
+          ))}
+          <Route path="/award" element={<AwardScreen />} />
+        </Routes>
+      </Box>
+    </Router>
   );
 }
 
