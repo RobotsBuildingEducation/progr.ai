@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import "@babel/polyfill";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -24,6 +24,7 @@ import {
 } from "react-router-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
+import { SunsetCanvas } from "./elements/SunsetCanvas";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -87,6 +88,14 @@ const VoiceInput = ({
     browserSupportsSpeechRecognition,
   } = useSpeechRecognition();
   const [isListening, setIsListening] = useState(false);
+  const [aiListening, setAiListening] = useState(false);
+  const [aiTranscript, setAiTranscript] = useState("");
+  const [generateResponse, setGenerateResponse] = useState(false);
+  const { resetMessages, messages, submitPrompt } = useChatCompletion({
+    response_format: { type: "json_object" },
+  });
+
+  const pauseTimeoutRef = useRef(null);
 
   useEffect(() => {
     let modifiedTranscript = transcript.toLowerCase();
@@ -95,16 +104,42 @@ const VoiceInput = ({
       modifiedTranscript = applySymbolMappings(modifiedTranscript);
     }
 
-    if (listening) {
+    if (listening && !aiListening) {
       onChange(modifiedTranscript);
+    } else if (listening && aiListening) {
+      setAiTranscript(modifiedTranscript);
+      onChange(modifiedTranscript); // Display AI transcript in the input field
     }
-  }, [transcript, listening, onChange, isCodeEditor]);
+
+    // Reset the timeout whenever the transcript changes
+    if (pauseTimeoutRef.current) {
+      clearTimeout(pauseTimeoutRef.current);
+    }
+
+    if (aiListening && modifiedTranscript) {
+      pauseTimeoutRef.current = setTimeout(() => {
+        handleAiStop();
+      }, 1000); // 1 second
+    } else if (isListening && modifiedTranscript) {
+      pauseTimeoutRef.current = setTimeout(() => {
+        handleVoiceStop();
+      }, 1000); // 1 second
+    }
+  }, [transcript, listening, onChange, isCodeEditor, aiListening]);
 
   useEffect(() => {
     if (!listening && isListening) {
       setIsListening(false);
+    } else if (!listening && aiListening) {
+      setAiListening(false);
     }
   }, [listening]);
+
+  useEffect(() => {
+    if (generateResponse) {
+      handleGenerateResponse();
+    }
+  }, [generateResponse]);
 
   if (!browserSupportsSpeechRecognition && useVoice) {
     return <span>Your browser doesn't support speech recognition.</span>;
@@ -112,7 +147,10 @@ const VoiceInput = ({
 
   const handleVoiceStart = () => {
     setIsListening(true);
+    setAiListening(false);
     resetTranscript();
+    resetMessages();
+    onChange(""); // Clear input when starting voice
     SpeechRecognition.startListening({ continuous: true });
   };
 
@@ -123,24 +161,96 @@ const VoiceInput = ({
     if (isCodeEditor) {
       finalTranscript = applySymbolMappings(finalTranscript);
     }
+    resetTranscript();
+    resetMessages();
     onChange(finalTranscript);
+  };
+
+  const handleAiStart = () => {
+    setAiListening(true);
+    setIsListening(false);
+    resetTranscript();
+    resetMessages();
+    onChange(""); // Clear input when starting AI
+    SpeechRecognition.startListening({ continuous: true });
+  };
+
+  const handleAiStop = () => {
+    setAiListening(false);
+    SpeechRecognition.stopListening();
+    setGenerateResponse(true); // Set flag to generate response
+  };
+
+  const handleGenerateResponse = async () => {
+    try {
+      await submitPrompt([
+        {
+          content:
+            aiTranscript +
+            ` The JSON format should be { input: "${aiTranscript}", output: "your_answer" }. The output should strictly answer what is requested. Absolutely no other text or data should be included or communicated.`,
+          role: "user",
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching answer:", error);
+    }
+    setAiTranscript("");
+    setGenerateResponse(false); // Reset flag
   };
 
   useEffect(() => {
     if (resetVoiceState) {
       setIsListening(false);
+      setAiListening(false);
       SpeechRecognition.stopListening();
     }
   }, [resetVoiceState]);
 
   useEffect(() => {
-    if (stopListening && isListening) {
+    if (stopListening && (isListening || aiListening)) {
       handleVoiceStop();
+      handleAiStop();
     }
   }, [stopListening]);
 
+  useEffect(() => {
+    if (messages?.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (!lastMessage.meta.loading) {
+        const jsonResponse = JSON.parse(lastMessage.content);
+        onChange(jsonResponse.output); // Replace the input with the final output
+      } else {
+        onChange(lastMessage.content); // Stream the response as it comes in
+      }
+    }
+  }, [messages, onChange]);
+
   return (
-    <HStack spacing={4} alignItems="center" width="100%">
+    <VStack spacing={4} alignItems="center" width="100%">
+      {useVoice || isTerminal ? (
+        <HStack spacing={4} alignItems="center">
+          <Button onClick={handleVoiceStart}>Voice</Button>
+
+          <Button onClick={handleAiStart}>Ask AI</Button>
+        </HStack>
+      ) : null}
+
+      {isListening && (
+        <HStack spacing={2} alignItems="center">
+          <SunsetCanvas />
+          <small>Listening...</small>
+        </HStack>
+      )}
+      {aiListening && (
+        <HStack spacing={2} alignItems="center">
+          <SunsetCanvas />
+          <small>Listening...</small>
+        </HStack>
+      )}
+      {/* {aiTranscript && !aiListening && generateResponse && (
+        <Button onClick={handleGenerateResponse}>Generate Response</Button>
+      )} */}
+
       {isCodeEditor ? (
         <Box width="100%" height="400px" position="relative">
           <MonacoEditor
@@ -159,25 +269,13 @@ const VoiceInput = ({
         </Box>
       ) : (
         <Input
-          value={value}
+          value={aiListening ? aiTranscript : value}
           onChange={(e) => onChange(e.target.value.toLowerCase())}
           placeholder="Type your response or use voice..."
           width="100%"
         />
       )}
-      {!isTextInput && (useVoice || isTerminal) ? (
-        <Button onClick={isListening ? handleVoiceStop : handleVoiceStart}>
-          {isListening ? "Stop" : "Voice"}
-        </Button>
-      ) : null}
-
-      {isListening && (useVoice || isTerminal) && (
-        <HStack spacing={2} alignItems="center">
-          <Spinner size="sm" />
-          <Text>Listening...</Text>
-        </HStack>
-      )}
-    </HStack>
+    </VStack>
   );
 };
 
@@ -408,7 +506,7 @@ const Step = ({ currentStep }) => {
 
   const handleInputChange = (value) => {
     setInputValue(value);
-    setIsCorrect(null);
+    // setIsCorrect(null);
     setFeedback("");
   };
 
@@ -416,6 +514,7 @@ const Step = ({ currentStep }) => {
     setIsSending(true);
     setResetVoiceState(true);
     setStopListening(true);
+    setInputValue(""); // Clear input after answering
     try {
       const response = await submitPrompt([
         {
@@ -426,13 +525,13 @@ const Step = ({ currentStep }) => {
         },
       ]);
 
-      if (response && response.length > 0 && response[0].content) {
-        const jsonResponse = JSON.parse(response[0].content);
-        setIsCorrect(jsonResponse.isCorrect);
-        setFeedback(jsonResponse.feedback);
-      } else {
-        console.error("Unexpected response format:", response);
-      }
+      // if (response && response.length > 0 && response[0].content) {
+      //   const jsonResponse = JSON.parse(response[0].content);
+      //   setIsCorrect(jsonResponse.isCorrect);
+      //   setFeedback(jsonResponse.feedback);
+      // } else {
+      //   console.error("Unexpected response format:", response);
+      // }
     } catch (error) {
       console.error("Error fetching answer:", error);
     }
@@ -444,7 +543,10 @@ const Step = ({ currentStep }) => {
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
+        console.log("hello?");
+        console.log(lastMessage);
         const jsonResponse = JSON.parse(lastMessage.content);
+        console.log("jsonResponse");
         setIsCorrect(jsonResponse.isCorrect);
         setFeedback(jsonResponse.feedback);
       }
@@ -459,21 +561,18 @@ const Step = ({ currentStep }) => {
   }, [step]);
 
   const handleNextClick = () => {
-    if (isCorrect) {
-      if (currentStep === steps.length - 1) {
-        navigate("/award"); // Navigate to the award screen if it's the last step
-      } else {
-        navigate(`/step/${currentStep + 1}`);
-      }
-    }
-    if (currentStep === 0) {
-      navigate(`/step/${1}`);
+    if (currentStep === steps.length - 1) {
+      navigate("/award"); // Navigate to the award screen if it's the last step
+    } else {
+      navigate(`/step/${currentStep + 1}`);
     }
   };
 
   const handleBackClick = () => {
     navigate(`/step/${currentStep - 1}`);
   };
+
+  console.log("isCorrect", isCorrect);
 
   return (
     <VStack spacing={4} width="100%">
@@ -487,7 +586,7 @@ const Step = ({ currentStep }) => {
           isCodeEditor={false}
           isTextInput={true}
           resetVoiceState={resetVoiceState}
-          useVoice={false}
+          useVoice={true}
           stopListening={stopListening}
         />
       )}
@@ -536,7 +635,7 @@ const Step = ({ currentStep }) => {
         )}
         {isCorrect && (
           <Button colorScheme="teal" onClick={handleNextClick}>
-            Next Step
+            Next Question
           </Button>
         )}
       </HStack>
