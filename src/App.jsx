@@ -113,7 +113,7 @@ const VoiceInput = ({
     response_format: { type: "json_object" },
   });
 
-  const [educationalContent, setEducationalContent] = useState("");
+  const [educationalContent, setEducationalContent] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -256,7 +256,7 @@ const VoiceInput = ({
     onOpen();
     await submitEducationalPrompt([
       {
-        content: `Generate educational material about ${value}. The JSON format should be { input: "${value}", output: "your_answer" }.`,
+        content: `Generate educational material about ${value} with code examples and explanations. The JSON format should be { input: "${value}", output: [{ code: "code_example", explanation: "explanation" }] }.`,
         role: "user",
       },
     ]);
@@ -267,13 +267,18 @@ const VoiceInput = ({
       const lastMessage = educationalMessages[educationalMessages.length - 1];
       if (!lastMessage.meta.loading) {
         const jsonResponse = JSON.parse(lastMessage.content);
-        setEducationalContent(jsonResponse.output);
+        if (Array.isArray(jsonResponse.output)) {
+          setEducationalContent(jsonResponse.output);
+        } else {
+          setEducationalContent([]);
+        }
       } else {
-        setEducationalContent(lastMessage.content);
+        setEducationalContent([]);
       }
     }
   }, [educationalMessages]);
 
+  console.log("educationalMessages", educationalMessages);
   return (
     <VStack spacing={4} alignItems="center" width="100%">
       {useVoice || isTerminal ? (
@@ -329,6 +334,7 @@ const VoiceInput = ({
         placement="right"
         onClose={onClose}
         blockScrollOnMount={false}
+        size={"lg"}
       >
         <DrawerOverlay>
           <DrawerContent>
@@ -336,14 +342,27 @@ const VoiceInput = ({
             <DrawerHeader>Educational Material</DrawerHeader>
             <DrawerBody>
               {educationalMessages.length === 0 && <Spinner />}
-              {educationalMessages.length > 0 && (
-                <Text>
-                  {educationalContent
-                    ? educationalContent
-                    : educationalMessages[educationalMessages.length - 1]
-                        ?.content}
-                </Text>
-              )}
+              {educationalMessages.length > 0 && !educationalContent.length > 0
+                ? educationalMessages[educationalMessages.length - 1]?.content
+                : null}
+
+              <VStack spacing={4} alignItems="flex-start">
+                {educationalContent.length > 0 &&
+                  educationalContent.map((content, index) => (
+                    <Box
+                      key={index}
+                      p={4}
+                      borderWidth={1}
+                      borderRadius="lg"
+                      width="100%"
+                    >
+                      <Text fontWeight="bold">Code Example:</Text>
+                      <pre>{content.code}</pre>
+                      <Text fontWeight="bold">Explanation:</Text>
+                      <Text>{content.explanation}</Text>
+                    </Box>
+                  ))}
+              </VStack>
             </DrawerBody>
           </DrawerContent>
         </DrawerOverlay>
