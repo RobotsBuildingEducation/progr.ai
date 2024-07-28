@@ -34,26 +34,23 @@ export const openAiStreamingDataHandler = async (
   onIncomingChunk,
   onCloseStream
 ) => {
-  // Record the timestamp before the request starts.
   const beforeTimestamp = Date.now();
 
-  // Initiate the completion request
   const response = await fetch(CHAT_COMPLETIONS_URL, requestOpts);
 
-  // If the response isn't OK (non-2XX HTTP code) report the HTTP status and description.
   if (!response.ok) {
     throw new Error(
       `Network response was not ok: ${response.status} - ${response.statusText}`
     );
   }
 
-  // A response body should always exist, if there isn't one something has gone wrong.
   if (!response.body) {
     throw new Error("No body included in POST response object");
   }
 
   let content = "";
   let role = "";
+  const textDecoder = new TextDecoder();
 
   const reader = response.body.getReader();
   const stream = new ReadableStream({
@@ -72,41 +69,42 @@ export const openAiStreamingDataHandler = async (
     },
   });
 
+  let buffer = "";
+
   for await (const newData of stream) {
-    // Decode the data
     const decodedData = textDecoder.decode(newData);
-    // Split the data into lines to process
-    const lines = decodedData.split(/(\n){2}/);
-    // Parse the lines into chat completion chunks
-    const chunks = lines
-      // Remove 'data:' prefix off each line
-      .map((line) => line.replace(/(\n)?^data:\s*/, "").trim())
-      // Remove empty lines and "[DONE]"
-      .filter((line) => line !== "" && line !== "[DONE]")
-      // Parse JSON string
-      .map((line) => JSON.parse(line));
+    buffer += decodedData;
 
-    // Process each chunk and send an update to the registered handler.
-    for (const chunk of chunks) {
-      // Avoid empty line after single backtick
-      const contentChunk = (chunk.choices[0].delta.content ?? "").replace(
-        /^`\s*/,
-        "`"
-      );
-      // Most times the chunk won't contain a role, in those cases set the role to ""
-      const roleChunk = chunk.choices[0].delta.role ?? "";
+    let lines = buffer.split("\n");
+    buffer = lines.pop(); // Keep the last line as it might be incomplete
 
-      // Assign the new data to the rest of the data already received.
-      content = `${content}${contentChunk}`;
-      role = `${role}${roleChunk}`;
+    for (let line of lines) {
+      line = line.replace(/^data:\s*/, "").trim();
+      if (line === "" || line === "[DONE]") continue;
 
-      onIncomingChunk(contentChunk, roleChunk);
+      try {
+        const chunk = JSON.parse(line);
+
+        const contentChunk = (chunk.choices[0].delta.content ?? "").replace(
+          /^`\s*/,
+          "`"
+        );
+        const roleChunk = chunk.choices[0].delta.role ?? "";
+
+        content = `${content}${contentChunk}`;
+        role = `${role}${roleChunk}`;
+
+        onIncomingChunk(contentChunk, roleChunk);
+      } catch (e) {
+        console.error("JSON parsing error:", e);
+        // Optionally: Log the erroneous line for debugging
+        console.error("Failed line:", line);
+      }
     }
   }
 
   onCloseStream(beforeTimestamp);
 
-  // Return the fully-assembled chat completion.
   return { content, role };
 };
 

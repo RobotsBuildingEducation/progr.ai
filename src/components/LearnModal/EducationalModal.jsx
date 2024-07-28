@@ -1,0 +1,133 @@
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  VStack,
+  Text,
+  Spinner,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  HStack,
+} from "@chakra-ui/react";
+import { SunsetCanvas } from "../../elements/SunsetCanvas";
+import Editor from "react-simple-code-editor";
+import { highlight, languages } from "prismjs/components/prism-core";
+import "prismjs/components/prism-clike";
+import "prismjs/components/prism-javascript";
+import "prismjs/themes/prism.css";
+
+const EducationalModal = ({
+  isOpen,
+  onClose,
+  educationalMessages,
+  educationalContent,
+}) => {
+  console.log("educationalContent", educationalContent);
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="full">
+      <ModalOverlay />
+      <ModalContent
+        background={"black"}
+        // color="white"
+        borderRadius="lg"
+        boxShadow="2xl"
+        p={5}
+        // style={{ fontFamily: "Roboto Serif, serif" }}
+      >
+        <ModalHeader fontSize="3xl" fontWeight="bold" textAlign="center">
+          <HStack>
+            <div style={{ width: "fit-content" }}>
+              <SunsetCanvas />
+            </div>
+            &nbsp;
+            <div style={{ color: "white" }}>Learn</div>
+          </HStack>
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {educationalMessages.length === 0 && <Spinner size="xl" />}
+          {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
+            <div style={{ color: "#FAF3E0" }}>
+              {educationalMessages[educationalMessages.length - 1]?.content}
+            </div>
+          ) : null}
+          <VStack spacing={6} alignItems="flex-start">
+            {educationalContent.length > 0 &&
+              educationalContent.map((content, index) => (
+                <Box
+                  fontFamily={"monospace"}
+                  key={index}
+                  p={4}
+                  bg="#170029"
+                  borderRadius="md"
+                  borderWidth={1}
+                  borderColor="rgba(255, 255, 255, 0.2)"
+                  width="100%"
+                  boxShadow="md"
+                >
+                  {/* <Text fontSize="xl" fontWeight="bold">
+                    Code Example:
+                  </Text> */}
+                  <div
+                    style={{
+                      //   color: "#696969",
+                      backgroundColor: "#faf3e0",
+                      width: "100%",
+                      padding: 20,
+                      wordBreak: "break-word",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderRadius: 30,
+                      boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
+                    }}
+                  >
+                    <pre style={{ whiteSpace: "pre-wrap" }}>
+                      <Editor
+                        value={content.code}
+                        highlight={(input) => highlight(input, languages.js)}
+                        padding={10}
+                        style={{
+                          fontFamily: '"Fira code", "Fira Mono", monospace',
+                          fontSize: 14,
+
+                          borderRadius: "8px",
+                        }}
+                        disabled
+                      />
+                    </pre>
+                  </div>
+                  {/* <Text fontSize="xl" fontWeight="bold" mt={3}>
+                    Explanation:
+                  </Text> */}
+                  <br />
+                  <Text style={{ color: "white" }} fontSize="sm">
+                    {content.explanation}
+                  </Text>
+                </Box>
+              ))}
+          </VStack>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            onClick={onClose}
+            colorScheme="teal"
+            variant="solid"
+            size="lg"
+            borderRadius="full"
+            boxShadow="0 0 20px rgba(0, 255, 255, 0.5)"
+          >
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+export default EducationalModal;
