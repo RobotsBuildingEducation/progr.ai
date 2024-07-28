@@ -9,6 +9,13 @@ import {
   Input,
   HStack,
   Spinner,
+  Drawer,
+  DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -96,6 +103,19 @@ const VoiceInput = ({
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
   });
+
+  // New variables for educational material
+  const {
+    resetMessages: resetEducationalMessages,
+    messages: educationalMessages,
+    submitPrompt: submitEducationalPrompt,
+  } = useChatCompletion({
+    response_format: { type: "json_object" },
+  });
+
+  const [educationalContent, setEducationalContent] = useState("");
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const pauseTimeoutRef = useRef(null);
 
@@ -231,13 +251,38 @@ const VoiceInput = ({
     }
   }, [messages, onChange]);
 
+  // New function for handling the "Learn" button click
+  const handleLearnClick = async () => {
+    onOpen();
+    await submitEducationalPrompt([
+      {
+        content: `Generate educational material about ${value}. The JSON format should be { input: "${value}", output: "your_answer" }.`,
+        role: "user",
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    if (educationalMessages?.length > 0) {
+      const lastMessage = educationalMessages[educationalMessages.length - 1];
+      if (!lastMessage.meta.loading) {
+        const jsonResponse = JSON.parse(lastMessage.content);
+        setEducationalContent(jsonResponse.output);
+      } else {
+        setEducationalContent(lastMessage.content);
+      }
+    }
+  }, [educationalMessages]);
+
   return (
     <VStack spacing={4} alignItems="center" width="100%">
       {useVoice || isTerminal ? (
         <HStack spacing={4} alignItems="center">
           <Button onClick={handleVoiceStart}>Use Voice To Text</Button>
-
           <Button onClick={handleAiStart}>Use Voice To AI</Button>
+          <Button onClick={handleLearnClick} colorScheme="teal">
+            Learn
+          </Button>
         </HStack>
       ) : null}
 
@@ -253,9 +298,6 @@ const VoiceInput = ({
           <small>Listening...</small>
         </HStack>
       )}
-      {/* {aiTranscript && !aiListening && generateResponse && (
-        <Button onClick={handleGenerateResponse}>Generate Response</Button>
-      )} */}
 
       {isCodeEditor ? (
         <Box width="100%" height="400px" position="relative">
@@ -281,6 +323,31 @@ const VoiceInput = ({
           width="100%"
         />
       )}
+
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        blockScrollOnMount={false}
+      >
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Educational Material</DrawerHeader>
+            <DrawerBody>
+              {educationalMessages.length === 0 && <Spinner />}
+              {educationalMessages.length > 0 && (
+                <Text>
+                  {educationalContent
+                    ? educationalContent
+                    : educationalMessages[educationalMessages.length - 1]
+                        ?.content}
+                </Text>
+              )}
+            </DrawerBody>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
     </VStack>
   );
 };
@@ -487,7 +554,7 @@ function TerminalComponent({
         resetVoiceState={resetVoiceState}
         stopListening={stopListening}
         setFeedback={setFeedback}
-        resetFeedbackMessages={resetMessages}
+        resetFeedbackMessages={resetFeedbackMessages}
       />
       <ReactBash
         structure={structure}
