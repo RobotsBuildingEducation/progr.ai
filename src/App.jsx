@@ -80,6 +80,8 @@ const VoiceInput = ({
   useVoice = false,
   isTerminal = false,
   stopListening,
+  setFeedback,
+  resetFeedbackMessages,
 }) => {
   const {
     transcript,
@@ -146,6 +148,8 @@ const VoiceInput = ({
   }
 
   const handleVoiceStart = () => {
+    resetFeedbackMessages();
+    setFeedback("");
     setIsListening(true);
     setAiListening(false);
     resetTranscript();
@@ -167,6 +171,8 @@ const VoiceInput = ({
   };
 
   const handleAiStart = () => {
+    resetFeedbackMessages();
+    setFeedback("");
     setAiListening(true);
     setIsListening(false);
     resetTranscript();
@@ -229,9 +235,9 @@ const VoiceInput = ({
     <VStack spacing={4} alignItems="center" width="100%">
       {useVoice || isTerminal ? (
         <HStack spacing={4} alignItems="center">
-          <Button onClick={handleVoiceStart}>Voice</Button>
+          <Button onClick={handleVoiceStart}>Use Voice To Text</Button>
 
-          <Button onClick={handleAiStart}>Ask AI</Button>
+          <Button onClick={handleAiStart}>Use Voice To AI</Button>
         </HStack>
       ) : null}
 
@@ -317,6 +323,8 @@ function TerminalComponent({
   isTerminal,
   resetVoiceState,
   stopListening,
+  setFeedback,
+  resetFeedbackMessages,
 }) {
   const [structure, setStructure] = useState(fileSystem);
   const [history, setHistory] = useState([
@@ -478,6 +486,8 @@ function TerminalComponent({
         isTerminal={isTerminal}
         resetVoiceState={resetVoiceState}
         stopListening={stopListening}
+        setFeedback={setFeedback}
+        resetFeedbackMessages={resetMessages}
       />
       <ReactBash
         structure={structure}
@@ -588,6 +598,8 @@ const Step = ({ currentStep }) => {
           resetVoiceState={resetVoiceState}
           useVoice={true}
           stopListening={stopListening}
+          setFeedback={setFeedback}
+          resetFeedbackMessages={resetMessages}
         />
       )}
       {step.isCode && !step.isTerminal && (
@@ -598,6 +610,8 @@ const Step = ({ currentStep }) => {
           resetVoiceState={resetVoiceState}
           useVoice={true}
           stopListening={stopListening}
+          setFeedback={setFeedback}
+          resetFeedbackMessages={resetMessages}
         />
       )}
       {step.isCode && step.isTerminal && (
@@ -609,6 +623,8 @@ const Step = ({ currentStep }) => {
             isTerminal={true}
             stopListening={stopListening}
             resetVoiceState={resetVoiceState}
+            setFeedback={setFeedback}
+            resetFeedbackMessages={resetMessages}
           />
         </Box>
       )}
