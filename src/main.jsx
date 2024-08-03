@@ -1,11 +1,22 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import { AppWrapper } from "./App.jsx";
 // localStorage.clear();
+const theme = extendTheme({
+  components: {
+    Modal: {
+      baseStyle: {
+        footer: {
+          bg: "transparent",
+        },
+      },
+    },
+  },
+});
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <ChakraProvider>
+  <ChakraProvider theme={theme}>
     <AppWrapper />
   </ChakraProvider>
 );

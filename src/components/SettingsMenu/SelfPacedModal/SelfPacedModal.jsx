@@ -13,16 +13,32 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  Input,
 } from "@chakra-ui/react";
 import {
   convertMinutesToReadableFormat,
   formatIntervalText,
 } from "../../../utility/settings";
+import { getUserData, updateUserData } from "../../../utility/nosql";
 
-const SelfPacedModal = ({ isOpen, onClose, interval, setInterval }) => {
+const SelfPacedModal = ({ isOpen, onClose, interval, setInterval, userId }) => {
   const [inputValue, setInputValue] = useState(interval);
+  const [streak, setStreak] = useState(0);
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const { days, hours, minutes } = convertMinutesToReadableFormat(interval);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userData = await getUserData(userId);
+      setStreak(userData.streak || 0);
+      setStartTime(new Date(userData.startTime));
+      setEndTime(new Date(userData.endTime));
+    };
+
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]);
 
   const handleSliderChange = (val) => {
     setInterval(val);
@@ -30,19 +46,6 @@ const SelfPacedModal = ({ isOpen, onClose, interval, setInterval }) => {
   };
 
   const debounceTimeout = useRef(null);
-
-  const handleInputChange = (event) => {
-    const value = event.target.value;
-    setInputValue(value);
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
-    debounceTimeout.current = setTimeout(() => {
-      if (!isNaN(value) && value >= 10 && value <= 4320) {
-        setInterval(parseInt(value, 10));
-      }
-    }, 500);
-  };
 
   useEffect(() => {
     return () => {
@@ -52,20 +55,55 @@ const SelfPacedModal = ({ isOpen, onClose, interval, setInterval }) => {
     };
   }, []);
 
+  const handleSave = async () => {
+    const currentTime = new Date();
+    const newEndTime = new Date(currentTime.getTime() + interval * 60000);
+    setStartTime(currentTime);
+    setEndTime(newEndTime);
+
+    await updateUserData(userId, interval, streak, currentTime, newEndTime);
+  };
+
+  const getMarkLabel = (interval) => {
+    if (interval <= 1440) {
+      return "Grind";
+    } else if (interval <= 2880) {
+      return "Motivated";
+    } else if (interval <= 4320) {
+      return "Casual";
+    } else {
+      return "";
+    }
+  };
+
+  const getMarkColor = (interval) => {
+    if (interval <= 1440) {
+      return "orange.500";
+    } else if (interval <= 2880) {
+      return "green.500";
+    } else if (interval <= 4320) {
+      return "blue.500";
+    } else {
+      return "gray.500";
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Self-Paced Feature</ModalHeader>
+        <ModalHeader>Self-pace</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text mb={4}>Set the interval for answering questions:</Text>
+          <Text mb={4} fontSize="xs">
+            Choose how much time can elapse to grow your streak.
+          </Text>
           <Slider
             aria-label="slider-ex-1"
             value={interval}
-            min={10}
+            min={30}
             max={4320}
-            step={10}
+            step={30}
             onChange={handleSliderChange}
           >
             <SliderTrack>
@@ -73,20 +111,13 @@ const SelfPacedModal = ({ isOpen, onClose, interval, setInterval }) => {
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text mt={2}>
-            Interval: {formatIntervalText(days, hours, minutes)}
+          <Text mt={2}>{formatIntervalText(days, hours, minutes)}</Text>
+          <Text mt={2} color={getMarkColor(interval)}>
+            <b>Mode: {getMarkLabel(interval)}</b>
           </Text>
-          <Input
-            mt={4}
-            type="number"
-            value={inputValue}
-            onChange={handleInputChange}
-            min={10}
-            max={4320}
-          />
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button colorScheme="blue" mr={3} onClick={handleSave}>
             Save
           </Button>
         </ModalFooter>

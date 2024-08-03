@@ -12,6 +12,7 @@ import {
   useDisclosure,
   VStack,
   useToast,
+  Text,
 } from "@chakra-ui/react";
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +21,9 @@ import BitcoinModeModal from "./BitcoinModeModal/BitcoinModeModal";
 import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
 import SelfPacedModal from "./SelfPacedModal/SelfPacedModal";
+import { KnowledgeLedgerModal } from "./KnowledgeLedgerModal/KnowledgeLedgerModal"; // Import the new modal
 
-const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
+const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const btnRef = React.useRef();
@@ -51,6 +53,12 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
     onClose: onSocialWalletClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isKnowledgeLedgerOpen,
+    onOpen: onKnowledgeLedgerOpen,
+    onClose: onKnowledgeLedgerClose,
+  } = useDisclosure();
+
   const [interval, setInterval] = useState(120);
 
   return (
@@ -73,6 +81,7 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
         placement="right"
         onClose={onClose}
         finalFocusRef={btnRef}
+        blockScrollOnMount={false}
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -83,16 +92,33 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
               <Button style={{ width: "100%" }} onClick={onSelfPacedOpen}>
                 Self-pace
               </Button>
+
+              <Button
+                style={{ width: "100%" }}
+                onClick={onKnowledgeLedgerOpen} // New button to open the Knowledge Ledger Modal
+              >
+                Adaptive Learning
+              </Button>
               <Button style={{ width: "100%" }} onClick={onBitcoinModeOpen}>
                 Bitcoin Mode
               </Button>
+
               <Button
                 style={{ width: "100%" }}
                 onClick={onRoxModalOpen}
                 mt={4}
                 variant={"outline"}
               >
-                Open rox
+                Open Tutor
+              </Button>
+              <Button
+                as="a"
+                href="https://chatgpt.com/g/g-09h5uQiFC-rox"
+                mt={4}
+                style={{ width: "100%" }}
+                variant={"outline"}
+              >
+                Open Tutor (GPT)
               </Button>
               <Button
                 style={{ width: "100%" }}
@@ -100,8 +126,9 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
                 mt={4}
                 variant={"outline"}
               >
-                Open social wallet
+                Open Social Wallet
               </Button>
+
               <Button
                 as="a"
                 href="https://patreon.com/robotsbuildingeducation"
@@ -133,6 +160,7 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
         onClose={onSelfPacedClose}
         interval={interval}
         setInterval={setInterval}
+        userId={localStorage.getItem("local_publicKey")}
       />
       {isBitcoinModeOpen ? (
         <BitcoinModeModal
@@ -145,6 +173,12 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn }) => {
       <SocialWalletModal
         isOpen={isSocialWalletOpen}
         onClose={onSocialWalletClose}
+      />
+      <KnowledgeLedgerModal
+        isOpen={isKnowledgeLedgerOpen} // New modal
+        onClose={onKnowledgeLedgerClose}
+        steps={steps}
+        currentStep={currentStep}
       />
     </>
   );

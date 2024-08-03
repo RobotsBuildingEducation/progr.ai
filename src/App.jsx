@@ -34,10 +34,16 @@ import { SunsetCanvas } from "./elements/SunsetCanvas";
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import { useNOSTR } from "./hooks/useNOSTR";
-import { createUser, getUserStep, incrementUserStep } from "./utility/nosql";
+import {
+  createUser,
+  getUserData,
+  getUserStep,
+  incrementUserStep,
+  updateUserData,
+} from "./utility/nosql";
 import { steps } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
-import { doc, getDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { database } from "./database/firebaseResources";
 
 const phraseToSymbolMap = {
@@ -57,7 +63,7 @@ const phraseToSymbolMap = {
 };
 
 const applySymbolMappings = (text) => {
-  let modifiedText = text.toLowerCase();
+  let modifiedText = text;
   Object.keys(phraseToSymbolMap).forEach((phrase) => {
     const regex = new RegExp(`\\b${phrase}\\b`, "gi");
     modifiedText = modifiedText.replace(regex, phraseToSymbolMap[phrase]);
@@ -128,7 +134,7 @@ const VoiceInput = ({
   const pauseTimeoutRef = useRef(null);
 
   useEffect(() => {
-    let modifiedTranscript = transcript.toLowerCase();
+    let modifiedTranscript = transcript;
 
     if (isCodeEditor) {
       modifiedTranscript = applySymbolMappings(modifiedTranscript);
@@ -189,7 +195,7 @@ const VoiceInput = ({
   const handleVoiceStop = () => {
     setIsListening(false);
     SpeechRecognition.stopListening();
-    let finalTranscript = transcript.toLowerCase();
+    let finalTranscript = transcript;
     if (isCodeEditor) {
       finalTranscript = applySymbolMappings(finalTranscript);
     }
@@ -328,7 +334,7 @@ const VoiceInput = ({
             language="javascript"
             theme="light"
             value={value}
-            onChange={(value) => onChange(value.toLowerCase())}
+            onChange={(value) => onChange(value)}
             options={{
               wordWrap: "on",
               scrollBeyondLastLine: false,
@@ -341,8 +347,8 @@ const VoiceInput = ({
           type="textarea"
           maxWidth={"333px"}
           value={aiListening ? aiTranscript : value}
-          onChange={(e) => onChange(e.target.value.toLowerCase())}
-          placeholder="Type your response or use voice..."
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Type your response or use voice"
           width="100%"
         />
       )}
@@ -410,7 +416,7 @@ function TerminalComponent({
 
   useEffect(() => {
     if (isSending) {
-      executeCommand(inputValue.toLowerCase());
+      executeCommand(inputValue);
     }
   }, [isSending]);
 
@@ -553,7 +559,7 @@ function TerminalComponent({
   return (
     <>
       <VoiceInput
-        value={inputValue.toLowerCase()}
+        value={inputValue}
         onChange={setInputValue}
         isCodeEditor={false}
         isTerminal={isTerminal}
@@ -581,6 +587,11 @@ const Step = ({ currentStep }) => {
   const [feedback, setFeedback] = useState("");
   const [resetVoiceState, setResetVoiceState] = useState(false);
   const [stopListening, setStopListening] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+  const [interval, setInterval] = useState(0);
+
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
   });
@@ -589,18 +600,54 @@ const Step = ({ currentStep }) => {
     localStorage.getItem("local_publicKey"),
     localStorage.getItem("local_privateKey")
   );
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const step = steps[currentStep];
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("local_publicKey");
+      const userData = await getUserData(userId);
+      console.log("Fetched User Data:", userData);
+      setStreak(userData.streak || 0);
+      setStartTime(new Date(userData.startTime));
+      setEndTime(new Date(userData.endTime));
+      setInterval(userData.timer || 0);
+
+      const currentTime = new Date();
+      if (currentTime > new Date(userData.endTime)) {
+        setStreak(0);
+        const newEndTime = new Date(
+          currentTime.getTime() + (userData.timer || 0) * 60000
+        );
+        setStartTime(currentTime);
+        setEndTime(newEndTime);
+        await updateUserData(
+          userId,
+          userData.timer,
+          0,
+          currentTime,
+          newEndTime
+        );
+        console.log("Updated User Data on Expiry:", {
+          userId,
+          timer: userData.timer,
+          streak: 0,
+          startTime: currentTime,
+          endTime: newEndTime,
+        });
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const calculateProgress = () => {
-    console.log("progress", (currentStep / (steps.length - 1)) * 100);
-    return (currentStep / (steps.length - 1)) * 100;
+    return ((currentStep - 1) / (steps.length - 1)) * 100;
   };
 
   const handleInputChange = (value) => {
     setInputValue(value);
-    // setIsCorrect(null);
     setFeedback("");
   };
 
@@ -608,16 +655,23 @@ const Step = ({ currentStep }) => {
     setIsSending(true);
     setResetVoiceState(true);
     setStopListening(true);
-    setInputValue(""); // Clear input after answering
+    setInputValue("");
     try {
       const response = await submitPrompt([
         {
-          content: `The user is answering the following question "${
-            step.question.questionText
-          }" with the following answer "${inputValue.toLowerCase()}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }`,
+          content: `The user is answering the following question "${step.question.questionText}" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }`,
           role: "user",
         },
       ]);
+      const jsonResponse = JSON.parse(response.content);
+      setIsCorrect(jsonResponse.isCorrect);
+      setFeedback(jsonResponse.feedback);
+
+      if (jsonResponse.isCorrect) {
+        const npub = localStorage.getItem("local_publicKey");
+        incrementUserStep(npub);
+        await storeCorrectAnswer(step, jsonResponse.feedback);
+      }
     } catch (error) {
       console.error("Error fetching answer:", error);
     }
@@ -625,20 +679,52 @@ const Step = ({ currentStep }) => {
     setResetVoiceState(false);
   };
 
+  const storeCorrectAnswer = async (step, answer) => {
+    const userId = localStorage.getItem("local_publicKey");
+    const answerRef = collection(database, `users/${userId}/answers`);
+    await addDoc(answerRef, {
+      step: currentStep,
+      question: step.question.questionText,
+      correctAnswer: answer,
+      timestamp: new Date(),
+    });
+
+    const currentTime = new Date();
+    let newStreak = streak;
+
+    if (currentTime <= new Date(endTime)) {
+      newStreak += 1; // Increment streak if within time
+    } else {
+      newStreak = 1; // Reset streak if not within time
+    }
+
+    const newEndTime = new Date(currentTime.getTime() + interval * 60000);
+    setStartTime(currentTime);
+    setEndTime(newEndTime);
+    setStreak(newStreak);
+
+    await updateUserData(userId, interval, newStreak, currentTime, newEndTime);
+    console.log("Updated User Data after Correct Answer:", {
+      userId,
+      timer: interval,
+      streak: newStreak,
+      startTime: currentTime.toISOString(),
+      endTime: newEndTime.toISOString(),
+    });
+  };
+
   useEffect(() => {
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
-        console.log("hello?");
-        console.log(lastMessage);
         const jsonResponse = JSON.parse(lastMessage.content);
-        console.log("jsonResponse");
         setIsCorrect(jsonResponse.isCorrect);
         setFeedback(jsonResponse.feedback);
 
         if (jsonResponse.isCorrect) {
           const npub = localStorage.getItem("local_publicKey");
           incrementUserStep(npub);
+          storeCorrectAnswer(step, jsonResponse.feedback);
         }
       }
     }
@@ -668,12 +754,12 @@ const Step = ({ currentStep }) => {
     }
   };
 
-  console.log("isCorrect", isCorrect);
-
   return (
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
-        <b style={{ fontSize: "60%" }}>Progress</b>
+        <b style={{ fontSize: "60%" }}>
+          Progress: {calculateProgress().toFixed(2)}% | Streak: {streak}
+        </b>
         <Progress
           value={calculateProgress()}
           size="xs"
@@ -685,8 +771,8 @@ const Step = ({ currentStep }) => {
       <Text fontSize="xl">
         {currentStep}. {step.title}
       </Text>
-      {/* <Text>{step.description}</Text> */}
       {step.question && <Text fontSize="sm">{step.question.questionText}</Text>}
+
       {step.isText && (
         <VoiceInput
           value={inputValue}
@@ -717,7 +803,7 @@ const Step = ({ currentStep }) => {
       {step.isCode && step.isTerminal && (
         <Box width="100%">
           <TerminalComponent
-            inputValue={inputValue.toLowerCase()}
+            inputValue={inputValue}
             setInputValue={setInputValue}
             isSending={isSending}
             isTerminal={true}
@@ -730,11 +816,6 @@ const Step = ({ currentStep }) => {
         </Box>
       )}
       <HStack spacing={4}>
-        {/* {currentStep > 0 && (
-          <Button colorScheme="teal" onClick={handleBackClick}>
-            Back
-          </Button>
-        )} */}
         {step.title === "Welcome to the Program AI App!" ? (
           <Button colorScheme="teal" onClick={handleNextClick}>
             Let's start
@@ -757,13 +838,12 @@ const Step = ({ currentStep }) => {
         )}
       </HStack>
       {messages.length > 0 && !feedback && (
-        <Box mt={4} p={4} borderWidth={1} borderRadius="lg" width="100%">
-          <Text fontWeight="bold">Feedback:</Text>
+        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="640px">
           <Text>{messages[messages.length - 1]?.content}</Text>
         </Box>
       )}
       {feedback && (
-        <Box mt={4} p={4} borderWidth={1} borderRadius="lg" width="100%">
+        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="640px">
           <Text color={isCorrect ? "green.500" : "red.500"}>{feedback}</Text>
         </Box>
       )}
@@ -971,6 +1051,7 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
 function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -978,8 +1059,9 @@ function App() {
       const npub = localStorage.getItem("local_publicKey");
       if (npub) {
         setIsSignedIn(true);
-        const currentStep = await getUserStep(npub);
-        navigate(`/step/${currentStep}`);
+        const step = await getUserStep(npub); // Fetch the current step
+        setCurrentStep(step);
+        navigate(`/step/${step}`);
       }
       setLoading(false);
     };
@@ -991,10 +1073,16 @@ function App() {
     return <Spinner />; // Show a loading spinner while initializing
   }
 
+  console.log("currentstep", currentStep);
   return (
     <Box textAlign="center" fontSize="xl" p={5}>
       {isSignedIn && (
-        <SettingsMenu isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+        <SettingsMenu
+          isSignedIn={isSignedIn}
+          setIsSignedIn={setIsSignedIn}
+          steps={steps}
+          currentStep={currentStep} // Pass current step to SettingsMenu
+        />
       )}
 
       <Routes>

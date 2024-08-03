@@ -2,6 +2,40 @@
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 import { database } from "../database/firebaseResources";
 
+// Update user data with timer, streak, startTime, and endTime
+export const updateUserData = async (
+  userId,
+  timer,
+  streak,
+  startTime,
+  endTime
+) => {
+  const userDocRef = doc(database, "users", userId);
+  await updateDoc(userDocRef, {
+    timer,
+    streak,
+    startTime: startTime.toISOString(), // Store dates as ISO strings
+    endTime: endTime.toISOString(),
+  });
+};
+
+// Retrieve user data to use within the component
+export const getUserData = async (userId) => {
+  const userDocRef = doc(database, "users", userId);
+  const userDoc = await getDoc(userDocRef);
+
+  if (userDoc.exists()) {
+    const data = userDoc.data();
+    return {
+      ...data,
+      startTime: new Date(data.startTime), // Convert ISO strings back to Date objects
+      endTime: new Date(data.endTime),
+    };
+  } else {
+    return null; // Handle case where user document does not exist
+  }
+};
+
 // Function to create or update a user in Firestore
 export const createUser = async (npub, userName) => {
   const userDoc = doc(database, "users", npub);

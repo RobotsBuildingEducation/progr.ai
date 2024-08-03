@@ -14,6 +14,8 @@ import {
   ModalCloseButton,
   useDisclosure,
   HStack,
+  extendTheme,
+  useStyleConfig,
 } from "@chakra-ui/react";
 import { SunsetCanvas } from "../../elements/SunsetCanvas";
 import Editor from "react-simple-code-editor";
@@ -28,19 +30,31 @@ const EducationalModal = ({
   educationalMessages,
   educationalContent,
 }) => {
-  console.log("educationalContent", educationalContent);
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="full">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="3xl"
+      scrollBehavior={"inside"}
+    >
       <ModalOverlay />
       <ModalContent
         background={"black"}
         // color="white"
         borderRadius="lg"
         boxShadow="2xl"
-        p={5}
+        p={0}
+        width="100%"
+
         // style={{ fontFamily: "Roboto Serif, serif" }}
       >
-        <ModalHeader fontSize="3xl" fontWeight="bold" textAlign="center">
+        <ModalHeader
+          fontSize="3xl"
+          fontWeight="bold"
+          marginTop={0}
+          paddingTop={0}
+          padding={3}
+        >
           <HStack>
             <div style={{ width: "fit-content" }}>
               <SunsetCanvas />
@@ -49,7 +63,7 @@ const EducationalModal = ({
             <div style={{ color: "white" }}>Learn</div>
           </HStack>
         </ModalHeader>
-        <ModalCloseButton />
+
         <ModalBody>
           {educationalMessages.length === 0 && <Spinner size="xl" />}
           {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
@@ -113,14 +127,14 @@ const EducationalModal = ({
               ))}
           </VStack>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter margin={0} padding={3}>
           <Button
             onClick={onClose}
-            colorScheme="teal"
+            colorScheme="purple"
             variant="solid"
             size="lg"
             borderRadius="full"
-            boxShadow="0 0 20px rgba(0, 255, 255, 0.5)"
+            boxShadow="0 0 15px rgba(0, 255, 255, 0.5)"
           >
             Close
           </Button>
