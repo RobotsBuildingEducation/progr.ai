@@ -15,8 +15,9 @@ import {
 import QRCode from "qrcode.react";
 import { useCashuWallet } from "../../../hooks/useCashuWallet";
 import { IdentityCard } from "../../../elements/IdentityCard";
+import { translation } from "../../../utility/translation";
 
-const BitcoinModeModal = ({ isOpen, onClose }) => {
+const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
   const [isModalActive, setisModalActive] = useState(false);
   const [isRecharging, setIsRecharging] = useState(false);
   const toast = useToast();
@@ -65,13 +66,15 @@ const BitcoinModeModal = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Bitcoin Mode</ModalHeader>
+        <ModalHeader>
+          {translation[userLanguage]["modal.bitcoinMode.title"]}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text mb={4} textAlign={"center"}>
             {balance > 0
-              ? "You're now using Bitcoin!"
-              : "Scan the QR code with Cash App to deposit Bitcoin"}
+              ? translation[userLanguage]["modal.bitcoinMode.successMessage"]
+              : translation[userLanguage]["modal.bitcoinMode.instructions"]}
           </Text>
           <VStack style={{ display: "flex", justifyContent: "center" }}>
             {localStorage.getItem("address") && balance === 0 ? (
@@ -81,7 +84,14 @@ const BitcoinModeModal = ({ isOpen, onClose }) => {
                   size={256}
                   style={{ zIndex: 1000000 }}
                 />
-                <Button onClick={handleCopyKeys}>🔑 Copy Address</Button>
+                <Button onClick={handleCopyKeys}>
+                  🔑{" "}
+                  {
+                    translation[userLanguage][
+                      "modal.bitcoinMode.copyAddressButton"
+                    ]
+                  }
+                </Button>
               </>
             ) : null}
 
@@ -93,8 +103,19 @@ const BitcoinModeModal = ({ isOpen, onClose }) => {
                 }
                 name={
                   <div>
-                    Bitcoin Deposit Card
-                    <div>balance: {balance}</div>
+                    {
+                      translation[userLanguage][
+                        "modal.bitcoinMode.cardNameLabel"
+                      ]
+                    }
+                    <div>
+                      {
+                        translation[userLanguage][
+                          "modal.bitcoinMode.balanceLabel"
+                        ]
+                      }
+                      : {balance}
+                    </div>
                   </div>
                 }
                 theme="BTC"
@@ -112,7 +133,7 @@ const BitcoinModeModal = ({ isOpen, onClose }) => {
               onClick={cashTap}
               variant={"ghost"}
             >
-              Test cash tap
+              {translation[userLanguage]["modal.bitcoinMode.testCashTapButton"]}
             </Button>
           ) : null}
           &nbsp;&nbsp;
@@ -126,7 +147,7 @@ const BitcoinModeModal = ({ isOpen, onClose }) => {
               }}
               variant={"ghost"}
             >
-              Recharge
+              {translation[userLanguage]["modal.bitcoinMode.rechargeButton"]}
             </Button>
           ) : null}
         </ModalFooter>

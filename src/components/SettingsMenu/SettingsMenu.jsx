@@ -13,6 +13,9 @@ import {
   VStack,
   useToast,
   Text,
+  FormControl,
+  Switch,
+  FormLabel,
 } from "@chakra-ui/react";
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -22,8 +25,18 @@ import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
 import SelfPacedModal from "./SelfPacedModal/SelfPacedModal";
 import { KnowledgeLedgerModal } from "./KnowledgeLedgerModal/KnowledgeLedgerModal"; // Import the new modal
+import { translation } from "../../utility/translation";
+import { database } from "../../database/firebaseResources";
+import { doc, updateDoc } from "firebase/firestore";
 
-const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
+const SettingsMenu = ({
+  isSignedIn,
+  setIsSignedIn,
+  steps,
+  currentStep,
+  userLanguage,
+  setUserLanguage,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const btnRef = React.useRef();
@@ -61,6 +74,33 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
 
   const [interval, setInterval] = useState(120);
 
+  const handleToggle = async () => {
+    const newLanguage = userLanguage === "en" ? "es" : "en";
+    setUserLanguage(newLanguage);
+
+    // Update local storage
+    localStorage.setItem("userLanguage", newLanguage);
+
+    // Update Firestore
+    const npub = localStorage.getItem("local_publicKey");
+    if (npub) {
+      const userDoc = doc(database, "users", npub);
+      await updateDoc(userDoc, {
+        language: newLanguage,
+      });
+    }
+  };
+
+  useEffect(() => {
+    const userDocRef = doc(
+      database,
+      "users",
+      localStorage.getItem("local_publicKey")
+    );
+    updateDoc(userDocRef, {
+      userLanguage: userLanguage,
+    });
+  }, []);
   return (
     <>
       {isSignedIn ? (
@@ -69,7 +109,7 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
           icon={<FiSettings />}
           onClick={onOpen}
           variant="outline"
-          aria-label="Settings"
+          aria-label={translation[userLanguage]["settings.title"]}
           position="fixed"
           top={4}
           right={4}
@@ -86,21 +126,38 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          <DrawerHeader>Settings</DrawerHeader>
+          <DrawerHeader>
+            {translation[userLanguage]["settings.title"]}
+          </DrawerHeader>
           <DrawerBody>
             <VStack>
+              <FormControl
+                display="flex"
+                alignItems="center"
+                style={{ justifyContent: "center" }}
+                m={2}
+              >
+                <FormLabel htmlFor="language-toggle" mb="0">
+                  {userLanguage === "en" ? "English" : "Español"}
+                </FormLabel>
+                <Switch
+                  id="language-toggle"
+                  isChecked={userLanguage === "es"}
+                  onChange={handleToggle}
+                />
+              </FormControl>
               <Button style={{ width: "100%" }} onClick={onSelfPacedOpen}>
-                Self-pace
+                {translation[userLanguage]["settings.button.selfPace"]}
               </Button>
 
               <Button
                 style={{ width: "100%" }}
                 onClick={onKnowledgeLedgerOpen} // New button to open the Knowledge Ledger Modal
               >
-                Adaptive Learning
+                {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button>
               <Button style={{ width: "100%" }} onClick={onBitcoinModeOpen}>
-                Bitcoin Mode
+                {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button>
 
               <Button
@@ -109,7 +166,7 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
                 mt={4}
                 variant={"outline"}
               >
-                Open Tutor
+                {translation[userLanguage]["settings.button.tutor"]}
               </Button>
               <Button
                 as="a"
@@ -118,7 +175,7 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
                 style={{ width: "100%" }}
                 variant={"outline"}
               >
-                Open Tutor (GPT)
+                {translation[userLanguage]["settings.button.tutorGPT"]}
               </Button>
               <Button
                 style={{ width: "100%" }}
@@ -126,7 +183,7 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
                 mt={4}
                 variant={"outline"}
               >
-                Open Social Wallet
+                {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
 
               <Button
@@ -136,19 +193,23 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
                 style={{ width: "100%" }}
                 variant={"outline"}
               >
-                Open Patreon
+                {translation[userLanguage]["settings.button.patreon"]}
               </Button>
               <Button
                 style={{ width: "100%" }}
                 onClick={() => {
+                  const translateValue = localStorage.getItem("userLanguage");
                   localStorage.clear();
+                  if (translateValue) {
+                    localStorage.setItem("userLanguage", translateValue);
+                  }
                   onClose();
                   navigate("/");
                 }}
                 mt={4}
                 variant={"transparent"}
               >
-                Sign out
+                {translation[userLanguage]["settings.button.signOut"]}
               </Button>
             </VStack>
           </DrawerBody>
@@ -161,20 +222,28 @@ const SettingsMenu = ({ isSignedIn, setIsSignedIn, steps, currentStep }) => {
         interval={interval}
         setInterval={setInterval}
         userId={localStorage.getItem("local_publicKey")}
+        userLanguage={userLanguage}
       />
       {isBitcoinModeOpen ? (
         <BitcoinModeModal
           isOpen={isBitcoinModeOpen}
           onClose={onBitcoinModeClose}
+          userLanguage={userLanguage}
         />
       ) : null}
 
-      <RoxModal isOpen={isRoxModalOpen} onClose={onRoxModalClose} />
+      <RoxModal
+        isOpen={isRoxModalOpen}
+        userLanguage={userLanguage}
+        onClose={onRoxModalClose}
+      />
       <SocialWalletModal
         isOpen={isSocialWalletOpen}
         onClose={onSocialWalletClose}
+        userLanguage={userLanguage}
       />
       <KnowledgeLedgerModal
+        userLanguage={userLanguage}
         isOpen={isKnowledgeLedgerOpen} // New modal
         onClose={onKnowledgeLedgerClose}
         steps={steps}

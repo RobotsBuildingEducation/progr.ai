@@ -37,7 +37,7 @@ export const getUserData = async (userId) => {
 };
 
 // Function to create or update a user in Firestore
-export const createUser = async (npub, userName) => {
+export const createUser = async (npub, userName, language) => {
   const userDoc = doc(database, "users", npub);
   await setDoc(
     userDoc,
@@ -45,6 +45,7 @@ export const createUser = async (npub, userName) => {
       name: userName,
       npub: npub,
       step: 0, // Initialize step count to 0
+      language: language,
     },
     { merge: true }
   ); // Merge true ensures it doesn't overwrite existing data

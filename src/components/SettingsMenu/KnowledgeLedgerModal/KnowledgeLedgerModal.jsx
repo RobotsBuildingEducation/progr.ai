@@ -20,12 +20,14 @@ import { useChatCompletion } from "../../../hooks/useChatCompletion";
 
 import { collection, getDocs } from "firebase/firestore";
 import { database } from "../../../database/firebaseResources";
+import { translation } from "../../../utility/translation";
 
 export const KnowledgeLedgerModal = ({
   isOpen,
   onClose,
   steps,
   currentStep,
+  userLanguage,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestion, setSuggestion] = useState("");
@@ -85,7 +87,10 @@ export const KnowledgeLedgerModal = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Adaptive Learning</ModalHeader>
+        <ModalHeader>
+          {" "}
+          {translation[userLanguage]["modal.adaptiveLearning.title"]}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody overflowY="scroll">
           <Box maxHeight="400px">
@@ -99,7 +104,9 @@ export const KnowledgeLedgerModal = ({
                 {isLoading ? (
                   <Spinner size="sm" />
                 ) : (
-                  "Recommend what to study next"
+                  translation[userLanguage][
+                    "modal.adaptiveLearning.recommendButton"
+                  ]
                 )}
               </Button>
               <br />
@@ -120,20 +127,27 @@ export const KnowledgeLedgerModal = ({
               )}
             </Box>
             <VStack align="stretch">
-              <b>Steps taken</b>
-              {steps.map((step, index) => (
-                <Text
-                  key={index}
-                  color={index <= currentStep - 1 ? "green.500" : "gray.500"}
-                >
-                  {index !== 0 ? index + ". " + step.title : ""}
-                </Text>
-              ))}
+              <b>
+                {" "}
+                {translation[userLanguage]["modal.adaptiveLearning.stepsTaken"]}
+              </b>
+              {steps[localStorage.getItem("userLanguage")].map(
+                (step, index) => (
+                  <Text
+                    key={index}
+                    color={index <= currentStep - 1 ? "green.500" : "gray.500"}
+                  >
+                    {index !== 0 ? index + ". " + step.title : ""}
+                  </Text>
+                )
+              )}
             </VStack>
           </Box>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={onClose}>
+            {translation[userLanguage]["button.close"]}
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

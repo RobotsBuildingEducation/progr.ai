@@ -19,8 +19,16 @@ import {
   formatIntervalText,
 } from "../../../utility/settings";
 import { getUserData, updateUserData } from "../../../utility/nosql";
+import { translation } from "../../../utility/translation";
 
-const SelfPacedModal = ({ isOpen, onClose, interval, setInterval, userId }) => {
+const SelfPacedModal = ({
+  isOpen,
+  onClose,
+  interval,
+  setInterval,
+  userId,
+  userLanguage,
+}) => {
   const [inputValue, setInputValue] = useState(interval);
   const [streak, setStreak] = useState(0);
   const [startTime, setStartTime] = useState(null);
@@ -62,15 +70,16 @@ const SelfPacedModal = ({ isOpen, onClose, interval, setInterval, userId }) => {
     setEndTime(newEndTime);
 
     await updateUserData(userId, interval, streak, currentTime, newEndTime);
+    onClose();
   };
 
   const getMarkLabel = (interval) => {
     if (interval <= 1440) {
-      return "Grind";
+      return translation[userLanguage]["modal.selfPace.mode.grind"];
     } else if (interval <= 2880) {
-      return "Motivated";
+      return translation[userLanguage]["modal.selfPace.mode.motivated"];
     } else if (interval <= 4320) {
-      return "Casual";
+      return translation[userLanguage]["modal.selfPace.mode.casual"];
     } else {
       return "";
     }
@@ -92,11 +101,14 @@ const SelfPacedModal = ({ isOpen, onClose, interval, setInterval, userId }) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Self-pace</ModalHeader>
+        <ModalHeader>
+          {" "}
+          {translation[userLanguage]["modal.title.selfPace"]}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Text mb={4} fontSize="xs">
-            Choose how much time can elapse to grow your streak.
+            {translation[userLanguage]["modal.selfPace.instruction"]}
           </Text>
           <Slider
             aria-label="slider-ex-1"
@@ -111,14 +123,19 @@ const SelfPacedModal = ({ isOpen, onClose, interval, setInterval, userId }) => {
             </SliderTrack>
             <SliderThumb />
           </Slider>
-          <Text mt={2}>{formatIntervalText(days, hours, minutes)}</Text>
+          <Text mt={2}>
+            {formatIntervalText(days, hours, minutes, userLanguage)}
+          </Text>
           <Text mt={2} color={getMarkColor(interval)}>
-            <b>Mode: {getMarkLabel(interval)}</b>
+            <b>
+              {translation[userLanguage]["modal.selfPace.mode"]}:{" "}
+              {getMarkLabel(interval)}
+            </b>
           </Text>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={handleSave}>
-            Save
+            {translation[userLanguage]["button.save"]}
           </Button>
         </ModalFooter>
       </ModalContent>

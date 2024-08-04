@@ -325,7 +325,7 @@ export const IdentityCard = ({
               </CardHolder>
             </div>
             <div>
-              <button
+              <div
                 style={{
                   height: "20px",
                   backgroundColor:
@@ -346,11 +346,12 @@ export const IdentityCard = ({
                   fontFamily: "sans-serif",
                   color: theme === "web5" ? "cyan" : "black",
                   padding: 24,
+                  cursor: "inherit",
                 }}
                 // onClick={() => setIsFlipped(true)}
               >
                 <b>{theme}</b>
-              </button>
+              </div>
             </div>
           </div>
         </CardFace>

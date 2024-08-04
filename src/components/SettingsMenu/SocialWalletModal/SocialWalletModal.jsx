@@ -10,8 +10,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
+import { translation } from "../../../utility/translation";
 
-const SocialWalletModal = ({ isOpen, onClose }) => {
+const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
 
   const handleCopyKeys = () => {
@@ -31,13 +32,17 @@ const SocialWalletModal = ({ isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent textAlign={"center"}>
-        <ModalHeader>Open Social Wallet</ModalHeader>
+        <ModalHeader>
+          {translation[userLanguage]["modal.openSocialWallet.title"]}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          Don't forget your keys before leaving!
+          {translation[userLanguage]["modal.openSocialWallet.instructions"]}
           <br />
           <br />
-          <Button onClick={handleCopyKeys}>🔑 Copy Keys</Button>
+          <Button onClick={handleCopyKeys}>
+            🔑 {translation[userLanguage]["button.copyKey"]}
+          </Button>
           <br />
           <br />
           <Button
@@ -47,12 +52,12 @@ const SocialWalletModal = ({ isOpen, onClose }) => {
             mb={4}
             variant={"outline"}
           >
-            Go to Social Wallet
+            {translation[userLanguage]["modal.openSocialWallet.startButton"]}
           </Button>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={onClose}>
-            Close
+            {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>
       </ModalContent>

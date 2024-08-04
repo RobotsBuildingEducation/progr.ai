@@ -15,6 +15,10 @@ import {
   Link,
   Textarea,
   Progress,
+  Select,
+  FormControl,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -45,6 +49,7 @@ import { steps } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { database } from "./database/firebaseResources";
+import { translation } from "./utility/translation";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -75,7 +80,7 @@ const AwardScreen = () => {
   const navigate = useNavigate();
 
   const handleRestart = () => {
-    navigate("/step/0"); // Navigate to the first step to restart the quiz
+    navigate("/q/0"); // Navigate to the first step to restart the quiz
   };
 
   return (
@@ -103,6 +108,7 @@ const VoiceInput = ({
   setFeedback,
   resetFeedbackMessages,
   step,
+  userLanguage,
 }) => {
   const {
     transcript,
@@ -300,10 +306,15 @@ const VoiceInput = ({
     <VStack spacing={4} alignItems="center">
       {useVoice || isTerminal ? (
         <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
-          <Button onClick={handleVoiceStart}>Voice To Text</Button>
-          <Button onClick={handleAiStart}>Voice To AI</Button>
+          <Button onClick={handleVoiceStart}>
+            {translation[userLanguage]["app.button.voiceToText"]}
+          </Button>
+          <Button onClick={handleAiStart}>
+            {" "}
+            {translation[userLanguage]["app.button.voiceToAI"]}
+          </Button>
           <Button onClick={handleLearnClick} variant={"outline"}>
-            Learn
+            {translation[userLanguage]["app.button.learn"]}
           </Button>
         </HStack>
       ) : null}
@@ -311,13 +322,13 @@ const VoiceInput = ({
       {isListening && (
         <HStack spacing={2} alignItems="center">
           <SunsetCanvas />
-          <small>Listening...</small>
+          <small> {translation[userLanguage]["app.listening"]}</small>
         </HStack>
       )}
       {aiListening && (
         <HStack spacing={2} alignItems="center">
           <SunsetCanvas />
-          <small>Listening...</small>
+          <small> {translation[userLanguage]["app.listening"]}</small>
         </HStack>
       )}
 
@@ -346,9 +357,10 @@ const VoiceInput = ({
         <Textarea
           type="textarea"
           maxWidth={"333px"}
+          height={"150px"}
           value={aiListening ? aiTranscript : value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Type your response or use voice"
+          placeholder={translation[userLanguage]["app.input.placeholder"]}
           width="100%"
         />
       )}
@@ -404,6 +416,7 @@ function TerminalComponent({
   setFeedback,
   resetFeedbackMessages,
   step,
+  userLanguage,
 }) {
   const [structure, setStructure] = useState(fileSystem);
   const [history, setHistory] = useState([
@@ -568,17 +581,22 @@ function TerminalComponent({
         setFeedback={setFeedback}
         resetFeedbackMessages={resetFeedbackMessages}
         step={step}
+        userLanguage={userLanguage}
       />
-      <ReactBash
-        structure={structure}
-        history={history}
-        prefix={`user@mock-terminal:${cwd}$`}
-      />
+      <div
+        style={{ width: "100%", maxWidth: "600px", marginTop: 12, height: 300 }}
+      >
+        <ReactBash
+          structure={structure}
+          history={history}
+          prefix={`user@mock-terminal:${cwd}$`}
+        />
+      </div>
     </>
   );
 }
 
-const Step = ({ currentStep }) => {
+const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
   const [inputValue, setInputValue] = useState("");
@@ -602,13 +620,13 @@ const Step = ({ currentStep }) => {
   );
 
   const navigate = useNavigate();
-  const step = steps[currentStep];
+  const step = steps[userLanguage][currentStep];
 
   useEffect(() => {
     const fetchUserData = async () => {
       const userId = localStorage.getItem("local_publicKey");
       const userData = await getUserData(userId);
-      console.log("Fetched User Data:", userData);
+
       setStreak(userData.streak || 0);
       setStartTime(new Date(userData.startTime));
       setEndTime(new Date(userData.endTime));
@@ -629,13 +647,6 @@ const Step = ({ currentStep }) => {
           currentTime,
           newEndTime
         );
-        console.log("Updated User Data on Expiry:", {
-          userId,
-          timer: userData.timer,
-          streak: 0,
-          startTime: currentTime,
-          endTime: newEndTime,
-        });
       }
     };
 
@@ -643,7 +654,7 @@ const Step = ({ currentStep }) => {
   }, []);
 
   const calculateProgress = () => {
-    return ((currentStep - 1) / (steps.length - 1)) * 100;
+    return ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
   };
 
   const handleInputChange = (value) => {
@@ -659,7 +670,11 @@ const Step = ({ currentStep }) => {
     try {
       const response = await submitPrompt([
         {
-          content: `The user is answering the following question "${step.question.questionText}" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }`,
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
           role: "user",
         },
       ]);
@@ -742,7 +757,7 @@ const Step = ({ currentStep }) => {
       navigate("/award");
     } else {
       publishEvent("I just completed question 2 on https://program-ai.app");
-      navigate(`/step/${currentStep + 1}`);
+      navigate(`/q/${currentStep + 1}`);
     }
   };
 
@@ -750,7 +765,7 @@ const Step = ({ currentStep }) => {
     if (currentStep === 1) {
       navigate(`/`);
     } else {
-      navigate(`/step/${currentStep - 1}`);
+      navigate(`/q/${currentStep - 1}`);
     }
   };
 
@@ -758,7 +773,9 @@ const Step = ({ currentStep }) => {
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
         <b style={{ fontSize: "60%" }}>
-          Progress: {calculateProgress().toFixed(2)}% | Streak: {streak}
+          {translation[userLanguage]["app.progress"]} :{" "}
+          {calculateProgress().toFixed(2)}% |{" "}
+          {translation[userLanguage]["app.streak"]}: {streak}
         </b>
         <Progress
           value={calculateProgress()}
@@ -785,6 +802,7 @@ const Step = ({ currentStep }) => {
           setFeedback={setFeedback}
           resetFeedbackMessages={resetMessages}
           step={step}
+          userLanguage={userLanguage}
         />
       )}
       {step.isCode && !step.isTerminal && (
@@ -798,10 +816,19 @@ const Step = ({ currentStep }) => {
           setFeedback={setFeedback}
           resetFeedbackMessages={resetMessages}
           step={step}
+          userLanguage={userLanguage}
         />
       )}
       {step.isCode && step.isTerminal && (
-        <Box width="100%">
+        <Box
+          width="100%"
+          justifyContent="center"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <TerminalComponent
             inputValue={inputValue}
             setInputValue={setInputValue}
@@ -812,6 +839,7 @@ const Step = ({ currentStep }) => {
             setFeedback={setFeedback}
             resetFeedbackMessages={resetMessages}
             step={step}
+            userLanguage={userLanguage}
           />
         </Box>
       )}
@@ -827,13 +855,13 @@ const Step = ({ currentStep }) => {
               onClick={handleAnswerClick}
               isLoading={isSending}
             >
-              Answer
+              {translation[userLanguage]["app.button.answer"]}
             </Button>
           )
         )}
         {isCorrect && (
           <Button colorScheme="teal" onClick={handleNextClick}>
-            Next Question
+            {translation[userLanguage]["app.button.nextQuestion"]}{" "}
           </Button>
         )}
       </HStack>
@@ -851,7 +879,7 @@ const Step = ({ currentStep }) => {
   );
 };
 
-const Home = ({ isSignedIn, setIsSignedIn }) => {
+const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
   const [view, setView] = useState("buttons");
   const [userName, setUserName] = useState("");
   const [secretKey, setSecretKey] = useState("");
@@ -873,8 +901,8 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
     setIsSignedIn(true);
     setView("created");
 
-    // Create user in Firestore
-    await createUser(newKeys.publicKey, userName);
+    // Create user in Firestore with language preference
+    await createUser(newKeys.publicKey, userName, userLanguage);
   };
 
   const handleSignIn = async () => {
@@ -886,12 +914,12 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
     const userDoc = doc(database, "users", npub);
     const userSnapshot = await getDoc(userDoc);
     if (!userSnapshot.exists()) {
-      await createUser(npub, userName);
+      await createUser(npub, userName, userLanguage);
     }
 
     const currentStep = await getUserStep(npub); // Retrieve the current step
     setIsSignedIn(true);
-    navigate(`/step/${currentStep}`); // Navigate to the user's current step
+    navigate(`/q/${currentStep}`); // Navigate to the user's current step
   };
 
   const handleCheckboxChange = (event) => {
@@ -900,7 +928,7 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
 
   const handleLaunchApp = () => {
     if (isCheckboxChecked) {
-      navigate("/step/1");
+      navigate("/q/1");
     }
   };
 
@@ -920,9 +948,30 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
   useEffect(() => {
     if (view === "buttons" || view === "createAccount") {
       setIsSignedIn(false);
+      const translateValue = localStorage.getItem("userLanguage");
       localStorage.clear();
+      if (translateValue) {
+        localStorage.setItem("userLanguage", translateValue);
+      }
     }
   }, [view]);
+
+  const handleToggle = async () => {
+    const newLanguage = userLanguage === "en" ? "es" : "en";
+    setUserLanguage(newLanguage);
+
+    // Update local storage
+    localStorage.setItem("userLanguage", newLanguage);
+
+    // Update Firestore
+    const npub = localStorage.getItem("local_publicKey");
+    if (npub) {
+      const userDoc = doc(database, "users", npub);
+      await updateDoc(userDoc, {
+        language: newLanguage,
+      });
+    }
+  };
 
   return (
     <Box
@@ -938,53 +987,81 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
       {view === "buttons" && (
         <VStack spacing={4}>
           <VStack spacing={4} width="95%" maxWidth="720px">
-            <Text fontSize="2xl">Welcome to Program AI App!</Text>
-            <Text size="sm">
-              Get it over with. Use intelligent assistance to work through 100
-              coding questions.
+            <Text fontSize="2xl">
+              {translation[userLanguage]["landing.welcome"]}
             </Text>
+            <Text fontSize="sm">
+              {translation[userLanguage]["landing.introduction"]}
+            </Text>
+            <FormControl
+              display="flex"
+              alignItems="center"
+              style={{ justifyContent: "center" }}
+              m={2}
+            >
+              <FormLabel htmlFor="language-toggle" mb="0">
+                {userLanguage === "en" ? "English" : "Español"}
+              </FormLabel>
+              <Switch
+                id="language-toggle"
+                isChecked={userLanguage === "es"}
+                onChange={handleToggle}
+              />
+            </FormControl>
           </VStack>
+
           <HStack>
             <Button colorScheme="teal" onClick={() => setView("createAccount")}>
-              Create Account
+              {translation[userLanguage]["landing.button.createAccount"]}
             </Button>
             <Button colorScheme="teal" onClick={() => setView("signIn")}>
-              Sign In
+              {translation[userLanguage]["landing.button.signIn"]}{" "}
             </Button>
           </HStack>
         </VStack>
       )}
       {view === "createAccount" && (
         <VStack spacing={4}>
-          <Text fontSize="sm">Create a user name. It can be anything!</Text>
+          <Text fontSize="sm">
+            {" "}
+            {translation[userLanguage]["createAccount.instructions"]}{" "}
+          </Text>
           <Input
             style={{ maxWidth: 300 }}
-            placeholder="Enter a user name"
+            placeholder={
+              translation[userLanguage]["createAccount.input.placeholder"]
+            }
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
           />
           <HStack>
-            <Button onClick={() => setView("buttons")}>Back</Button>
+            <Button onClick={() => setView("buttons")}>
+              {" "}
+              {translation[userLanguage]["button.back"]}
+            </Button>
             <Button colorScheme="teal" onClick={handleCreateAccount}>
-              Create
+              {translation[userLanguage]["button.create"]}
             </Button>
           </HStack>
         </VStack>
       )}
       {view === "signIn" && (
         <VStack spacing={4}>
-          <Text fontSize="sm">Enter your nostr secret key</Text>
-
+          <Text fontSize="sm">
+            {translation[userLanguage]["signIn.instructions"]}
+          </Text>
           <Input
-            placeholder="Enter your secret key"
+            placeholder={translation[userLanguage]["signIn.input.placeholder"]}
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
             style={{ maxWidth: 300 }}
           />
           <HStack>
-            <Button onClick={() => setView("buttons")}>Back</Button>
+            <Button onClick={() => setView("buttons")}>
+              {translation[userLanguage]["button.back"]}
+            </Button>
             <Button colorScheme="teal" onClick={handleSignIn}>
-              Sign In
+              {translation[userLanguage]["landing.button.signIn"]}
             </Button>
           </HStack>
         </VStack>
@@ -992,30 +1069,34 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
       {view === "created" && keys && (
         <VStack spacing={4}>
           <Text width="95%" maxWidth="720px">
-            That's all we need! <br />
-            Your account now works on a number of decentralized apps. Use your
-            key to sign into apps like ours,{" "}
-            {isCheckboxChecked ? (
-              <Link href="https://robotsbuildingeducation.com" color="teal.500">
-                ROX the learning assistant
-              </Link>
-            ) : (
-              "ROX the learning assistant"
-            )}{" "}
-            or social platforms like{" "}
-            {isCheckboxChecked ? (
-              <Link href="https://primal.net/home" color="teal.500">
-                Primal
-              </Link>
-            ) : (
-              "Primal"
-            )}
-            .
+            {translation[userLanguage]["createAccount.successMessage"]} <br />
+            <Text fontSize="sm">
+              {translation[userLanguage]["createAccount.awareness"]}
+              {isCheckboxChecked ? (
+                <Link
+                  href="https://robotsbuildingeducation.com"
+                  color="teal.500"
+                >
+                  {translation[userLanguage]["createAccount.roxLink"]}
+                </Link>
+              ) : (
+                translation[userLanguage]["createAccount.roxLink"]
+              )}{" "}
+              {translation[userLanguage]["or"] + " "}
+              {isCheckboxChecked ? (
+                <Link href="https://primal.net/home" color="teal.500">
+                  {translation[userLanguage]["createAccount.primalLink"]}
+                </Link>
+              ) : (
+                translation[userLanguage]["createAccount.primalLink"]
+              )}
+              .
+            </Text>
           </Text>
           <Button onClick={handleCopyKeys} variant={"outline"}>
-            🔑 Copy Key
+            🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
-          <br />
+
           <HStack>
             <Checkbox
               direction="row"
@@ -1026,20 +1107,21 @@ const Home = ({ isSignedIn, setIsSignedIn }) => {
               maxWidth="350px"
             >
               <Text fontSize="x-small" fontWeight={"bolder"}>
-                I understand that my key allows me to sign into different apps
-                that may contain important and private data like Bitcoin. I have
-                safely stored my keys.
+                {translation[userLanguage]["createAccount.checkbox.disclaimer"]}
               </Text>
             </Checkbox>
           </HStack>
           <HStack>
-            <Button onClick={() => setView("createAccount")}>Back</Button>
+            <Button onClick={() => setView("createAccount")}>
+              {" "}
+              {translation[userLanguage]["button.back"]}
+            </Button>
             <Button
               colorScheme="teal"
               onClick={handleLaunchApp}
               isDisabled={!isCheckboxChecked}
             >
-              Launch App
+              {translation[userLanguage]["createAccount.button.launchApp"]}
             </Button>
           </HStack>
         </VStack>
@@ -1052,6 +1134,7 @@ function App() {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
+  const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -1061,7 +1144,23 @@ function App() {
         setIsSignedIn(true);
         const step = await getUserStep(npub); // Fetch the current step
         setCurrentStep(step);
-        navigate(`/step/${step}`);
+
+        // Fetch user language preference
+        const userDoc = doc(database, "users", npub);
+        const userSnapshot = await getDoc(userDoc);
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.data();
+          setUserLanguage(userData.language || "en"); // Set user language preference
+          localStorage.setItem("userLanguage", userData.language);
+        }
+
+        navigate(`/q/${step}`);
+      }
+
+      if (localStorage.getItem("userLanguage")) {
+        setUserLanguage(localStorage.getItem("userLanguage") || "en");
+      } else {
+        localStorage.setItem("userLanguage", "en");
       }
       setLoading(false);
     };
@@ -1073,7 +1172,6 @@ function App() {
     return <Spinner />; // Show a loading spinner while initializing
   }
 
-  console.log("currentstep", currentStep);
   return (
     <Box textAlign="center" fontSize="xl" p={5}>
       {isSignedIn && (
@@ -1081,6 +1179,8 @@ function App() {
           isSignedIn={isSignedIn}
           setIsSignedIn={setIsSignedIn}
           steps={steps}
+          userLanguage={userLanguage}
+          setUserLanguage={setUserLanguage}
           currentStep={currentStep} // Pass current step to SettingsMenu
         />
       )}
@@ -1089,16 +1189,25 @@ function App() {
         <Route
           path="/"
           element={
-            <Home isSignedIn={isSignedIn} setIsSignedIn={setIsSignedIn} />
+            <Home
+              isSignedIn={isSignedIn}
+              setIsSignedIn={setIsSignedIn}
+              userLanguage={userLanguage}
+              setUserLanguage={setUserLanguage}
+            />
           }
         />
-        {steps.map((_, index) => (
+        {steps[userLanguage].map((_, index) => (
           <Route
             key={index}
-            path={`/step/${index}`}
+            path={`/q/${index}`}
             element={
               <PrivateRoute>
-                <Step currentStep={index} />
+                <Step
+                  currentStep={index}
+                  userLanguage={userLanguage}
+                  setUserLanguage={setUserLanguage}
+                />
               </PrivateRoute>
             }
           />
