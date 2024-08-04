@@ -53,8 +53,8 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     const keys = localStorage.getItem("address"); // replace with actual keys
     navigator.clipboard.writeText(keys);
     toast({
-      title: "Address copied.",
-      description: "Your address has been copied to the clipboard.",
+      title: translation[userLanguage]["toast.title.addressCopied"],
+      description: translation[userLanguage]["toast.description.addressCopied"],
       status: "success",
       duration: 1500,
       isClosable: true,

@@ -936,8 +936,8 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
     const keysToCopy = `${keys.privateKey}`;
     navigator.clipboard.writeText(keysToCopy);
     toast({
-      title: "Keys copied.",
-      description: "Your keys have been copied to the clipboard.",
+      title: translation[userLanguage]["toast.title.keysCopied"],
+      description: translation[userLanguage]["toast.description.keysCopied"],
       status: "success",
       duration: 1500,
       isClosable: true,

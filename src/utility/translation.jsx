@@ -3,6 +3,9 @@ export let translation = {
     "toast.title.keysCopied": "Keys copied.",
     "toast.description.keysCopied":
       "Your keys have been copied to the clipboard.",
+    "toast.title.addressCopied": "Lightning address copied.",
+    "toast.description.addressCopied":
+      "Your lightning address has been copied.",
     "landing.welcome": "Welcome to Program AI App!",
     "landing.introduction":
       "Get it over with. Use intelligent assistance to work through 100 coding questions.",
@@ -79,6 +82,9 @@ export let translation = {
     "toast.title.keysCopied": "Claves copiadas.",
     "toast.description.keysCopied":
       "Tus claves se han copiado al portapapeles.",
+    "toast.title.addressCopied": "Dirección de Lightning copiada.",
+    "toast.description.addressCopied":
+      "Tu dirección de Lightning ha sido copiada.",
     "landing.welcome": "¡Bienvenido a Program AI App!",
     "landing.introduction":
       "Es hora de superarlo. Usa asistencia inteligente para resolver 100 preguntas de codificación.",

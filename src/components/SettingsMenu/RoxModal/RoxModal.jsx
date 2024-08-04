@@ -19,8 +19,8 @@ const RoxModal = ({ isOpen, onClose, userLanguage }) => {
     const keys = localStorage.getItem("local_privateKey"); // replace with actual keys
     navigator.clipboard.writeText(keys);
     toast({
-      title: "Keys copied.",
-      description: "Your keys have been copied to the clipboard.",
+      title: translation[userLanguage]["toast.title.keysCopied"],
+      description: translation[userLanguage]["toast.description.keysCopied"],
       status: "success",
       duration: 1500,
       isClosable: true,
