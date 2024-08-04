@@ -23,12 +23,14 @@ import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
+import { translation } from "../../utility/translation";
 
 const EducationalModal = ({
   isOpen,
   onClose,
   educationalMessages,
   educationalContent,
+  userLanguage,
 }) => {
   return (
     <Modal
@@ -60,14 +62,20 @@ const EducationalModal = ({
               <SunsetCanvas />
             </div>
             &nbsp;
-            <div style={{ color: "white" }}>Learn</div>
+            <div style={{ color: "white" }}>
+              {translation[userLanguage]["modal.learn.title"]}
+            </div>
           </HStack>
         </ModalHeader>
 
         <ModalBody>
           {educationalMessages.length === 0 && <Spinner size="xl" />}
+
           {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
             <div style={{ color: "#FAF3E0" }}>
+              <b> {translation[userLanguage]["modal.learn.instructions"]}</b>
+              <br />
+              <br />
               {educationalMessages[educationalMessages.length - 1]?.content}
             </div>
           ) : null}
@@ -136,7 +144,7 @@ const EducationalModal = ({
             borderRadius="full"
             boxShadow="0 0 15px rgba(0, 255, 255, 0.5)"
           >
-            Close
+            {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>
       </ModalContent>

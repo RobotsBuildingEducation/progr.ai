@@ -195,7 +195,10 @@ const VoiceInput = ({
     resetTranscript();
     resetMessages();
     onChange(""); // Clear input when starting voice
-    SpeechRecognition.startListening({ continuous: true });
+    SpeechRecognition.startListening({
+      continuous: true,
+      language: userLanguage === "en" ? "en-US" : "es-MX",
+    });
   };
 
   const handleVoiceStop = () => {
@@ -218,7 +221,10 @@ const VoiceInput = ({
     resetTranscript();
     resetMessages();
     onChange(""); // Clear input when starting AI
-    SpeechRecognition.startListening({ continuous: true });
+    SpeechRecognition.startListening({
+      continuous: true,
+      language: userLanguage === "en" ? "en-US" : "es-MX",
+    });
   };
 
   const handleAiStop = () => {
@@ -233,7 +239,9 @@ const VoiceInput = ({
         {
           content:
             aiTranscript +
-            ` The JSON format should be { input: "${aiTranscript}", output: "your_answer" }. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated.`,
+            ` The JSON format should be { input: "${aiTranscript}", output: "your_answer" }. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
+              userLanguage === "en" ? "english" : "spanish"
+            }`,
           role: "user",
         },
       ]);
@@ -280,7 +288,9 @@ const VoiceInput = ({
           step
         )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other tom encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
           step
-        )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion`,
+        )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+          userLanguage === "en" ? "english" : "spanish"
+        }`,
         role: "user",
       },
     ]);
@@ -345,7 +355,7 @@ const VoiceInput = ({
             language="javascript"
             theme="light"
             value={value}
-            onChange={(value) => onChange(value)}
+            onChange={(value) => onChange(value, resetMessages)}
             options={{
               wordWrap: "on",
               scrollBeyondLastLine: false,
@@ -370,6 +380,7 @@ const VoiceInput = ({
         onClose={onClose}
         educationalMessages={educationalMessages}
         educationalContent={educationalContent}
+        userLanguage={userLanguage}
       />
     </VStack>
   );
@@ -657,9 +668,12 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     return ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
   };
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value, resetter = null) => {
     setInputValue(value);
-    setFeedback("");
+    if (resetter) {
+      resetter();
+    }
+    // setFeedback("");
   };
 
   const handleAnswerClick = async () => {
@@ -668,7 +682,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     setStopListening(true);
     setInputValue("");
     try {
-      const response = await submitPrompt([
+      await submitPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
@@ -678,15 +692,15 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
           role: "user",
         },
       ]);
-      const jsonResponse = JSON.parse(response.content);
-      setIsCorrect(jsonResponse.isCorrect);
-      setFeedback(jsonResponse.feedback);
+      // const jsonResponse = JSON.parse(response.content);
+      // setIsCorrect(jsonResponse.isCorrect);
+      // setFeedback(jsonResponse.feedback);
 
-      if (jsonResponse.isCorrect) {
-        const npub = localStorage.getItem("local_publicKey");
-        incrementUserStep(npub);
-        await storeCorrectAnswer(step, jsonResponse.feedback);
-      }
+      // if (jsonResponse.isCorrect) {
+      //   const npub = localStorage.getItem("local_publicKey");
+      //   incrementUserStep(npub);
+      //   await storeCorrectAnswer(step, jsonResponse.feedback);
+      // }
     } catch (error) {
       console.error("Error fetching answer:", error);
     }
@@ -719,6 +733,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     setStreak(newStreak);
 
     await updateUserData(userId, interval, newStreak, currentTime, newEndTime);
+    // setFeedback(answer);
     console.log("Updated User Data after Correct Answer:", {
       userId,
       timer: interval,
@@ -733,7 +748,9 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
         const jsonResponse = JSON.parse(lastMessage.content);
+        console.log("JSONRESPON", jsonResponse);
         setIsCorrect(jsonResponse.isCorrect);
+        console.log("run");
         setFeedback(jsonResponse.feedback);
 
         if (jsonResponse.isCorrect) {
@@ -746,6 +763,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
   }, [messages]);
 
   useEffect(() => {
+    console.log("RUN");
     setInputValue("");
     setFeedback("");
     setIsCorrect(null);
@@ -769,6 +787,8 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     }
   };
 
+  console.log("Fdb", feedback);
+  console.log("msg", messages);
   return (
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>

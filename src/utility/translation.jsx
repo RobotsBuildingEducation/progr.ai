@@ -77,6 +77,9 @@ export let translation = {
     "modal.openSocialWallet.instructions":
       "Don't forget your keys before leaving!",
     "modal.openSocialWallet.startButton": "Go To Social Wallet",
+    "modal.learn.title": "Learn",
+    "modal.learn.instructions":
+      "Give us a few seconds to create quick lesson notes.",
   },
   es: {
     "toast.title.keysCopied": "Claves copiadas.",
@@ -157,5 +160,8 @@ export let translation = {
     "modal.openSocialWallet.instructions":
       "¡No olvides tus llaves antes de irte!",
     "modal.openSocialWallet.startButton": "Ir a la Billetera Social",
+    "modal.learn.title": "Aprender",
+    "modal.learn.instructions":
+      "Danos unos segundos para crear notas rápidas de la lección.",
   },
 };
