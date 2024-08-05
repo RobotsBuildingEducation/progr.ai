@@ -36,12 +36,12 @@ const EducationalModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="3xl"
+      size="4xl"
       scrollBehavior={"inside"}
     >
       <ModalOverlay />
       <ModalContent
-        background={"black"}
+        background={"#6B46C1"}
         // color="white"
         borderRadius="lg"
         boxShadow="2xl"
@@ -68,7 +68,7 @@ const EducationalModal = ({
           </HStack>
         </ModalHeader>
 
-        <ModalBody>
+        <ModalBody p={2} style={{ border: "1px solid green", width: "100%" }}>
           {educationalMessages.length === 0 && <Spinner size="xl" />}
 
           {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
@@ -138,11 +138,10 @@ const EducationalModal = ({
         <ModalFooter margin={0} padding={3}>
           <Button
             onClick={onClose}
-            colorScheme="purple"
             variant="solid"
             size="lg"
             borderRadius="full"
-            boxShadow="0 0 15px rgba(0, 255, 255, 0.5)"
+            border="1px solid transparent"
           >
             {translation[userLanguage]["button.close"]}
           </Button>
