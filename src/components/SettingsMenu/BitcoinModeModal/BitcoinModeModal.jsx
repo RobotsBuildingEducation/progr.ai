@@ -84,7 +84,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                   size={256}
                   style={{ zIndex: 1000000 }}
                 />
-                <Button onClick={handleCopyKeys}>
+                <Button onMouseDown={handleCopyKeys}>
                   🔑{" "}
                   {
                     translation[userLanguage][
@@ -130,7 +130,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
             <Button
               style={{ marginBottom: 8 }}
               className="swap-send-button"
-              onClick={cashTap}
+              onMouseDown={cashTap}
               variant={"ghost"}
             >
               {translation[userLanguage]["modal.bitcoinMode.testCashTapButton"]}
@@ -141,7 +141,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
             <Button
               style={{ marginBottom: 8 }}
               className="swap-send-button"
-              onClick={() => {
+              onMouseDown={() => {
                 setIsRecharging(true);
                 recharge();
               }}

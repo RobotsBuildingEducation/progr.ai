@@ -50,6 +50,8 @@ import { PrivateRoute } from "./PrivateRoute";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { database } from "./database/firebaseResources";
 import { translation } from "./utility/translation";
+import { useCashuWallet } from "./hooks/useCashuWallet";
+import { Dashboard } from "./components/Dashboard/Dashboard";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -89,7 +91,7 @@ const AwardScreen = () => {
         Congratulations!
       </Text>
       <Text>You have completed the quiz. Well done!</Text>
-      <Button mt={4} colorScheme="purple" onClick={handleRestart}>
+      <Button mt={4} colorScheme="purple" onMouseDown={handleRestart}>
         Restart Quiz
       </Button>
     </Box>
@@ -317,21 +319,21 @@ const VoiceInput = ({
       {useVoice || isTerminal ? (
         <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
           <Button
-            onClick={handleVoiceStart}
+            onMouseDown={handleVoiceStart}
             colorScheme="purple"
             variant={"outline"}
           >
             {translation[userLanguage]["app.button.voiceToText"]}
           </Button>
           <Button
-            onClick={handleAiStart}
+            onMouseDown={handleAiStart}
             colorScheme="purple"
             variant={"outline"}
           >
             {" "}
             {translation[userLanguage]["app.button.voiceToAI"]}
           </Button>
-          <Button colorScheme="purple" onClick={handleLearnClick}>
+          <Button colorScheme="purple" onMouseDown={handleLearnClick}>
             {translation[userLanguage]["app.button.learn"]}
           </Button>
         </HStack>
@@ -377,7 +379,13 @@ const VoiceInput = ({
           maxWidth={"333px"}
           height={"150px"}
           value={aiListening ? aiTranscript : value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => {
+            console.log("e", e.target.value);
+            console.log("aiTranscript", aiTranscript);
+            console.log("aiListening", aiListening);
+
+            onChange(e.target.value);
+          }}
           placeholder={translation[userLanguage]["app.input.placeholder"]}
           width="100%"
         />
@@ -628,6 +636,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
+  const { cashTap } = useCashuWallet(true);
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
@@ -689,29 +698,20 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     setResetVoiceState(true);
     setStopListening(true);
     setInputValue("");
-    try {
-      await submitPrompt([
-        {
-          content: `The user is answering the following question "${
-            step.question.questionText
-          }" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
-            userLanguage === "es" ? "spanish" : "english"
-          }.`,
-          role: "user",
-        },
-      ]);
-      // const jsonResponse = JSON.parse(response.content);
-      // setIsCorrect(jsonResponse.isCorrect);
-      // setFeedback(jsonResponse.feedback);
 
-      // if (jsonResponse.isCorrect) {
-      //   const npub = localStorage.getItem("local_publicKey");
-      //   incrementUserStep(npub);
-      //   await storeCorrectAnswer(step, jsonResponse.feedback);
-      // }
-    } catch (error) {
-      console.error("Error fetching answer:", error);
-    }
+    await submitPrompt([
+      {
+        content: `The user is answering the following question "${
+          step.question.questionText
+        }" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+          userLanguage === "es" ? "spanish" : "english"
+        }.`,
+        role: "user",
+      },
+    ]);
+
+    cashTap();
+
     setIsSending(false);
     setResetVoiceState(false);
   };
@@ -782,6 +782,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     if (currentStep === steps.length - 1) {
       navigate("/award");
     } else {
+      handleInputChange(null);
       publishEvent("I just completed question 2 on https://program-ai.app");
       navigate(`/q/${currentStep + 1}`);
     }
@@ -821,7 +822,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
       {step.isText && (
         <VoiceInput
           value={inputValue}
-          onChange={handleInputChange}
+          onChange={setInputValue}
           isCodeEditor={false}
           isTextInput={true}
           resetVoiceState={resetVoiceState}
@@ -836,7 +837,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
       {step.isCode && !step.isTerminal && (
         <VoiceInput
           value={inputValue}
-          onChange={handleInputChange}
+          onChange={setInputValue}
           isCodeEditor={true}
           resetVoiceState={resetVoiceState}
           useVoice={true}
@@ -873,18 +874,18 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
       )}
       <HStack spacing={4}>
         {step.title === "Welcome to the Program AI App!" ? (
-          <Button colorScheme="purple" onClick={handleNextClick}>
+          <Button colorScheme="purple" onMouseDown={handleNextClick}>
             Let's start
           </Button>
         ) : (
           step.question && (
-            <Button onClick={handleAnswerClick} isLoading={isSending}>
+            <Button onMouseDown={handleAnswerClick} isLoading={isSending}>
               {translation[userLanguage]["app.button.answer"]}
             </Button>
           )
         )}
         {isCorrect && (
-          <Button colorScheme="purple" onClick={handleNextClick}>
+          <Button variant={"outline"} onMouseDown={handleNextClick}>
             {translation[userLanguage]["app.button.nextQuestion"]}{" "}
           </Button>
         )}
@@ -1030,6 +1031,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
                 {userLanguage === "en" ? "English" : "Español"}
               </FormLabel>
               <Switch
+                colorScheme="purple"
                 id="language-toggle"
                 isChecked={userLanguage === "es"}
                 onChange={handleToggle}
@@ -1040,11 +1042,16 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
           <HStack>
             <Button
               colorScheme="purple"
-              onClick={() => setView("createAccount")}
+              variant={"outline"}
+              onMouseDown={() => setView("createAccount")}
             >
               {translation[userLanguage]["landing.button.createAccount"]}
             </Button>
-            <Button colorScheme="purple" onClick={() => setView("signIn")}>
+            <Button
+              colorScheme="purple"
+              variant={"outline"}
+              onMouseDown={() => setView("signIn")}
+            >
               {translation[userLanguage]["landing.button.signIn"]}{" "}
             </Button>
           </HStack>
@@ -1065,11 +1072,15 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
             onChange={(e) => setUserName(e.target.value)}
           />
           <HStack>
-            <Button onClick={() => setView("buttons")}>
+            <Button variant="outline" onMouseDown={() => setView("buttons")}>
               {" "}
               {translation[userLanguage]["button.back"]}
             </Button>
-            <Button colorScheme="purple" onClick={handleCreateAccount}>
+            <Button
+              onMouseDown={handleCreateAccount}
+              colorScheme="purple"
+              variant={"outline"}
+            >
               {translation[userLanguage]["button.create"]}
             </Button>
           </HStack>
@@ -1087,10 +1098,14 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
             style={{ maxWidth: 300 }}
           />
           <HStack>
-            <Button onClick={() => setView("buttons")}>
+            <Button variant="outline" onMouseDown={() => setView("buttons")}>
               {translation[userLanguage]["button.back"]}
             </Button>
-            <Button colorScheme="purple" onClick={handleSignIn}>
+            <Button
+              onMouseDown={handleSignIn}
+              colorScheme="purple"
+              variant={"outline"}
+            >
               {translation[userLanguage]["landing.button.signIn"]}
             </Button>
           </HStack>
@@ -1106,6 +1121,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
                 <Link
                   href="https://robotsbuildingeducation.com"
                   color="teal.500"
+                  style={{ textDecoration: "underline" }}
                 >
                   {translation[userLanguage]["createAccount.roxLink"]}
                 </Link>
@@ -1114,7 +1130,11 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
               )}{" "}
               {translation[userLanguage]["or"] + " "}
               {isCheckboxChecked ? (
-                <Link href="https://primal.net/home" color="teal.500">
+                <Link
+                  href="https://primal.net/home"
+                  color="teal.500"
+                  style={{ textDecoration: "underline" }}
+                >
                   {translation[userLanguage]["createAccount.primalLink"]}
                 </Link>
               ) : (
@@ -1123,12 +1143,13 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
               .
             </Text>
           </Text>
-          <Button onClick={handleCopyKeys} variant={"outline"}>
+          <Button onMouseDown={handleCopyKeys}>
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
 
           <HStack>
             <Checkbox
+              colorScheme="purple"
               direction="row"
               isChecked={isCheckboxChecked}
               onChange={handleCheckboxChange}
@@ -1142,14 +1163,18 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
             </Checkbox>
           </HStack>
           <HStack>
-            <Button onClick={() => setView("createAccount")}>
+            <Button
+              variant="outline"
+              onMouseDown={() => setView("createAccount")}
+            >
               {" "}
               {translation[userLanguage]["button.back"]}
             </Button>
             <Button
-              colorScheme="purple"
-              onClick={handleLaunchApp}
+              onMouseDown={handleLaunchApp}
               isDisabled={!isCheckboxChecked}
+              colorScheme="purple"
+              variant={"outline"}
             >
               {translation[userLanguage]["createAccount.button.launchApp"]}
             </Button>
@@ -1170,7 +1195,7 @@ function App() {
   useEffect(() => {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_publicKey");
-      if (npub) {
+      if (npub && window.location.pathname !== "/dashboard") {
         setIsSignedIn(true);
         const step = await getUserStep(npub); // Fetch the current step
         setCurrentStep(step);
@@ -1243,6 +1268,7 @@ function App() {
           />
         ))}
         <Route path="/award" element={<AwardScreen />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Box>
   );

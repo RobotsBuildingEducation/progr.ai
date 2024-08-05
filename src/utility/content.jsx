@@ -37,7 +37,7 @@ export const steps = {
       description:
         "In this step, you will learn how to declare a variable in JavaScript.",
       isCode: true,
-      isTerminal: false,
+      isTerminal: true,
       question: {
         questionText: "How do you declare a variable in JavaScript?",
       },

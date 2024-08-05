@@ -68,7 +68,7 @@ const EducationalModal = ({
           </HStack>
         </ModalHeader>
 
-        <ModalBody p={2} style={{ border: "1px solid green", width: "100%" }}>
+        <ModalBody p={2} style={{ width: "100%" }}>
           {educationalMessages.length === 0 && <Spinner size="xl" />}
 
           {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
@@ -137,7 +137,7 @@ const EducationalModal = ({
         </ModalBody>
         <ModalFooter margin={0} padding={3}>
           <Button
-            onClick={onClose}
+            onMouseDown={onClose}
             variant="solid"
             size="lg"
             borderRadius="full"

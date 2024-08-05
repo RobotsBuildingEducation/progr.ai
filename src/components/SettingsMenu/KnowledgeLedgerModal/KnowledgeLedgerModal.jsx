@@ -98,8 +98,8 @@ export const KnowledgeLedgerModal = ({
           <Box maxHeight="400px">
             <Box mt={4}>
               <Button
-                colorScheme="green"
-                onClick={handleSuggestNext}
+                colorScheme="purple"
+                onMouseDown={handleSuggestNext}
                 isDisabled={isLoading}
                 variant={"outline"}
               >
@@ -128,6 +128,7 @@ export const KnowledgeLedgerModal = ({
                 </Box>
               )}
             </Box>
+            <br />
             <VStack align="stretch">
               <b>
                 {" "}
@@ -147,7 +148,7 @@ export const KnowledgeLedgerModal = ({
           </Box>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>
+          <Button onMouseDown={onClose}>
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

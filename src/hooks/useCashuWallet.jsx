@@ -1,7 +1,9 @@
 import { CashuMint } from "@cashu/cashu-ts/src/CashuMint";
 import { CashuWallet } from "@cashu/cashu-ts/src/CashuWallet";
 import { getEncodedToken } from "@cashu/cashu-ts/src/utils";
+import { addDoc, collection } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
+import { database } from "../database/firebaseResources";
 
 export const useProofStorage = () => {
   const [proofs, setProofs] = useState(null);
@@ -62,7 +64,7 @@ export const useProofStorage = () => {
   };
 };
 
-export const useCashuWallet = (isUnactivated, isModalOpen) => {
+export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
   const [formData, setFormData] = useState({
     mintUrl: "https://stablenut.umint.cash",
     mintAmount: "25",
@@ -174,6 +176,19 @@ export const useCashuWallet = (isUnactivated, isModalOpen) => {
     handleMint(wallet);
   };
 
+  const cashTap = async () => {
+    if (
+      parseInt(localStorage.getItem("balance")) > 0 &&
+      localStorage.getItem("address")
+    ) {
+      const token = await handleSwapSend();
+      try {
+        addDoc(collection(database, "tokens"), { token: token });
+      } catch (error) {
+        console.error("Error storing token in Firestore: ", error);
+      }
+    }
+  };
   return {
     formData,
     setFormData,
@@ -184,5 +199,6 @@ export const useCashuWallet = (isUnactivated, isModalOpen) => {
     handleMint,
     handleSwapSend,
     recharge,
+    cashTap,
   };
 };

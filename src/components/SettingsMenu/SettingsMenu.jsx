@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -16,6 +16,7 @@ import {
   FormControl,
   Switch,
   FormLabel,
+  Input,
 } from "@chakra-ui/react";
 import { FiSettings } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +26,7 @@ import RoxModal from "./RoxModal/RoxModal";
 import SocialWalletModal from "./SocialWalletModal/SocialWalletModal";
 import SelfPacedModal from "./SelfPacedModal/SelfPacedModal";
 import { KnowledgeLedgerModal } from "./KnowledgeLedgerModal/KnowledgeLedgerModal"; // Import the new modal
+import FeedbackModal from "./FeedbackModal/FeedbackModal"; // Import the feedback modal
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
@@ -72,6 +74,12 @@ const SettingsMenu = ({
     onClose: onKnowledgeLedgerClose,
   } = useDisclosure();
 
+  const {
+    isOpen: isFeedbackOpen,
+    onOpen: onFeedbackOpen,
+    onClose: onFeedbackClose,
+  } = useDisclosure(); // Feedback modal
+
   const [interval, setInterval] = useState(120);
 
   const handleToggle = async () => {
@@ -107,7 +115,7 @@ const SettingsMenu = ({
         <IconButton
           ref={btnRef}
           icon={<FiSettings />}
-          onClick={onOpen}
+          onMouseDown={onOpen}
           variant="outline"
           aria-label={translation[userLanguage]["settings.title"]}
           position="fixed"
@@ -135,7 +143,6 @@ const SettingsMenu = ({
                 display="flex"
                 alignItems="center"
                 style={{ justifyContent: "center" }}
-                m={2}
               >
                 <FormLabel htmlFor="language-toggle" mb="0">
                   {userLanguage === "en" ? "English" : "Español"}
@@ -150,56 +157,66 @@ const SettingsMenu = ({
               <Button
                 colorScheme="purple"
                 style={{ width: "100%" }}
-                onClick={onSelfPacedOpen}
+                onMouseDown={onSelfPacedOpen}
+                p={6}
               >
                 {translation[userLanguage]["settings.button.selfPace"]}
               </Button>
-
               <Button
+                p={6}
                 colorScheme="purple"
                 style={{ width: "100%" }}
-                onClick={onKnowledgeLedgerOpen} // New button to open the Knowledge Ledger Modal
+                onMouseDown={onKnowledgeLedgerOpen} // New button to open the Knowledge Ledger Modal
               >
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button>
               <Button
+                p={6}
                 colorScheme="purple"
                 style={{ width: "100%" }}
-                onClick={onBitcoinModeOpen}
+                onMouseDown={onBitcoinModeOpen}
               >
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
-              </Button>
-
+              </Button>{" "}
               <Button
+                p={6}
+                colorScheme="purple"
                 style={{ width: "100%" }}
-                onClick={onRoxModalOpen}
+                onMouseDown={onFeedbackOpen} // Feedback button
+              >
+                {translation[userLanguage]["settings.button.feedback"] ||
+                  "Feedback"}
+              </Button>
+              <Button
+                p={6}
+                style={{ width: "100%" }}
+                onMouseDown={onRoxModalOpen}
                 mt={4}
                 variant={"outline"}
               >
                 {translation[userLanguage]["settings.button.tutor"]}
               </Button>
               <Button
+                p={6}
                 as="a"
                 href="https://chatgpt.com/g/g-09h5uQiFC-rox"
-                mt={4}
                 style={{ width: "100%" }}
                 variant={"outline"}
               >
                 {translation[userLanguage]["settings.button.tutorGPT"]}
               </Button>
               <Button
+                p={6}
                 style={{ width: "100%" }}
-                onClick={onSocialWalletOpen}
-                mt={4}
+                onMouseDown={onSocialWalletOpen}
                 variant={"outline"}
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
-
               <Button
                 as="a"
                 href="https://patreon.com/robotsbuildingeducation"
-                mt={4}
+                p={6}
                 style={{ width: "100%" }}
                 variant={"outline"}
               >
@@ -207,7 +224,7 @@ const SettingsMenu = ({
               </Button>
               <Button
                 style={{ width: "100%" }}
-                onClick={() => {
+                onMouseDown={() => {
                   const translateValue = localStorage.getItem("userLanguage");
                   localStorage.clear();
                   if (translateValue) {
@@ -216,7 +233,7 @@ const SettingsMenu = ({
                   onClose();
                   navigate("/");
                 }}
-                mt={4}
+                p={6}
                 variant={"transparent"}
               >
                 {translation[userLanguage]["settings.button.signOut"]}
@@ -234,6 +251,7 @@ const SettingsMenu = ({
         userId={localStorage.getItem("local_publicKey")}
         userLanguage={userLanguage}
       />
+
       {isBitcoinModeOpen ? (
         <BitcoinModeModal
           isOpen={isBitcoinModeOpen}
@@ -258,6 +276,11 @@ const SettingsMenu = ({
         onClose={onKnowledgeLedgerClose}
         steps={steps}
         currentStep={currentStep}
+      />
+      <FeedbackModal
+        userLanguage={userLanguage}
+        isOpen={isFeedbackOpen}
+        onClose={onFeedbackClose} // Feedback modal
       />
     </>
   );

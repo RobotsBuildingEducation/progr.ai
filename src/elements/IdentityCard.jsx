@@ -289,7 +289,7 @@ export const IdentityCard = ({
           >
             <CardNumber animate={animate}>{number}</CardNumber>
             <CopyButton
-              onClick={() => handleCopy(theme)}
+              onMouseDown={() => handleCopy(theme)}
               theme={theme}
               copied={copied}
             >
@@ -348,7 +348,7 @@ export const IdentityCard = ({
                   padding: 24,
                   cursor: "inherit",
                 }}
-                // onClick={() => setIsFlipped(true)}
+                // onMouseDown={() => setIsFlipped(true)}
               >
                 <b>{theme}</b>
               </div>
@@ -365,7 +365,7 @@ export const IdentityCard = ({
               ? cashuContent
               : nostrContent}
             <br />
-            <button onClick={() => setIsFlipped(false)}>Back</button>
+            <button onMouseDown={() => setIsFlipped(false)}>Back</button>
             <br />
             <br />
           </div>

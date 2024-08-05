@@ -43,7 +43,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           {translation[userLanguage]["modal.openSocialWallet.instructions"]}
           <br />
           <br />
-          <Button onClick={handleCopyKeys}>
+          <Button onMouseDown={handleCopyKeys}>
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>
           <br />
@@ -59,7 +59,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           </Button>
         </ModalBody>
         <ModalFooter>
-          <Button mr={3} onClick={onClose}>
+          <Button mr={3} onMouseDown={onClose}>
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

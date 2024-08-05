@@ -31,7 +31,7 @@ const VoiceRecognition = ({ onResult }) => {
   };
 
   return (
-    <button onClick={handleStartListening} disabled={isListening}>
+    <button onMouseDown={handleStartListening} disabled={isListening}>
       {isListening ? "Listening..." : "Start Voice Input"}
     </button>
   );
