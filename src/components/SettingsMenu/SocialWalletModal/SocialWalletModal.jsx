@@ -8,9 +8,11 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  background,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { translation } from "../../../utility/translation";
+import { SunsetCanvas } from "../../../elements/SunsetCanvas";
 
 const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
@@ -25,6 +27,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
       duration: 1500,
       isClosable: true,
       position: "top",
+      icon: <SunsetCanvas />,
     });
   };
 
@@ -56,7 +59,7 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           </Button>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button mr={3} onClick={onClose}>
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

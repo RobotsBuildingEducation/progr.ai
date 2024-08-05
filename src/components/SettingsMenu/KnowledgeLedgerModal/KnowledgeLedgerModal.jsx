@@ -65,7 +65,9 @@ export const KnowledgeLedgerModal = ({
         {
           content: `Based on the user's completed steps and their answers: ${JSON.stringify(
             userAnswers
-          )}, suggest the next best topic for them to learn. Explain why it's best. Respond as if you're talking to the individual. Do not include code or headers headers/titles formatting - at most simply bold test to indicate sections. Format in minimalist markdown.`,
+          )}, suggest the next best topic for them to learn. Explain why it's best. Respond as if you're talking to the individual. Do not include code or headers headers/titles formatting - at most simply bold test to indicate sections. Format in minimalist markdown. The user is speaking in ${
+            userLanguage === "en" ? "English" : "Spanish"
+          }`,
           role: "user",
         },
       ]);

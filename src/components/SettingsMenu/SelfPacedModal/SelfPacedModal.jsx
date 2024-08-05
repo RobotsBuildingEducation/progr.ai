@@ -134,7 +134,7 @@ const SelfPacedModal = ({
           </Text>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleSave}>
+          <Button mr={3} onClick={handleSave}>
             {translation[userLanguage]["button.save"]}
           </Button>
         </ModalFooter>

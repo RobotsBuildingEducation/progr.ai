@@ -56,7 +56,7 @@ const RoxModal = ({ isOpen, onClose, userLanguage }) => {
           </Button>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button mr={3} onClick={onClose}>
             {translation[userLanguage]["button.close"]}
           </Button>
         </ModalFooter>

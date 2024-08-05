@@ -89,7 +89,7 @@ const AwardScreen = () => {
         Congratulations!
       </Text>
       <Text>You have completed the quiz. Well done!</Text>
-      <Button mt={4} colorScheme="teal" onClick={handleRestart}>
+      <Button mt={4} colorScheme="purple" onClick={handleRestart}>
         Restart Quiz
       </Button>
     </Box>
@@ -316,14 +316,22 @@ const VoiceInput = ({
     <VStack spacing={4} alignItems="center">
       {useVoice || isTerminal ? (
         <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
-          <Button onClick={handleVoiceStart}>
+          <Button
+            onClick={handleVoiceStart}
+            colorScheme="purple"
+            variant={"outline"}
+          >
             {translation[userLanguage]["app.button.voiceToText"]}
           </Button>
-          <Button onClick={handleAiStart}>
+          <Button
+            onClick={handleAiStart}
+            colorScheme="purple"
+            variant={"outline"}
+          >
             {" "}
             {translation[userLanguage]["app.button.voiceToAI"]}
           </Button>
-          <Button onClick={handleLearnClick} variant={"outline"}>
+          <Button colorScheme="purple" onClick={handleLearnClick}>
             {translation[userLanguage]["app.button.learn"]}
           </Button>
         </HStack>
@@ -800,7 +808,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
         <Progress
           value={calculateProgress()}
           size="xs"
-          colorScheme="teal"
+          colorScheme="purple"
           width="100%"
           mb={4}
         />
@@ -865,22 +873,18 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
       )}
       <HStack spacing={4}>
         {step.title === "Welcome to the Program AI App!" ? (
-          <Button colorScheme="teal" onClick={handleNextClick}>
+          <Button colorScheme="purple" onClick={handleNextClick}>
             Let's start
           </Button>
         ) : (
           step.question && (
-            <Button
-              colorScheme="teal"
-              onClick={handleAnswerClick}
-              isLoading={isSending}
-            >
+            <Button onClick={handleAnswerClick} isLoading={isSending}>
               {translation[userLanguage]["app.button.answer"]}
             </Button>
           )
         )}
         {isCorrect && (
-          <Button colorScheme="teal" onClick={handleNextClick}>
+          <Button colorScheme="purple" onClick={handleNextClick}>
             {translation[userLanguage]["app.button.nextQuestion"]}{" "}
           </Button>
         )}
@@ -1007,6 +1011,9 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
       {view === "buttons" && (
         <VStack spacing={4}>
           <VStack spacing={4} width="95%" maxWidth="720px">
+            <HStack spacing={2} alignItems="center">
+              <SunsetCanvas />
+            </HStack>
             <Text fontSize="2xl">
               {translation[userLanguage]["landing.welcome"]}
             </Text>
@@ -1031,10 +1038,13 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
           </VStack>
 
           <HStack>
-            <Button colorScheme="teal" onClick={() => setView("createAccount")}>
+            <Button
+              colorScheme="purple"
+              onClick={() => setView("createAccount")}
+            >
               {translation[userLanguage]["landing.button.createAccount"]}
             </Button>
-            <Button colorScheme="teal" onClick={() => setView("signIn")}>
+            <Button colorScheme="purple" onClick={() => setView("signIn")}>
               {translation[userLanguage]["landing.button.signIn"]}{" "}
             </Button>
           </HStack>
@@ -1059,7 +1069,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
               {" "}
               {translation[userLanguage]["button.back"]}
             </Button>
-            <Button colorScheme="teal" onClick={handleCreateAccount}>
+            <Button colorScheme="purple" onClick={handleCreateAccount}>
               {translation[userLanguage]["button.create"]}
             </Button>
           </HStack>
@@ -1080,7 +1090,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
             <Button onClick={() => setView("buttons")}>
               {translation[userLanguage]["button.back"]}
             </Button>
-            <Button colorScheme="teal" onClick={handleSignIn}>
+            <Button colorScheme="purple" onClick={handleSignIn}>
               {translation[userLanguage]["landing.button.signIn"]}
             </Button>
           </HStack>
@@ -1137,7 +1147,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
               {translation[userLanguage]["button.back"]}
             </Button>
             <Button
-              colorScheme="teal"
+              colorScheme="purple"
               onClick={handleLaunchApp}
               isDisabled={!isCheckboxChecked}
             >

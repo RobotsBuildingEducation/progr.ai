@@ -15,10 +15,10 @@ export const formatIntervalText = (days, hours, minutes, userLanguage) => {
       days > 1 ? "s" : ""
     }, `;
   if (hours)
-    text += `${hours} ${translation[userLanguage]["modal.selfPace.minute"]}${
+    text += `${hours} ${translation[userLanguage]["modal.selfPace.hour"]}${
       hours > 1 ? "s" : ""
     }, `;
-  text += `${minutes} ${translation[userLanguage]["modal.selfPace.hour"]}${
+  text += `${minutes} ${translation[userLanguage]["modal.selfPace.minute"]}${
     minutes > 1 ? "s" : ""
   }`;
   return text;

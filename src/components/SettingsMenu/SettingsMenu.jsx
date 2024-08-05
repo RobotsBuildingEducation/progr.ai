@@ -141,22 +141,32 @@ const SettingsMenu = ({
                   {userLanguage === "en" ? "English" : "Español"}
                 </FormLabel>
                 <Switch
+                  colorScheme="purple"
                   id="language-toggle"
                   isChecked={userLanguage === "es"}
                   onChange={handleToggle}
                 />
               </FormControl>
-              <Button style={{ width: "100%" }} onClick={onSelfPacedOpen}>
+              <Button
+                colorScheme="purple"
+                style={{ width: "100%" }}
+                onClick={onSelfPacedOpen}
+              >
                 {translation[userLanguage]["settings.button.selfPace"]}
               </Button>
 
               <Button
+                colorScheme="purple"
                 style={{ width: "100%" }}
                 onClick={onKnowledgeLedgerOpen} // New button to open the Knowledge Ledger Modal
               >
                 {translation[userLanguage]["settings.button.adaptiveLearning"]}
               </Button>
-              <Button style={{ width: "100%" }} onClick={onBitcoinModeOpen}>
+              <Button
+                colorScheme="purple"
+                style={{ width: "100%" }}
+                onClick={onBitcoinModeOpen}
+              >
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button>
 
