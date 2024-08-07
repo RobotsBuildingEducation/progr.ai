@@ -1098,105 +1098,115 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
       }}
     >
       {view === "buttons" && (
-        <VStack spacing={4}>
-          <VStack spacing={4} width="95%" maxWidth="720px">
-            <HStack spacing={2} alignItems="center">
-              <SunsetCanvas />
-            </HStack>
-            <Text fontSize="2xl">
-              {translation[userLanguage]["landing.welcome"]}
-            </Text>
-            <Text fontSize="sm">
-              {translation[userLanguage]["landing.introduction"]}
-            </Text>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              style={{ justifyContent: "center" }}
-              m={2}
-            >
-              <FormLabel htmlFor="language-toggle" mb="0">
-                {userLanguage === "en" ? "English" : "Español"}
-              </FormLabel>
-              <Switch
-                colorScheme="purple"
-                id="language-toggle"
-                isChecked={userLanguage === "es"}
-                onChange={handleToggle}
-              />
-            </FormControl>
-          </VStack>
+        <>
+          <VStack spacing={4}>
+            <VStack spacing={4} width="95%" maxWidth="720px">
+              <HStack spacing={2} alignItems="center">
+                <SunsetCanvas />
+              </HStack>
+              <Text fontSize="2xl">
+                {translation[userLanguage]["landing.welcome"]}
+              </Text>
+              <Text fontSize="sm">
+                {translation[userLanguage]["landing.introduction"]}
+              </Text>
+              <FormControl
+                display="flex"
+                alignItems="center"
+                style={{ justifyContent: "center" }}
+                m={2}
+              >
+                <FormLabel htmlFor="language-toggle" mb="0">
+                  {userLanguage === "en" ? "English" : "Español"}
+                </FormLabel>
+                <Switch
+                  colorScheme="purple"
+                  id="language-toggle"
+                  isChecked={userLanguage === "es"}
+                  onChange={handleToggle}
+                />
+              </FormControl>
+            </VStack>
 
-          <HStack>
-            <Button
-              colorScheme="purple"
-              variant={"outline"}
-              onMouseDown={() => setView("createAccount")}
-            >
-              {translation[userLanguage]["landing.button.createAccount"]}
-            </Button>
-            <Button
-              colorScheme="purple"
-              variant={"outline"}
-              onMouseDown={() => setView("signIn")}
-            >
-              {translation[userLanguage]["landing.button.signIn"]}{" "}
-            </Button>
-          </HStack>
-        </VStack>
+            <HStack>
+              <Button
+                colorScheme="purple"
+                variant={"outline"}
+                onMouseDown={() => setView("createAccount")}
+              >
+                {translation[userLanguage]["landing.button.createAccount"]}
+              </Button>
+              <Button
+                colorScheme="purple"
+                variant={"outline"}
+                onMouseDown={() => setView("signIn")}
+              >
+                {translation[userLanguage]["landing.button.signIn"]}{" "}
+              </Button>
+            </HStack>
+          </VStack>
+          {isUnsupportedBrowser() ? (
+            <>
+              <br />
+              <VStack
+                p={4}
+                pt={8}
+                style={{
+                  backgroundColor: "rgba(207,124,208, 1)",
+                  color: "white",
+                  borderRadius: "64px",
+                }}
+              >
+                <Heading size="lg">
+                  {translation[userLanguage]["badBrowser.header"]}{" "}
+                </Heading>
+                <Text p={8} pt={0} textAlign={"left"}>
+                  {translation[userLanguage]["badBrowser.bodyOne"]}&nbsp;
+                  {isUnsupportedBrowser()}{" "}
+                  {translation[userLanguage]["badBrowser.bodyTwo"]}{" "}
+                  <b>{translation[userLanguage]["badBrowser.bodyThree"]}</b>
+                </Text>{" "}
+                <OrderedList p={8} pt={0} textAlign={"left"}>
+                  <ListItem>
+                    <span style={{ display: "flex" }}>
+                      <IconButton mr={"2"} isDisabled icon={<IoIosMore />} />
+                      {translation[userLanguage]["badBrowser.stepOne"]}
+                      &nbsp;
+                    </span>
+                  </ListItem>
+                  <br />
+                  <ListItem>
+                    <span style={{ display: "flex" }}>
+                      <IconButton
+                        mr={"2"}
+                        isDisabled
+                        icon={<IoShareOutline />}
+                      />
+                      {translation[userLanguage]["badBrowser.stepTwo"]}
+                      &nbsp;
+                    </span>
+                  </ListItem>
+                  <br />
+                  <ListItem>
+                    <span style={{ display: "flex" }}>
+                      <IconButton
+                        mr={"2"}
+                        isDisabled
+                        icon={<PlusSquareIcon />}
+                      />
+                      {translation[userLanguage]["badBrowser.stepThree"]} &nbsp;
+                    </span>
+                  </ListItem>
+                </OrderedList>
+                <Text p={8} pt={0} textAlign={"left"}>
+                  {translation[userLanguage]["badBrowser.footer"]}{" "}
+                </Text>
+              </VStack>
+            </>
+          ) : null}
+        </>
       )}
 
-      {isUnsupportedBrowser() ? (
-        <>
-          <br />
-          <VStack
-            p={4}
-            pt={8}
-            style={{
-              backgroundColor: "rgba(207,124,208, 1)",
-              color: "white",
-              borderRadius: "64px",
-            }}
-          >
-            <Heading size="lg">
-              {translation[userLanguage]["badBrowser.header"]}{" "}
-            </Heading>
-            <Text p={8} pt={0} textAlign={"left"}>
-              {translation[userLanguage]["badBrowser.bodyOne"]}&nbsp;
-              {isUnsupportedBrowser()}{" "}
-              {translation[userLanguage]["badBrowser.bodyTwo"]}{" "}
-              <b>{translation[userLanguage]["badBrowser.bodyThree"]}</b>
-            </Text>{" "}
-            <OrderedList p={8} pt={0} textAlign={"left"}>
-              <ListItem>
-                <span style={{ display: "flex" }}>
-                  <IconButton mr={"2"} isDisabled icon={<IoIosMore />} />
-                  {translation[userLanguage]["badBrowser.stepOne"]}
-                  &nbsp;
-                </span>
-              </ListItem>
-              <br />
-              <ListItem>
-                <span style={{ display: "flex" }}>
-                  <IconButton mr={"2"} isDisabled icon={<IoShareOutline />} />
-                  {translation[userLanguage]["badBrowser.stepTwo"]}
-                  &nbsp;
-                </span>
-              </ListItem>
-              <br />
-              <ListItem>
-                <span style={{ display: "flex" }}>
-                  <IconButton mr={"2"} isDisabled icon={<PlusSquareIcon />} />
-                  {translation[userLanguage]["badBrowser.stepThree"]} &nbsp;
-                </span>
-              </ListItem>
-            </OrderedList>
-            <Text p={8} pt={0} textAlign={"left"}>
-              {translation[userLanguage]["badBrowser.footer"]}{" "}
-            </Text>
-          </VStack>
-        </>
-      ) : null}
       {view === "createAccount" && (
         <VStack spacing={4}>
           <Text fontSize="sm">

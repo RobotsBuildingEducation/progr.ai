@@ -117,7 +117,7 @@ export let translation = {
     "badBrowser.stepOne":
       "Open this page in your browser with the More Options button",
     "badBrowser.stepTwo": "Press the Share button",
-    "badBrowser.stepThree": "Press the Add To Homescreen button button",
+    "badBrowser.stepThree": "Press the Add To Homescreen button",
     "badBrowser.footer":
       "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
   },

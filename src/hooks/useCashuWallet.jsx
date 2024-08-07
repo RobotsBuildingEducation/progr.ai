@@ -1,9 +1,7 @@
-import { CashuMint } from "@cashu/cashu-ts/src/CashuMint";
-import { CashuWallet } from "@cashu/cashu-ts/src/CashuWallet";
-import { getEncodedToken } from "@cashu/cashu-ts/src/utils";
 import { addDoc, collection } from "firebase/firestore";
 import React, { useState, useEffect } from "react";
 import { database } from "../database/firebaseResources";
+import { CashuMint, CashuWallet, getEncodedToken } from "@cashu/cashu-ts";
 
 export const useProofStorage = () => {
   const [proofs, setProofs] = useState(null);
@@ -122,6 +120,7 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
   const handleMint = async (walletRef) => {
     const amount = parseInt(formData.mintAmount);
     let w = wallet || walletRef;
+    console.log("wwww,", w);
     const quote = await w.getMintQuote(amount);
 
     localStorage.setItem("address", quote.request);
