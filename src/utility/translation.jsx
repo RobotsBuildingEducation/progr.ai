@@ -93,6 +93,33 @@ export let translation = {
     "toast.feedbackErrorTitle": "Error submitting feedback.",
     "toast.feedbackErrorDescription":
       "An error occurred while submitting your feedback. Please try again.",
+    "mockTerminal.welcomeMessage":
+      "Welcome to the mock terminal. Use basic commands to navigate the file system.",
+    "mockTerminal.userName": "user@mock-terminal",
+    "mockTerminal.bashCommand": "bash:",
+    "mockTerminal.commandNotFound": "command not found",
+    "mockTerminal.cdCommand": "cd:",
+    "mockTerminal.noSuchFileOrDirectory": "no such file or directory",
+    "mockTerminal.mkDirCommand": "mkDir:",
+    "mockTerminal.cannotCreatDirectory": "cannot create directory",
+    "mockTerminal.fileExists": "File exists",
+    "mockTerminal.catCommand": "cat:",
+    "mockTerminal.noSuchFile": "No such file",
+    "mockTerminal.help":
+      "Available commands: help, clear, ls, cat, mkdir, cd, pwd, echo, printenv, whoami",
+    "mockTerminal.directory": "Directory",
+    "badBrowser.header": "⚠️ Unsupported Browser",
+    "badBrowser.bodyOne":
+      "This platform makes use out of speech recognition to prompt AI to write code vocally on mobile devices. The",
+    "badBrowser.bodyTwo":
+      "browser does not support these features since they develop non-standard in-app browsers. On the brightside, the alternative allows you to download the page as an app on your phone!",
+    "badBrowser.bodyThree": "Simply",
+    "badBrowser.stepOne":
+      "Open this page in your browser with the More Options button",
+    "badBrowser.stepTwo": "Press the Share button",
+    "badBrowser.stepThree": "Press the Add To Homescreen button button",
+    "badBrowser.footer":
+      "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
   },
   es: {
     "toast.title.keysCopied": "Claves copiadas.",
@@ -189,5 +216,32 @@ export let translation = {
     "toast.feedbackErrorTitle": "Error al enviar comentarios.",
     "toast.feedbackErrorDescription":
       "Ocurrió un error al enviar tus comentarios. Inténtalo de nuevo.",
+    "mockTerminal.welcomeMessage":
+      "Bienvenido al terminal simulado. Utilice comandos básicos para navegar por el sistema de archivos.",
+    "mockTerminal.userName": "usuario@terminal-simulado",
+    "mockTerminal.bashCommand": "bash:",
+    "mockTerminal.commandNotFound": "comando no encontrado",
+    "mockTerminal.cdCommand": "cd:",
+    "mockTerminal.noSuchFileOrDirectory": "no existe tal archivo o directorio",
+    "mockTerminal.mkDirCommand": "mkDir:",
+    "mockTerminal.cannotCreatDirectory": "no se puede crear el directorio",
+    "mockTerminal.fileExists": "El archivo existe",
+    "mockTerminal.catCommand": "cat:",
+    "mockTerminal.noSuchFile": "No existe tal archivo",
+    "mockTerminal.help":
+      "Comandos disponibles: help, clear, ls, cat, mkdir, cd, pwd, echo, printenv, whoami",
+    "mockTerminal.directory": "Directorio",
+    "badBrowser.header": "⚠️ Navegador No Compatible",
+    "badBrowser.bodyOne":
+      "Esta plataforma utiliza el reconocimiento de voz para que la IA escriba código de forma vocal en dispositivos móviles.",
+    "badBrowser.bodyTwo":
+      "El navegador no admite estas funciones ya que desarrollan navegadores internos no estándar. En el lado positivo, la alternativa te permite descargar la página como una aplicación en tu teléfono.",
+    "badBrowser.bodyThree": "Simplemente",
+    "badBrowser.stepOne":
+      "Abre esta página en tu navegador con el botón de Más opciones",
+    "badBrowser.stepTwo": "Presiona el botón Compartir:",
+    "badBrowser.stepThree": "Presiona el botón Añadir a la pantalla de inicio:",
+    "badBrowser.footer":
+      "¡Eso es todo! No necesitas descargar la aplicación a través de una tienda de aplicaciones porque estamos utilizando estándares de código abierto para aplicaciones web progresivas.",
   },
 };

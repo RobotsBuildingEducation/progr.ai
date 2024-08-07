@@ -9,7 +9,9 @@ export const steps = {
       title: "Understanding the Goal of Coding",
       description:
         "In this step, you will learn about the primary goal of coding or programming.",
-      isText: true,
+      // isText: true,
+      isCode: true,
+      // isTerminal: true,
       question: {
         questionText: "What is the primary goal of coding or programming?",
       },
@@ -37,7 +39,7 @@ export const steps = {
       description:
         "In this step, you will learn how to declare a variable in JavaScript.",
       isCode: true,
-      isTerminal: true,
+      isTerminal: false,
       question: {
         questionText: "How do you declare a variable in JavaScript?",
       },
@@ -1092,8 +1094,6 @@ export const steps = {
       description:
         "En este paso, aprenderás sobre la lógica en el contexto de la programación.",
       isText: true,
-      // isCode: true,
-      // isTerminal: true,
       question: {
         questionText: "¿Qué es la lógica en el contexto de la programación?",
       },
@@ -1131,7 +1131,7 @@ export const steps = {
       description:
         "En este paso, escribirás una definición simple de clase en JavaScript.",
       isCode: true,
-      isTerminal: false,
+      isTerminal: true,
       question: {
         questionText: `Escribe una definición simple de clase en JavaScript para un objeto \`Car\` con propiedades para \`make\` y \`model\`, y un método para mostrar los detalles del coche.`,
       },

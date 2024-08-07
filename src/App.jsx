@@ -19,6 +19,11 @@ import {
   FormControl,
   FormLabel,
   Switch,
+  Heading,
+  OrderedList,
+  ListItem,
+  Icon,
+  IconButton,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -52,6 +57,10 @@ import { database } from "./database/firebaseResources";
 import { translation } from "./utility/translation";
 import { useCashuWallet } from "./hooks/useCashuWallet";
 import { Dashboard } from "./components/Dashboard/Dashboard";
+import { isUnsupportedBrowser } from "./utility/browser";
+import { PlusSquareIcon } from "@chakra-ui/icons";
+import { IoShareOutline } from "react-icons/io5";
+import { IoIosMore } from "react-icons/io";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -117,6 +126,7 @@ const VoiceInput = ({
     listening,
     resetTranscript,
     browserSupportsSpeechRecognition,
+    isMicrophoneAvailable,
   } = useSpeechRecognition();
   const [isListening, setIsListening] = useState(false);
   const [aiListening, setAiListening] = useState(false);
@@ -185,7 +195,8 @@ const VoiceInput = ({
     }
   }, [generateResponse]);
 
-  if (!browserSupportsSpeechRecognition && useVoice) {
+  if (!browserSupportsSpeechRecognition || !browserSupportsSpeechRecognition) {
+    alert("Your browser doesn't support speech recognition.");
     return <span>Your browser doesn't support speech recognition.</span>;
   }
 
@@ -212,7 +223,7 @@ const VoiceInput = ({
     }
     resetTranscript();
     resetMessages();
-    onChange(finalTranscript);
+    onChange(finalTranscript.toLocaleLowerCase());
   };
 
   const handleAiStart = () => {
@@ -315,7 +326,7 @@ const VoiceInput = ({
   }, [educationalMessages]);
 
   return (
-    <VStack spacing={4} alignItems="center">
+    <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
       {useVoice || isTerminal ? (
         <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
           <Button
@@ -353,12 +364,7 @@ const VoiceInput = ({
       )}
 
       {isCodeEditor ? (
-        <Box
-          width="100%"
-          height="400px"
-          position="relative"
-          style={{ border: "1px solid black" }}
-        >
+        <Box width="99%" height="400px" style={{ border: "1px solid black" }}>
           <MonacoEditor
             height="100%"
             width="100%"
@@ -448,8 +454,7 @@ function TerminalComponent({
   const [structure, setStructure] = useState(fileSystem);
   const [history, setHistory] = useState([
     {
-      value:
-        "Welcome to the mock terminal. Use basic commands to navigate the file system.",
+      value: translation[userLanguage]["mockTerminal.welcomeMessage"],
     },
   ]);
   const [cwd, setCwd] = useState("/");
@@ -471,8 +476,7 @@ function TerminalComponent({
           setHistory([
             ...history,
             {
-              value:
-                "Available commands: help, clear, ls, cat, mkdir, cd, pwd, echo, printenv, whoami",
+              value: translation[userLanguage]["mockTerminal.help"],
             },
           ]);
         },
@@ -507,7 +511,9 @@ function TerminalComponent({
           } else {
             setHistory([
               ...history,
-              { value: `cat: ${filePath}: No such file` },
+              {
+                value: `cat: ${filePath}: ${translation[userLanguage]["mockTerminal.noSuchFile"]}`,
+              },
             ]);
           }
         },
@@ -526,7 +532,12 @@ function TerminalComponent({
           if (!currentDir[newDir]) {
             currentDir[newDir] = {};
             setStructure({ ...structure });
-            setHistory([...history, { value: `Directory ${newDir} created.` }]);
+            setHistory([
+              ...history,
+              {
+                value: `${translation[userLanguage]["mockTerminal.directory"]} ${newDir} created.`,
+              },
+            ]);
           } else {
             setHistory([
               ...history,
@@ -596,6 +607,78 @@ function TerminalComponent({
     }
   };
 
+  useEffect(() => {
+    const commands = ["mkdir new_folder"];
+
+    commands.forEach((command) => {
+      const parts = command.split(" ");
+      const cmd = parts[0];
+      const arg = parts[1];
+
+      const customExtensions = {
+        mkdir: {
+          exec: ({ structure, history, cwd }, command) => {
+            const args = command.split(" ");
+            const newDir = args[1];
+            const currentDir =
+              cwd === "/"
+                ? structure
+                : cwd
+                    .split("/")
+                    .filter((p) => p)
+                    .reduce((acc, dir) => acc[dir], structure);
+
+            if (!currentDir[newDir]) {
+              currentDir[newDir] = {};
+              setStructure({ ...structure });
+              setHistory([
+                ...history,
+                {
+                  value: `${translation[userLanguage]["mockTerminal.directory"]} ${newDir} created.`,
+                },
+              ]);
+            } else {
+              setHistory([
+                ...history,
+                {
+                  value: `bash: mkdir: cannot create directory '${newDir}': File exists`,
+                },
+              ]);
+            }
+          },
+        },
+        touch: {
+          exec: ({ structure, history, cwd }, command) => {
+            const args = command.split(" ");
+            const newFile = args[1];
+            const currentDir =
+              cwd === "/"
+                ? structure
+                : cwd
+                    .split("/")
+                    .filter((p) => p)
+                    .reduce((acc, dir) => acc[dir], structure);
+
+            if (!currentDir[newFile]) {
+              currentDir[newFile] = "";
+              setStructure({ ...structure });
+              setHistory([...history, { value: `File ${newFile} created.` }]);
+            } else {
+              setHistory([
+                ...history,
+                {
+                  value: `bash: touch: cannot create file '${newFile}': File exists`,
+                },
+              ]);
+            }
+          },
+        },
+      };
+
+      customExtensions[cmd].exec({ structure, history, cwd }, command);
+    });
+  }, []);
+
   return (
     <>
       <VoiceInput
@@ -616,7 +699,7 @@ function TerminalComponent({
         <ReactBash
           structure={structure}
           history={history}
-          prefix={`user@mock-terminal:${cwd}$`}
+          prefix={`${translation[userLanguage]["mockTerminal.userName"]}${cwd}$`}
         />
       </div>
     </>
@@ -697,7 +780,6 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     setIsSending(true);
     setResetVoiceState(true);
     setStopListening(true);
-    setInputValue("");
 
     await submitPrompt([
       {
@@ -712,6 +794,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
 
     cashTap();
 
+    setInputValue("");
     setIsSending(false);
     setResetVoiceState(false);
   };
@@ -817,7 +900,11 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
       <Text fontSize="xl">
         {currentStep}. {step.title}
       </Text>
-      {step.question && <Text fontSize="sm">{step.question.questionText}</Text>}
+      {step.question && (
+        <Text style={{ width: "100%", maxWidth: 600 }} fontSize="sm">
+          {step.question.questionText}
+        </Text>
+      )}
 
       {step.isText && (
         <VoiceInput
@@ -1001,9 +1088,10 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
   return (
     <Box
       textAlign="center"
-      p={5}
+      p={0}
       style={{
-        height: "80vh",
+        height: "100%",
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -1057,6 +1145,58 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
           </HStack>
         </VStack>
       )}
+
+      {isUnsupportedBrowser() ? (
+        <>
+          <br />
+          <VStack
+            p={4}
+            pt={8}
+            style={{
+              backgroundColor: "rgba(207,124,208, 1)",
+              color: "white",
+              borderRadius: "64px",
+            }}
+          >
+            <Heading size="lg">
+              {translation[userLanguage]["badBrowser.header"]}{" "}
+            </Heading>
+            <Text p={8} pt={0} textAlign={"left"}>
+              {translation[userLanguage]["badBrowser.bodyOne"]}&nbsp;
+              {isUnsupportedBrowser()}{" "}
+              {translation[userLanguage]["badBrowser.bodyTwo"]}{" "}
+              <b>{translation[userLanguage]["badBrowser.bodyThree"]}</b>
+            </Text>{" "}
+            <OrderedList p={8} pt={0} textAlign={"left"}>
+              <ListItem>
+                <span style={{ display: "flex" }}>
+                  <IconButton mr={"2"} isDisabled icon={<IoIosMore />} />
+                  {translation[userLanguage]["badBrowser.stepOne"]}
+                  &nbsp;
+                </span>
+              </ListItem>
+              <br />
+              <ListItem>
+                <span style={{ display: "flex" }}>
+                  <IconButton mr={"2"} isDisabled icon={<IoShareOutline />} />
+                  {translation[userLanguage]["badBrowser.stepTwo"]}
+                  &nbsp;
+                </span>
+              </ListItem>
+              <br />
+              <ListItem>
+                <span style={{ display: "flex" }}>
+                  <IconButton mr={"2"} isDisabled icon={<PlusSquareIcon />} />
+                  {translation[userLanguage]["badBrowser.stepThree"]} &nbsp;
+                </span>
+              </ListItem>
+            </OrderedList>
+            <Text p={8} pt={0} textAlign={"left"}>
+              {translation[userLanguage]["badBrowser.footer"]}{" "}
+            </Text>
+          </VStack>
+        </>
+      ) : null}
       {view === "createAccount" && (
         <VStack spacing={4}>
           <Text fontSize="sm">
@@ -1228,7 +1368,7 @@ function App() {
   }
 
   return (
-    <Box textAlign="center" fontSize="xl" p={5}>
+    <Box textAlign="center" fontSize="xl" p={4}>
       {isSignedIn && (
         <SettingsMenu
           isSignedIn={isSignedIn}
@@ -1252,7 +1392,7 @@ function App() {
             />
           }
         />
-        {steps[userLanguage].map((_, index) => (
+        {steps?.[userLanguage]?.map((_, index) => (
           <Route
             key={index}
             path={`/q/${index}`}

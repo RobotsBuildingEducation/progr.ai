@@ -121,7 +121,7 @@ const SettingsMenu = ({
           position="fixed"
           top={4}
           right={4}
-          backgroundColor={"white"}
+          style={{ backgroundColor: "white", zIndex: 1000 }}
         />
       ) : null}
       <Drawer
