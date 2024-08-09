@@ -90,7 +90,7 @@ const SettingsMenu = ({
     localStorage.setItem("userLanguage", newLanguage);
 
     // Update Firestore
-    const npub = localStorage.getItem("local_publicKey");
+    const npub = localStorage.getItem("local_npub");
     if (npub) {
       const userDoc = doc(database, "users", npub);
       await updateDoc(userDoc, {
@@ -103,12 +103,13 @@ const SettingsMenu = ({
     const userDocRef = doc(
       database,
       "users",
-      localStorage.getItem("local_publicKey")
+      localStorage.getItem("local_npub")
     );
     updateDoc(userDocRef, {
       userLanguage: userLanguage,
     });
   }, []);
+
   return (
     <>
       {isSignedIn ? (
@@ -117,7 +118,6 @@ const SettingsMenu = ({
           icon={<FiSettings />}
           onMouseDown={onOpen}
           variant="outline"
-          aria-label={translation[userLanguage]["settings.title"]}
           position="fixed"
           top={4}
           right={4}
@@ -248,7 +248,7 @@ const SettingsMenu = ({
         onClose={onSelfPacedClose}
         interval={interval}
         setInterval={setInterval}
-        userId={localStorage.getItem("local_publicKey")}
+        userId={localStorage.getItem("local_npub")}
         userLanguage={userLanguage}
       />
 

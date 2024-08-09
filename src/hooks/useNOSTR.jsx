@@ -2,178 +2,182 @@ import { useState, useEffect } from "react";
 
 import NDK, {
   NDKPrivateKeySigner,
-  NDKEvent,
   NDKKind,
+  NDKEvent,
 } from "@nostr-dev-kit/ndk";
-import { nip19, getPublicKey } from "nostr-tools";
 
 import { Buffer } from "buffer";
 import { bech32 } from "bech32";
+import { getPublicKey, nip19 } from "nostr-tools";
 
-export const useNOSTR = (initialPublicKey, initialPrivateKey) => {
+export const useSharedNostr = (initialNpub, initialNsec) => {
   const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState(null);
-  const [publicKey, setPublicKey] = useState(initialPublicKey || "");
-  const [privateKey, setPrivateKey] = useState(initialPrivateKey || "");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [nostrPubKey, setNostrPubKey] = useState(initialNpub || "");
+  const [nostrPrivKey, setNostrPrivKey] = useState(initialNsec || "");
 
   useEffect(() => {
-    const storedPublicKey = localStorage.getItem("local_publicKey");
-    const storedPrivateKey = localStorage.getItem("local_privateKey");
+    // Load keys from local storage if they exist
+    const storedNpub = localStorage.getItem("local_npub");
+    const storedNsec = localStorage.getItem("local_nsec");
 
-    if (storedPublicKey) {
-      setPublicKey(storedPublicKey);
+    if (storedNpub) {
+      console.log("storing key", storedNpub);
+      setNostrPubKey(storedNpub);
     }
 
-    if (storedPrivateKey) {
-      setPrivateKey(storedPrivateKey);
+    if (storedNsec) {
+      console.log("storing key");
+      setNostrPrivKey(storedNsec);
     }
   }, []);
 
-  const generateKeys = async (userName = null) => {
+  const generateNostrKeys = async (userDisplayName = null) => {
     const privateKeySigner = NDKPrivateKeySigner.generate();
 
-    const generatedPrivateKey = privateKeySigner.privateKey;
+    const privateKey = privateKeySigner.privateKey;
     const user = await privateKeySigner.user();
 
-    const generatedPublicKey = user.npub;
+    const publicKey = user.npub;
 
-    const encodedPrivateKey = bech32.encode(
+    const encodedNsec = bech32.encode(
       "nsec",
-      bech32.toWords(Buffer.from(generatedPrivateKey, "hex"))
+      bech32.toWords(Buffer.from(privateKey, "hex"))
     );
-
-    const encodedPublicKey = bech32.encode(
+    const encodedNpub = bech32.encode(
       "npub",
-      bech32.toWords(Buffer.from(generatedPublicKey, "hex"))
+      bech32.toWords(Buffer.from(publicKey, "hex"))
     );
 
-    setPrivateKey(encodedPrivateKey);
-    setPublicKey(encodedPublicKey);
+    setNostrPrivKey(encodedNsec);
+    setNostrPubKey(publicKey);
+
+    console.log("encded npub", encodedNpub);
+    console.log("user.npub", publicKey);
 
     if (!localStorage.getItem("local_nsec")) {
-      publishEvent(
+      await postNostrContent(
         JSON.stringify({
-          name: userName,
+          name: userDisplayName,
           about: "A student onboarded with Robots Building Education",
         }),
         0,
-        generatedPublicKey,
-        encodedPrivateKey
+        publicKey,
+        encodedNsec
       );
     }
 
-    localStorage.setItem("local_privateKey", encodedPrivateKey);
-    localStorage.setItem("local_publicKey", generatedPublicKey);
+    localStorage.setItem("local_nsec", encodedNsec);
+    localStorage.setItem("local_npub", publicKey);
+    localStorage.setItem("uniqueId", publicKey);
 
-    return { publicKey: generatedPublicKey, privateKey: encodedPrivateKey };
+    return { npub: publicKey, nsec: encodedNsec };
   };
 
-  const connect = async (
-    overridePublicKey = null,
-    overridePrivateKey = null
-  ) => {
-    const privateKeyToUse = overridePrivateKey || privateKey;
-    const publicKeyToUse = overridePublicKey || publicKey;
+  const connectToNostr = async (npubRef = null, nsecRef = null) => {
+    const defaultNsec = import.meta.env.VITE_GLOBAL_NOSTR_NSEC;
+    const defaultNpub =
+      "npub1mgt5c7qh6dm9rg57mrp89rqtzn64958nj5w9g2d2h9dng27hmp0sww7u2v";
+
+    const nsec = nsecRef || nostrPrivKey || defaultNsec;
+    const npub = npubRef || nostrPubKey || defaultNpub;
+
+    console.log("nsec ent", nsec);
+    console.log("npub ent", npub);
 
     try {
-      const { words: privateKeyWords } = bech32.decode(privateKeyToUse);
-      const hexPrivateKey = Buffer.from(
-        bech32.fromWords(privateKeyWords)
-      ).toString("hex");
+      // Decode the nsec from Bech32
+      const { words: nsecWords } = bech32.decode(nsec);
+      const hexNsec = Buffer.from(bech32.fromWords(nsecWords)).toString("hex");
 
-      const { words: publicKeyWords } = bech32.decode(publicKeyToUse);
-      const hexPublicKey = Buffer.from(
-        bech32.fromWords(publicKeyWords)
-      ).toString("hex");
+      // Decode the npub from Bech32
+      const { words: npubWords } = bech32.decode(npub);
+      const hexNpub = Buffer.from(bech32.fromWords(npubWords)).toString("hex");
 
+      // Create a new NDK instance
       const ndkInstance = new NDK({
         explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
       });
 
+      // Connect to the relays
       await ndkInstance.connect();
 
       setIsConnected(true);
 
-      return {
-        ndkInstance,
-        hexPublicKey,
-        signer: new NDKPrivateKeySigner(hexPrivateKey),
-      };
+      // Return the connected NDK instance and signer
+      return { ndkInstance, hexNpub, signer: new NDKPrivateKeySigner(hexNsec) };
     } catch (err) {
       console.error("Error connecting to Nostr:", err);
-      setError(err.message);
+      setErrorMessage(err.message);
       return null;
     }
   };
 
-  const authenticate = async (providedPrivateKey) => {
-    let decoded = nip19.decode(providedPrivateKey);
+  const auth = async (nsecPassword) => {
+    console.log("nsecPassword is running..", nsecPassword);
 
-    console.log("decoded", decoded);
+    let testnsec = nsecPassword;
 
-    const userPublicKey = getPublicKey(decoded.data);
+    let decoded = nip19.decode(testnsec);
 
-    console.log("user public key", userPublicKey);
+    const pubkey = getPublicKey(decoded.data);
 
-    const ndkInstance = new NDK({
+    const ndk = new NDK({
       explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
     });
-    await ndkInstance.connect();
 
-    let user = await ndkInstance.getUser({ pubkey: userPublicKey });
-    // let awaitedUsed = await ndkInstance.getUser({ pubkey: userPublicKey });
+    let user = ndk.getUser({ pubkey: pubkey });
 
-    console.log("user", user);
-    console.log(user.npub);
-    console.log("userporfile", user.profile);
-    // let test = user
-    //   .fetchProfile()
-    //   .then((response) => console.log("response", response));
-    const me = await ndkInstance.getUser({
-      npub: user.npub,
-    });
+    setNostrPrivKey(testnsec);
+    setNostrPubKey(user.npub);
 
-    let profile = await me.fetchProfile();
-    console.log("profile", profile);
-
-    setPrivateKey(providedPrivateKey);
-    setPublicKey(user.npub);
-
-    localStorage.setItem("local_privateKey", providedPrivateKey);
-    localStorage.setItem("local_publicKey", user.npub);
+    localStorage.setItem("local_nsec", testnsec);
+    localStorage.setItem("local_npub", user.npub);
+    localStorage.setItem("uniqueId", user.npub);
   };
 
-  const publishEvent = async (
+  const postNostrContent = async (
     content,
-    eventKind = NDKKind.Text,
-    overridePublicKey = null,
-    overridePrivateKey = null
+    kind = NDKKind.Text,
+    npubRef = null,
+    nsecRef = null
   ) => {
-    const connection = await connect(overridePublicKey, overridePrivateKey);
+    const connection = await connectToNostr(npubRef, nsecRef);
     if (!connection) return;
 
-    const { ndkInstance, hexPublicKey, signer } = connection;
+    const { ndkInstance, hexNpub, signer } = connection;
 
+    console.log("x", hexNpub);
+    // Create a new note event
     const noteEvent = new NDKEvent(ndkInstance, {
-      kind: eventKind,
+      kind,
       tags: [],
       content: content,
       created_at: Math.floor(Date.now() / 1000),
-      pubkey: hexPublicKey,
+      pubkey: hexNpub,
     });
 
-    await noteEvent.sign(signer);
+    // Sign the note event
 
-    await noteEvent.publish();
+    try {
+      await noteEvent.sign(signer);
+    } catch (error) {}
+
+    // Publish the note event
+    try {
+      await noteEvent.publish();
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return {
     isConnected,
-    error,
-    publicKey,
-    privateKey,
-    generateKeys,
-    publishEvent,
-    authenticate,
+    errorMessage,
+    nostrPubKey,
+    nostrPrivKey,
+    generateNostrKeys,
+    postNostrContent,
+    auth,
   };
 };

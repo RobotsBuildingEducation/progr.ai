@@ -16,7 +16,7 @@ const RoxModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
 
   const handleCopyKeys = () => {
-    const keys = localStorage.getItem("local_privateKey"); // replace with actual keys
+    const keys = localStorage.getItem("local_nsec"); // replace with actual keys
     navigator.clipboard.writeText(keys);
     toast({
       title: translation[userLanguage]["toast.title.keysCopied"],

@@ -47,7 +47,7 @@ export const KnowledgeLedgerModal = ({
   }, [messages]);
 
   const fetchUserAnswers = async () => {
-    const userId = localStorage.getItem("local_publicKey");
+    const userId = localStorage.getItem("local_npub");
     const answersRef = collection(database, `users/${userId}/answers`);
     const answerDocs = await getDocs(answersRef);
     const answers = answerDocs.docs.map((doc) => doc.data());
@@ -77,8 +77,6 @@ export const KnowledgeLedgerModal = ({
       setIsLoading(false);
     }
   };
-
-  console.log("suggestion", suggestion);
 
   return (
     <Modal

@@ -42,7 +42,7 @@ import { useChatCompletion } from "./hooks/useChatCompletion";
 import { SunsetCanvas } from "./elements/SunsetCanvas";
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
-import { useNOSTR } from "./hooks/useNOSTR";
+import { useSharedNostr } from "./hooks/useNOSTR";
 import {
   createUser,
   getUserData,
@@ -61,6 +61,10 @@ import { isUnsupportedBrowser } from "./utility/browser";
 import { PlusSquareIcon } from "@chakra-ui/icons";
 import { IoShareOutline } from "react-icons/io5";
 import { IoIosMore } from "react-icons/io";
+import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
+import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
+
+import Confetti from "react-confetti";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -364,7 +368,7 @@ const VoiceInput = ({
       )}
 
       {isCodeEditor ? (
-        <Box width="99%" height="400px" style={{ border: "1px solid black" }}>
+        <Box width="99%" height="400px" style={{ border: "1px solid #f0f0f0" }}>
           <MonacoEditor
             height="100%"
             width="100%"
@@ -386,10 +390,6 @@ const VoiceInput = ({
           height={"150px"}
           value={aiListening ? aiTranscript : value}
           onChange={(e) => {
-            console.log("e", e.target.value);
-            console.log("aiTranscript", aiTranscript);
-            console.log("aiListening", aiListening);
-
             onChange(e.target.value);
           }}
           placeholder={translation[userLanguage]["app.input.placeholder"]}
@@ -706,10 +706,17 @@ function TerminalComponent({
   );
 }
 
-const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
+const Step = ({
+  currentStep,
+  userLanguage,
+  setUserLanguage,
+  postNostrContent,
+}) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
   const [inputValue, setInputValue] = useState("");
+  const [selectedOption, setSelectedOption] = useState(""); // For Multiple Choice
+  const [items, setItems] = useState([]); // For Select Order
   const [isSending, setIsSending] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -725,17 +732,13 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     response_format: { type: "json_object" },
   });
 
-  const { publishEvent } = useNOSTR(
-    localStorage.getItem("local_publicKey"),
-    localStorage.getItem("local_privateKey")
-  );
-
   const navigate = useNavigate();
   const step = steps[userLanguage][currentStep];
 
+  // Fetch user data and manage streaks and timers
   useEffect(() => {
     const fetchUserData = async () => {
-      const userId = localStorage.getItem("local_publicKey");
+      const userId = localStorage.getItem("local_npub");
       const userData = await getUserData(userId);
 
       setStreak(userData.streak || 0);
@@ -764,43 +767,76 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     fetchUserData();
   }, []);
 
+  // Initialize items for Select Order question
+  useEffect(() => {
+    if (step.isSelectOrder) {
+      setItems(step.question.options.sort(() => Math.random() - 0.5));
+    }
+  }, [step]);
+
+  // Calculate progress through the steps
   const calculateProgress = () => {
     return ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
   };
 
+  // Handle input change
   const handleInputChange = (value, resetter = null) => {
     setInputValue(value);
     if (resetter) {
       resetter();
     }
-    // setFeedback("");
   };
 
+  // Handle answer submission
   const handleAnswerClick = async () => {
     setIsSending(true);
     setResetVoiceState(true);
     setStopListening(true);
 
-    await submitPrompt([
-      {
-        content: `The user is answering the following question "${
-          step.question.questionText
-        }" with the following answer "${inputValue}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
-          userLanguage === "es" ? "spanish" : "english"
-        }.`,
-        role: "user",
-      },
-    ]);
+    let answer = inputValue;
+    if (step.isMultipleChoice) {
+      answer = selectedOption;
+    } else if (step.isSelectOrder) {
+      answer = items;
+    }
 
+    console.log("answer", answer);
+
+    if (step.isMultipleChoice || step.isSelectOrder) {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }". The answer to the question is ${step.question.answer}
+        and the user provided the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    } else {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    }
     cashTap();
 
     setInputValue("");
+    setSelectedOption(""); // Reset the selected option after submission
     setIsSending(false);
     setResetVoiceState(false);
   };
 
+  // Store correct answers in the database
   const storeCorrectAnswer = async (step, answer) => {
-    const userId = localStorage.getItem("local_publicKey");
+    const userId = localStorage.getItem("local_npub");
     const answerRef = collection(database, `users/${userId}/answers`);
     await addDoc(answerRef, {
       step: currentStep,
@@ -824,28 +860,20 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     setStreak(newStreak);
 
     await updateUserData(userId, interval, newStreak, currentTime, newEndTime);
-    // setFeedback(answer);
-    console.log("Updated User Data after Correct Answer:", {
-      userId,
-      timer: interval,
-      streak: newStreak,
-      startTime: currentTime.toISOString(),
-      endTime: newEndTime.toISOString(),
-    });
   };
 
+  // Stream messages and handle feedback
   useEffect(() => {
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
         const jsonResponse = JSON.parse(lastMessage.content);
-        console.log("JSONRESPON", jsonResponse);
+
         setIsCorrect(jsonResponse.isCorrect);
-        console.log("run");
         setFeedback(jsonResponse.feedback);
 
         if (jsonResponse.isCorrect) {
-          const npub = localStorage.getItem("local_publicKey");
+          const npub = localStorage.getItem("local_npub");
           incrementUserStep(npub);
           storeCorrectAnswer(step, jsonResponse.feedback);
         }
@@ -853,24 +881,27 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     }
   }, [messages]);
 
+  // Reset state for a new step
   useEffect(() => {
-    console.log("RUN");
     setInputValue("");
     setFeedback("");
     setIsCorrect(null);
     resetMessages();
   }, [step]);
 
-  const handleNextClick = () => {
+  // Navigate to the next step
+  const handleNextClick = async () => {
     if (currentStep === steps.length - 1) {
       navigate("/award");
     } else {
-      handleInputChange(null);
-      publishEvent("I just completed question 2 on https://program-ai.app");
+      await postNostrContent(
+        `I just completed question ${currentStep} on https://program-ai.app\n\n---\n\n${step.question?.questionText}`
+      );
       navigate(`/q/${currentStep + 1}`);
     }
   };
 
+  // Navigate back to the previous step
   const handleBackClick = () => {
     if (currentStep === 1) {
       navigate(`/`);
@@ -879,8 +910,51 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
     }
   };
 
-  console.log("Fdb", feedback);
-  console.log("msg", messages);
+  const {
+    resetMessages: resetEducationalMessages,
+    messages: educationalMessages,
+    submitPrompt: submitEducationalPrompt,
+  } = useChatCompletion({
+    response_format: { type: "json_object" },
+  });
+
+  const [educationalContent, setEducationalContent] = useState([]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // New function for handling the "Learn" button click
+  const handleLearnClick = async () => {
+    onOpen();
+    await submitEducationalPrompt([
+      {
+        content: `Generate educational material about ${JSON.stringify(
+          step
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other tom encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
+          step
+        )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+          userLanguage === "en" ? "english" : "spanish"
+        }`,
+        role: "user",
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    if (educationalMessages?.length > 0) {
+      const lastMessage = educationalMessages[educationalMessages.length - 1];
+      if (!lastMessage.meta.loading) {
+        const jsonResponse = JSON.parse(lastMessage.content);
+        if (Array.isArray(jsonResponse.output)) {
+          setEducationalContent(jsonResponse.output);
+        } else {
+          setEducationalContent([]);
+        }
+      } else {
+        setEducationalContent([]);
+      }
+    }
+  }, [educationalMessages]);
+
   return (
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
@@ -959,6 +1033,24 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
           />
         </Box>
       )}
+      {step.isMultipleChoice && (
+        <MultipleChoiceQuestion
+          question={step.question}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          userLanguage={userLanguage}
+          onLearnClick={handleLearnClick}
+        />
+      )}
+      {step.isSelectOrder && (
+        <SelectOrderQuestion
+          items={items}
+          setItems={setItems}
+          onLearnClick={handleLearnClick}
+          userLanguage={userLanguage}
+          step={step}
+        />
+      )}
       <HStack spacing={4}>
         {step.title === "Welcome to the Program AI App!" ? (
           <Button colorScheme="purple" onMouseDown={handleNextClick}>
@@ -966,7 +1058,7 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
           </Button>
         ) : (
           step.question && (
-            <Button onMouseDown={handleAnswerClick} isLoading={isSending}>
+            <Button onClick={handleAnswerClick} isLoading={isSending}>
               {translation[userLanguage]["app.button.answer"]}
             </Button>
           )
@@ -987,39 +1079,57 @@ const Step = ({ currentStep, userLanguage, setUserLanguage }) => {
           <Text color={isCorrect ? "green.500" : "red.500"}>{feedback}</Text>
         </Box>
       )}
+
+      <EducationalModal
+        isOpen={isOpen}
+        onClose={onClose}
+        educationalMessages={educationalMessages}
+        educationalContent={educationalContent}
+        userLanguage={userLanguage}
+      />
     </VStack>
   );
 };
 
-const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
+const Home = ({
+  isSignedIn,
+  setIsSignedIn,
+  userLanguage,
+  setUserLanguage,
+  generateNostrKeys,
+  auth,
+}) => {
   const [view, setView] = useState("buttons");
   const [userName, setUserName] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [keys, setKeys] = useState(null);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
 
-  const { generateKeys, authenticate, publishEvent } = useNOSTR(
-    localStorage.getItem("local_publicKey"),
-    localStorage.getItem("local_privateKey")
-  );
+  // localStorage.getItem("local_npub"),
+  // localStorage.getItem("local_nsec")
 
   const navigate = useNavigate();
   const toast = useToast();
+  // const { width, height } = useWindow();
 
   const handleCreateAccount = async () => {
-    const newKeys = await generateKeys(userName);
+    setIsCreatingAccount(true);
+    const newKeys = await generateNostrKeys(userName);
     setKeys(newKeys);
+
     localStorage.setItem("displayName", userName);
     setIsSignedIn(true);
-    setView("created");
 
     // Create user in Firestore with language preference
-    await createUser(newKeys.publicKey, userName, userLanguage);
+    await createUser(newKeys.npub, userName, userLanguage);
+    setView("created");
+    setIsCreatingAccount(false);
   };
 
   const handleSignIn = async () => {
-    await authenticate(secretKey);
-    const npub = localStorage.getItem("local_publicKey");
+    await auth(secretKey);
+    const npub = localStorage.getItem("local_npub");
     const userName = localStorage.getItem("displayName");
 
     // Check if user exists in Firestore and create if necessary
@@ -1076,7 +1186,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
     localStorage.setItem("userLanguage", newLanguage);
 
     // Update Firestore
-    const npub = localStorage.getItem("local_publicKey");
+    const npub = localStorage.getItem("local_npub");
     if (npub) {
       const userDoc = doc(database, "users", npub);
       await updateDoc(userDoc, {
@@ -1139,7 +1249,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
               <Button
                 colorScheme="purple"
                 variant={"outline"}
-                onMouseDown={() => setView("signIn")}
+                onClick={() => setView("signIn")}
               >
                 {translation[userLanguage]["landing.button.signIn"]}{" "}
               </Button>
@@ -1209,6 +1319,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
 
       {view === "createAccount" && (
         <VStack spacing={4}>
+          <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div>
           <Text fontSize="sm">
             {" "}
             {translation[userLanguage]["createAccount.instructions"]}{" "}
@@ -1252,7 +1363,7 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
               {translation[userLanguage]["button.back"]}
             </Button>
             <Button
-              onMouseDown={handleSignIn}
+              onClick={handleSignIn}
               colorScheme="purple"
               variant={"outline"}
             >
@@ -1263,6 +1374,11 @@ const Home = ({ isSignedIn, setIsSignedIn, userLanguage, setUserLanguage }) => {
       )}
       {view === "created" && keys && (
         <VStack spacing={4}>
+          <Confetti
+            numberOfPieces={300}
+            recycle={false}
+            colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
+          />
           <Text width="95%" maxWidth="720px">
             {translation[userLanguage]["createAccount.successMessage"]} <br />
             <Text fontSize="sm">
@@ -1342,10 +1458,16 @@ function App() {
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
   const navigate = useNavigate();
 
+  const { generateNostrKeys, auth, postNostrContent } = useSharedNostr(
+    localStorage.getItem("local_npub"),
+    localStorage.getItem("local_nsec")
+  );
+
   useEffect(() => {
     const initializeApp = async () => {
-      const npub = localStorage.getItem("local_publicKey");
+      const npub = localStorage.getItem("local_npub");
       if (npub && window.location.pathname !== "/dashboard") {
+        auth(localStorage.getItem("local_nsec"));
         setIsSignedIn(true);
         const step = await getUserStep(npub); // Fetch the current step
         setCurrentStep(step);
@@ -1355,8 +1477,8 @@ function App() {
         const userSnapshot = await getDoc(userDoc);
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
-          setUserLanguage(userData.language || "en"); // Set user language preference
-          localStorage.setItem("userLanguage", userData.language);
+          setUserLanguage(userData.userLanguage || "en"); // Set user language preference
+          localStorage.setItem("userLanguage", userData.userLanguage);
         }
 
         navigate(`/q/${step}`);
@@ -1374,7 +1496,21 @@ function App() {
   }, [navigate]);
 
   if (loading) {
-    return <Spinner />; // Show a loading spinner while initializing
+    return (
+      <Box
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          height: "100vh",
+          alignItems: "center",
+        }}
+        textAlign="center"
+        fontSize="xl"
+        p={4}
+      >
+        <SunsetCanvas />
+      </Box>
+    );
   }
 
   return (
@@ -1399,6 +1535,8 @@ function App() {
               setIsSignedIn={setIsSignedIn}
               userLanguage={userLanguage}
               setUserLanguage={setUserLanguage}
+              generateNostrKeys={generateNostrKeys}
+              auth={auth}
             />
           }
         />
@@ -1412,6 +1550,7 @@ function App() {
                   currentStep={index}
                   userLanguage={userLanguage}
                   setUserLanguage={setUserLanguage}
+                  postNostrContent={postNostrContent}
                 />
               </PrivateRoute>
             }

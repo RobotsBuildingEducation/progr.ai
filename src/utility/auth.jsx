@@ -1,3 +1,3 @@
 export const isLoggedIn = () => {
-  return !!localStorage.getItem("local_publicKey");
+  return !!localStorage.getItem("local_npub");
 };
