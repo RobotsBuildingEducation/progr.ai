@@ -148,7 +148,7 @@ export const Dashboard = () => {
             />
             <Button
               colorScheme="red"
-              onClick={() => deleteToken(token.id)}
+              onMouseDown={() => deleteToken(token.id)}
               mt={3}
             >
               Delete Token

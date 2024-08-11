@@ -57,7 +57,7 @@ const SelectOrderQuestion = ({
 
   return (
     <VStack spacing={4}>
-      <Button onClick={onLearnClick} colorScheme="purple">
+      <Button onMouseDown={onLearnClick} colorScheme="purple">
         {translation[userLanguage]["app.button.learn"]}
       </Button>
       {/* <Text>Order the items correctly:</Text> */}
@@ -77,7 +77,7 @@ const SelectOrderQuestion = ({
                         marginBottom: "8px",
                         padding: "16px",
                         border: `${borderSwitches[index] ? "3" : "1"}px solid ${
-                          borderSwitches[index] ? "green" : "gray"
+                          borderSwitches[index] ? "#5ad5ac" : "gray"
                         }`,
                         borderRadius: "4px",
                         backgroundColor: "white",

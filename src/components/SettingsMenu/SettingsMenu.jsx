@@ -135,7 +135,7 @@ const SettingsMenu = ({
         <DrawerContent>
           <DrawerCloseButton />
           <DrawerHeader>
-            {translation[userLanguage]["settings.title"]}
+            {translation?.[userLanguage]?.["settings.title"]}
           </DrawerHeader>
           <DrawerBody>
             <VStack>
@@ -221,6 +221,17 @@ const SettingsMenu = ({
                 variant={"outline"}
               >
                 {translation[userLanguage]["settings.button.patreon"]}
+              </Button>
+              <Button
+                style={{ width: "100%" }}
+                onMouseDown={() => {
+                  onClose();
+                  navigate("/about");
+                }}
+                p={6}
+                variant={"transparent"}
+              >
+                {translation[userLanguage]["button.about"]}
               </Button>
               <Button
                 style={{ width: "100%" }}

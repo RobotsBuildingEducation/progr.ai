@@ -9,26 +9,18 @@ export const steps = {
       title: "Understanding the Goal of Coding",
       description:
         "In this step, you will learn about the primary goal of coding or programming.",
-      isText: true,
-      question: {
-        questionText: "What is the primary goal of coding or programming?",
-      },
-    },
-    {
-      title: "Understanding Logic in Programming",
-      description:
-        "In this step, you will learn about logic in the context of programming.",
       isMultipleChoice: true,
       question: {
         questionText:
-          "Which of the following best describes logic in programming?",
+          "Which of the following best describes the primary goal of coding or programming?",
         options: [
-          "A system of principles of reasoning",
-          "A method of setting up a program's goals",
-          "A type of programming language",
-          "A database management system",
+          "To solve problems by creating efficient and effective solutions",
+          "To learn different programming languages",
+          "To write as much code as possible",
+          "To memorize syntax and functions",
         ],
-        answer: "A system of principles of reasoning",
+        answer:
+          "To solve problems by creating efficient and effective solutions",
       },
     },
     {
@@ -40,8 +32,8 @@ export const steps = {
         questionText:
           "Arrange the following steps to correctly declare a variable in JavaScript:",
         options: [
-          "Choose a variable name",
           "Use the var/let/const keyword",
+          "Choose a variable name",
           "Assign a value to the variable",
           "End the line with a semicolon",
         ],
@@ -60,7 +52,18 @@ export const steps = {
       isCode: true,
       isTerminal: false,
       question: {
-        questionText: "How do you declare a variable in JavaScript?",
+        questionText:
+          "Write a JavaScript code snippet that declares a variable called `age` and assigns it the value `25`.",
+      },
+    },
+    {
+      title: "Understanding Logic in Programming",
+      description:
+        "In this step, you will learn about logic in the context of programming.",
+      isText: true,
+      question: {
+        questionText:
+          "Explain in your own words how logic is applied in programming to control the flow of a program.",
       },
     },
     {
@@ -1437,27 +1440,18 @@ export const steps = {
     {
       title: "Entendiendo el Objetivo de la Programación",
       description:
-        "En este paso, aprenderás sobre el objetivo principal de la programación.",
-      isText: true,
-      question: {
-        questionText: "¿Cuál es el objetivo principal de la programación?",
-      },
-    },
-    {
-      title: "Entendiendo la Lógica en la Programación",
-      description:
-        "En este paso, aprenderás sobre la lógica en el contexto de la programación.",
+        "En este paso, aprenderás sobre el objetivo principal de la codificación o programación.",
       isMultipleChoice: true,
       question: {
         questionText:
-          "¿Cuál de las siguientes opciones describe mejor la lógica en programación?",
+          "¿Cuál de las siguientes opciones describe mejor el objetivo principal de la codificación o programación?",
         options: [
-          "Un sistema de principios de razonamiento",
-          "Un método para establecer los objetivos de un programa",
-          "Un tipo de lenguaje de programación",
-          "Un sistema de gestión de bases de datos",
+          "Resolver problemas creando soluciones eficientes y efectivas",
+          "Aprender diferentes lenguajes de programación",
+          "Escribir la mayor cantidad de código posible",
+          "Memorizar sintaxis y funciones",
         ],
-        answer: "Un sistema de principios de razonamiento",
+        answer: "Resolver problemas creando soluciones eficientes y efectivas",
       },
     },
     {
@@ -1467,10 +1461,10 @@ export const steps = {
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los siguientes pasos para declarar correctamente una variable en JavaScript:",
+          "Ordena los siguientes pasos para declarar correctamente una variable en JavaScript:",
         options: [
-          "Elige un nombre de variable",
           "Usa la palabra clave var/let/const",
+          "Elige un nombre de variable",
           "Asigna un valor a la variable",
           "Termina la línea con un punto y coma",
         ],
@@ -1489,7 +1483,18 @@ export const steps = {
       isCode: true,
       isTerminal: false,
       question: {
-        questionText: "¿Cómo declaras una variable en JavaScript?",
+        questionText:
+          "Escribe un fragmento de código en JavaScript que declare una variable llamada `edad` y le asigne el valor `25`.",
+      },
+    },
+    {
+      title: "Entendiendo la Lógica en la Programación",
+      description:
+        "En este paso, aprenderás sobre la lógica en el contexto de la programación.",
+      isText: true,
+      question: {
+        questionText:
+          "Explica con tus propias palabras cómo se aplica la lógica en la programación para controlar el flujo de un programa.",
       },
     },
     {

@@ -93,11 +93,11 @@ const FeedbackModal = ({ isOpen, onClose, userLanguage }) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onMouseDown={onClose}>
             {translation[userLanguage]["modal.feedback.cancelButton"]}
           </Button>
           &nbsp; &nbsp;
-          <Button mr={3} onClick={handleSubmit}>
+          <Button mr={3} onMouseDown={handleSubmit}>
             {translation[userLanguage]["modal.feedback.submitButton"]}
           </Button>
         </ModalFooter>

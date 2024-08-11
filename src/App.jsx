@@ -36,6 +36,7 @@ import {
   Routes,
   useNavigate,
   useParams,
+  useLocation,
 } from "react-router-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
@@ -65,6 +66,7 @@ import MultipleChoiceQuestion from "./components/MultipleChoice/MultipleChoice";
 import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 
 import Confetti from "react-confetti";
+import { About } from "./About";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -124,6 +126,7 @@ const VoiceInput = ({
   resetFeedbackMessages,
   step,
   userLanguage,
+  currentStep,
 }) => {
   const {
     transcript,
@@ -139,6 +142,7 @@ const VoiceInput = ({
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
   });
+  const [isWarningNotDismissed, setIsWarningNotDismissed] = useState(true);
 
   // New variables for educational material
   const {
@@ -352,6 +356,60 @@ const VoiceInput = ({
             {translation[userLanguage]["app.button.learn"]}
           </Button>
         </HStack>
+      ) : null}
+      {isWarningNotDismissed && isUnsupportedBrowser() && currentStep === 3 ? (
+        <>
+          <br />
+          <VStack
+            p={4}
+            pt={8}
+            style={{
+              backgroundColor: "rgba(207,124,208, 1)",
+              color: "white",
+              borderRadius: "64px",
+            }}
+          >
+            <Button onMouseDown={() => setIsWarningNotDismissed(false)}>
+              {translation[userLanguage]["button.dismiss"]}
+            </Button>
+            <Heading size="lg">
+              {translation[userLanguage]["badBrowser.header"]}{" "}
+            </Heading>
+            <Text p={8} pt={0} textAlign={"left"}>
+              {translation[userLanguage]["badBrowser.bodyOne"]}&nbsp;
+              {isUnsupportedBrowser()}{" "}
+              {translation[userLanguage]["badBrowser.bodyTwo"]}{" "}
+              <b>{translation[userLanguage]["badBrowser.bodyThree"]}</b>
+            </Text>{" "}
+            <OrderedList p={8} pt={0} textAlign={"left"}>
+              <ListItem>
+                <span style={{ display: "flex" }}>
+                  <IconButton mr={"2"} isDisabled icon={<IoIosMore />} />
+                  {translation[userLanguage]["badBrowser.stepOne"]}
+                  &nbsp;
+                </span>
+              </ListItem>
+              <br />
+              <ListItem>
+                <span style={{ display: "flex" }}>
+                  <IconButton mr={"2"} isDisabled icon={<IoShareOutline />} />
+                  {translation[userLanguage]["badBrowser.stepTwo"]}
+                  &nbsp;
+                </span>
+              </ListItem>
+              <br />
+              <ListItem>
+                <span style={{ display: "flex" }}>
+                  <IconButton mr={"2"} isDisabled icon={<PlusSquareIcon />} />
+                  {translation[userLanguage]["badBrowser.stepThree"]} &nbsp;
+                </span>
+              </ListItem>
+            </OrderedList>
+            <Text p={8} pt={0} textAlign={"left"}>
+              {translation[userLanguage]["badBrowser.footer"]}{" "}
+            </Text>
+          </VStack>
+        </>
       ) : null}
 
       {isListening && (
@@ -735,6 +793,8 @@ const Step = ({
   const navigate = useNavigate();
   const step = steps[userLanguage][currentStep];
 
+  const [isPostingWithNostr, setIsPostingWithNostr] = useState(false);
+
   // Fetch user data and manage streaks and timers
   useEffect(() => {
     const fetchUserData = async () => {
@@ -894,9 +954,11 @@ const Step = ({
     if (currentStep === steps.length - 1) {
       navigate("/award");
     } else {
+      setIsPostingWithNostr(true);
       await postNostrContent(
-        `I just completed question ${currentStep} on https://program-ai.app\n\n---\n\n${step.question?.questionText}`
+        `I just completed question ${currentStep} on  \n\n---\n\n${step.question?.questionText}`
       );
+      setIsPostingWithNostr(false);
       navigate(`/q/${currentStep + 1}`);
     }
   };
@@ -1007,6 +1069,7 @@ const Step = ({
           resetFeedbackMessages={resetMessages}
           step={step}
           userLanguage={userLanguage}
+          currentStep={currentStep}
         />
       )}
       {step.isCode && step.isTerminal && (
@@ -1051,31 +1114,46 @@ const Step = ({
           step={step}
         />
       )}
-      <HStack spacing={4}>
-        {step.title === "Welcome to the Program AI App!" ? (
-          <Button colorScheme="purple" onMouseDown={handleNextClick}>
-            Let's start
-          </Button>
-        ) : (
-          step.question && (
-            <Button onClick={handleAnswerClick} isLoading={isSending}>
-              {translation[userLanguage]["app.button.answer"]}
-            </Button>
-          )
-        )}
-        {isCorrect && (
-          <Button variant={"outline"} onMouseDown={handleNextClick}>
-            {translation[userLanguage]["app.button.nextQuestion"]}{" "}
-          </Button>
-        )}
-      </HStack>
+      {isPostingWithNostr ? (
+        <SunsetCanvas />
+      ) : (
+        <HStack spacing={4}>
+          {step.title === "Welcome to the Program AI App!" ? (
+            <>
+              <Button colorScheme="purple" onMouseDown={handleNextClick}>
+                Let's start
+              </Button>
+              {isPostingWithNostr ? <SunsetCanvas /> : null}
+            </>
+          ) : (
+            step.question && (
+              <Button
+                fontSize="sm"
+                onMouseDown={handleAnswerClick}
+                isLoading={isSending}
+              >
+                {translation[userLanguage]["app.button.answer"]}
+              </Button>
+            )
+          )}
+
+          {isCorrect && (
+            <>
+              <Button variant={"outline"} onMouseDown={handleNextClick}>
+                {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+              </Button>
+            </>
+          )}
+        </HStack>
+      )}
+
       {messages.length > 0 && !feedback && (
-        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="640px">
+        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="600px">
           <Text>{messages[messages.length - 1]?.content}</Text>
         </Box>
       )}
       {feedback && (
-        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="640px">
+        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="600px">
           <Text color={isCorrect ? "green.500" : "red.500"}>{feedback}</Text>
         </Box>
       )}
@@ -1105,7 +1183,7 @@ const Home = ({
   const [keys, setKeys] = useState(null);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-
+  const [isSigningIn, setIsSigningIn] = useState(false);
   // localStorage.getItem("local_npub"),
   // localStorage.getItem("local_nsec")
 
@@ -1121,13 +1199,25 @@ const Home = ({
     localStorage.setItem("displayName", userName);
     setIsSignedIn(true);
 
+    const defaultInterval = 2880;
+    const currentTime = new Date();
+    const endTime = new Date(currentTime.getTime() + defaultInterval * 60000);
+
     // Create user in Firestore with language preference
     await createUser(newKeys.npub, userName, userLanguage);
+    await updateUserData(
+      newKeys.npub,
+      defaultInterval, // Set the default interval for the streak
+      0, // Initial streak count is 0
+      currentTime, // Start time
+      endTime // End time, 48 hours from start time
+    );
     setView("created");
     setIsCreatingAccount(false);
   };
 
   const handleSignIn = async () => {
+    setIsSigningIn(true);
     await auth(secretKey);
     const npub = localStorage.getItem("local_npub");
     const userName = localStorage.getItem("displayName");
@@ -1140,7 +1230,9 @@ const Home = ({
     }
 
     const currentStep = await getUserStep(npub); // Retrieve the current step
+    setIsSigningIn(false);
     setIsSignedIn(true);
+
     navigate(`/q/${currentStep}`); // Navigate to the user's current step
   };
 
@@ -1155,7 +1247,7 @@ const Home = ({
   };
 
   const handleCopyKeys = () => {
-    const keysToCopy = `${keys.privateKey}`;
+    const keysToCopy = `${localStorage.getItem("local_nsec")}`;
     navigator.clipboard.writeText(keysToCopy);
     toast({
       title: translation[userLanguage]["toast.title.keysCopied"],
@@ -1210,16 +1302,59 @@ const Home = ({
       {view === "buttons" && (
         <>
           <VStack spacing={4}>
-            <VStack spacing={4} width="95%" maxWidth="720px">
+            <VStack spacing={4} width="95%" maxWidth="600px" mb={4}>
               <HStack spacing={2} alignItems="center">
-                <SunsetCanvas />
+                <SunsetCanvas />{" "}
+                {isCreatingAccount ? (
+                  <Text>
+                    {translation[userLanguage]["createAccount.isLoading"]}
+                  </Text>
+                ) : null}
               </HStack>
-              <Text fontSize="2xl">
+
+              <Text fontSize="3xl">
                 {translation[userLanguage]["landing.welcome"]}
               </Text>
-              <Text fontSize="sm">
+              <Text fontSize="medium">
                 {translation[userLanguage]["landing.introduction"]}
               </Text>
+            </VStack>
+
+            {/* 
+            <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div> */}
+            <Text fontSize="sm" maxWidth={"600px"}>
+              {" "}
+              {translation[userLanguage]["createAccount.instructions"]}{" "}
+            </Text>
+            <Input
+              style={{ maxWidth: 300 }}
+              placeholder={
+                translation[userLanguage]["createAccount.input.placeholder"]
+              }
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            <VStack>
+              <Button
+                onMouseDown={handleCreateAccount}
+                colorScheme="purple"
+                variant={"outline"}
+                isDisabled={userName.length < 1}
+                style={{ width: "150px" }}
+              >
+                {translation[userLanguage]["landing.button.createAccount"]}
+              </Button>
+              {/* <div>{translation[userLanguage]["or"]}</div> */}
+              <Button
+                colorScheme="purple"
+                variant={"outline"}
+                onMouseDown={() => setView("signIn")}
+                style={{ width: "150px" }}
+              >
+                {translation[userLanguage]["landing.button.signIn"]}{" "}
+              </Button>
+              <br />
+              <br />
               <FormControl
                 display="flex"
                 alignItems="center"
@@ -1236,119 +1371,23 @@ const Home = ({
                   onChange={handleToggle}
                 />
               </FormControl>
-            </VStack>
 
-            <HStack>
               <Button
-                colorScheme="purple"
-                variant={"outline"}
-                onMouseDown={() => setView("createAccount")}
+                variant="ghost"
+                onMouseDown={() => navigate("/about")}
+                textDecoration={"underline"}
               >
-                {translation[userLanguage]["landing.button.createAccount"]}
+                {translation[userLanguage]["button.about"]}
               </Button>
-              <Button
-                colorScheme="purple"
-                variant={"outline"}
-                onClick={() => setView("signIn")}
-              >
-                {translation[userLanguage]["landing.button.signIn"]}{" "}
-              </Button>
-            </HStack>
+            </VStack>
           </VStack>
-          {isUnsupportedBrowser() ? (
-            <>
-              <br />
-              <VStack
-                p={4}
-                pt={8}
-                style={{
-                  backgroundColor: "rgba(207,124,208, 1)",
-                  color: "white",
-                  borderRadius: "64px",
-                }}
-              >
-                <Heading size="lg">
-                  {translation[userLanguage]["badBrowser.header"]}{" "}
-                </Heading>
-                <Text p={8} pt={0} textAlign={"left"}>
-                  {translation[userLanguage]["badBrowser.bodyOne"]}&nbsp;
-                  {isUnsupportedBrowser()}{" "}
-                  {translation[userLanguage]["badBrowser.bodyTwo"]}{" "}
-                  <b>{translation[userLanguage]["badBrowser.bodyThree"]}</b>
-                </Text>{" "}
-                <OrderedList p={8} pt={0} textAlign={"left"}>
-                  <ListItem>
-                    <span style={{ display: "flex" }}>
-                      <IconButton mr={"2"} isDisabled icon={<IoIosMore />} />
-                      {translation[userLanguage]["badBrowser.stepOne"]}
-                      &nbsp;
-                    </span>
-                  </ListItem>
-                  <br />
-                  <ListItem>
-                    <span style={{ display: "flex" }}>
-                      <IconButton
-                        mr={"2"}
-                        isDisabled
-                        icon={<IoShareOutline />}
-                      />
-                      {translation[userLanguage]["badBrowser.stepTwo"]}
-                      &nbsp;
-                    </span>
-                  </ListItem>
-                  <br />
-                  <ListItem>
-                    <span style={{ display: "flex" }}>
-                      <IconButton
-                        mr={"2"}
-                        isDisabled
-                        icon={<PlusSquareIcon />}
-                      />
-                      {translation[userLanguage]["badBrowser.stepThree"]} &nbsp;
-                    </span>
-                  </ListItem>
-                </OrderedList>
-                <Text p={8} pt={0} textAlign={"left"}>
-                  {translation[userLanguage]["badBrowser.footer"]}{" "}
-                </Text>
-              </VStack>
-            </>
-          ) : null}
         </>
       )}
 
-      {view === "createAccount" && (
-        <VStack spacing={4}>
-          <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div>
-          <Text fontSize="sm">
-            {" "}
-            {translation[userLanguage]["createAccount.instructions"]}{" "}
-          </Text>
-          <Input
-            style={{ maxWidth: 300 }}
-            placeholder={
-              translation[userLanguage]["createAccount.input.placeholder"]
-            }
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-          />
-          <HStack>
-            <Button variant="outline" onMouseDown={() => setView("buttons")}>
-              {" "}
-              {translation[userLanguage]["button.back"]}
-            </Button>
-            <Button
-              onMouseDown={handleCreateAccount}
-              colorScheme="purple"
-              variant={"outline"}
-            >
-              {translation[userLanguage]["button.create"]}
-            </Button>
-          </HStack>
-        </VStack>
-      )}
       {view === "signIn" && (
         <VStack spacing={4}>
+          <div>{isSigningIn ? <SunsetCanvas /> : null}</div>
+
           <Text fontSize="sm">
             {translation[userLanguage]["signIn.instructions"]}
           </Text>
@@ -1363,7 +1402,7 @@ const Home = ({
               {translation[userLanguage]["button.back"]}
             </Button>
             <Button
-              onClick={handleSignIn}
+              onMouseDown={handleSignIn}
               colorScheme="purple"
               variant={"outline"}
             >
@@ -1379,9 +1418,11 @@ const Home = ({
             recycle={false}
             colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
           />
-          <Text width="95%" maxWidth="720px">
-            {translation[userLanguage]["createAccount.successMessage"]} <br />
-            <Text fontSize="sm">
+          <Text maxWidth="600px">
+            <Text>
+              {translation[userLanguage]["createAccount.successMessage"]}
+            </Text>{" "}
+            <Text fontSize="sm" maxWidth={"300px"}>
               {translation[userLanguage]["createAccount.awareness"]}
               {isCheckboxChecked ? (
                 <Link
@@ -1429,10 +1470,7 @@ const Home = ({
             </Checkbox>
           </HStack>
           <HStack>
-            <Button
-              variant="outline"
-              onMouseDown={() => setView("createAccount")}
-            >
+            <Button variant="outline" onMouseDown={() => setView("buttons")}>
               {" "}
               {translation[userLanguage]["button.back"]}
             </Button>
@@ -1457,6 +1495,8 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
   const navigate = useNavigate();
+  const location = useLocation();
+  console.log("location", location);
 
   const { generateNostrKeys, auth, postNostrContent } = useSharedNostr(
     localStorage.getItem("local_npub"),
@@ -1481,7 +1521,10 @@ function App() {
           localStorage.setItem("userLanguage", userData.userLanguage);
         }
 
-        navigate(`/q/${step}`);
+        if (location.pathname === "/about") {
+        } else {
+          navigate(`/q/${step}`);
+        }
       }
 
       if (localStorage.getItem("userLanguage")) {
@@ -1540,24 +1583,26 @@ function App() {
             />
           }
         />
-        {steps?.[userLanguage]?.map((_, index) => (
-          <Route
-            key={index}
-            path={`/q/${index}`}
-            element={
-              <PrivateRoute>
-                <Step
-                  currentStep={index}
-                  userLanguage={userLanguage}
-                  setUserLanguage={setUserLanguage}
-                  postNostrContent={postNostrContent}
-                />
-              </PrivateRoute>
-            }
-          />
-        ))}
+        {location.pathname !== "/about" &&
+          steps?.[userLanguage]?.map((_, index) => (
+            <Route
+              key={index}
+              path={`/q/${index}`}
+              element={
+                <PrivateRoute>
+                  <Step
+                    currentStep={index}
+                    userLanguage={userLanguage}
+                    setUserLanguage={setUserLanguage}
+                    postNostrContent={postNostrContent}
+                  />
+                </PrivateRoute>
+              }
+            />
+          ))}
         <Route path="/award" element={<AwardScreen />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/about" element={<About userLanguage={userLanguage} />} />
       </Routes>
     </Box>
   );
