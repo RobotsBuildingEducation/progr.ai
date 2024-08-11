@@ -7,6 +7,9 @@ import {
   Box,
   Text,
   Button,
+  FormControl,
+  FormLabel,
+  Switch,
 } from "@chakra-ui/react";
 import { translation } from "./utility/translation";
 import { useNavigate } from "react-router-dom";
@@ -15,13 +18,32 @@ const Content = ({ children }) => {
   return <Text fontSize="sm">{children}</Text>;
 };
 
-export const About = ({ userLanguage }) => {
+export const About = ({ userLanguage, handleToggle }) => {
   let navigate = useNavigate();
+
   return (
     <Box p={4}>
-      <Button onMouseDown={() => navigate(-1)}>
+      <Button onMouseDown={() => navigate(-1)} m={6}>
         {translation[userLanguage]["button.back"] || "Go back"}
       </Button>
+
+      <FormControl
+        display="flex"
+        alignItems="center"
+        style={{ justifyContent: "center" }}
+        m={2}
+      >
+        <FormLabel htmlFor="language-toggle" mb="0">
+          {userLanguage === "en" ? "English" : "Español"}
+        </FormLabel>
+
+        <Switch
+          colorScheme="purple"
+          id="language-toggle"
+          isChecked={userLanguage === "es"}
+          onChange={handleToggle}
+        />
+      </FormControl>
       <br />
       <br />
       <Accordion allowToggle>

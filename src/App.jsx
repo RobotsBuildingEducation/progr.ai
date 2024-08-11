@@ -207,6 +207,18 @@ const VoiceInput = ({
     alert("Your browser doesn't support speech recognition.");
     return <span>Your browser doesn't support speech recognition.</span>;
   }
+  const handleCopyKeys = () => {
+    const keysToCopy = `${localStorage.getItem("local_nsec")}`;
+    navigator.clipboard.writeText(keysToCopy);
+    toast({
+      title: translation[userLanguage]["toast.title.keysCopied"],
+      description: translation[userLanguage]["toast.description.keysCopied"],
+      status: "success",
+      duration: 1500,
+      isClosable: true,
+      position: "top",
+    });
+  };
 
   const handleVoiceStart = () => {
     resetFeedbackMessages();
@@ -371,6 +383,9 @@ const VoiceInput = ({
           >
             <Button onMouseDown={() => setIsWarningNotDismissed(false)}>
               {translation[userLanguage]["button.dismiss"]}
+            </Button>
+            <Button onMouseDown={handleCopyKeys}>
+              🔑 {translation[userLanguage]["button.copyKey"]}
             </Button>
             <Heading size="lg">
               {translation[userLanguage]["badBrowser.header"]}{" "}
@@ -1503,6 +1518,23 @@ function App() {
     localStorage.getItem("local_nsec")
   );
 
+  const handleToggle = async () => {
+    const newLanguage = userLanguage === "en" ? "es" : "en";
+    setUserLanguage(newLanguage);
+
+    // Update local storage
+    localStorage.setItem("userLanguage", newLanguage);
+
+    // Update Firestore
+    const npub = localStorage.getItem("local_npub");
+    if (npub) {
+      const userDoc = doc(database, "users", npub);
+      await updateDoc(userDoc, {
+        language: newLanguage,
+      });
+    }
+  };
+
   useEffect(() => {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
@@ -1602,7 +1634,12 @@ function App() {
           ))}
         <Route path="/award" element={<AwardScreen />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/about" element={<About userLanguage={userLanguage} />} />
+        <Route
+          path="/about"
+          element={
+            <About userLanguage={userLanguage} handleToggle={handleToggle} />
+          }
+        />
       </Routes>
     </Box>
   );
