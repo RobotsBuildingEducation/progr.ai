@@ -330,8 +330,8 @@ export let translation = {
     ),
     "about.feature.conversationQuiz": (
       <div>
-        <DataTags isRox />A quiz feature where your conversation with AI can be
-        graded.
+        <DataTags isRox isProgramAI />A quiz feature where your conversation
+        with AI can be graded.
       </div>
     ),
     "about.feature.schedulingAssistant": (
@@ -387,6 +387,8 @@ export let translation = {
         investment for supporting the platform.
       </div>
     ),
+    "button.addToConversation": "Add To Conversation",
+    "button.subjectsCovered": "Subjects Covered",
   },
   es: {
     "toast.title.keysCopied": "Claves copiadas.",
@@ -715,7 +717,7 @@ export let translation = {
     ),
     "about.feature.conversationQuiz": (
       <div>
-        <DataTags isRox />
+        <DataTags isRox isProgramAI />
         Una función de cuestionario donde tu conversación con la IA puede ser
         calificada.
       </div>
@@ -775,5 +777,7 @@ export let translation = {
         significativo de la inversión para apoyar la plataforma.
       </div>
     ),
+    "button.addToConversation": "Agregar a la conversación",
+    "button.subjectsCovered": "Temas cubiertos",
   },
 };

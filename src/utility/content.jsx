@@ -5,6 +5,7 @@ export const steps = {
       description:
         "Press 'Let's start' to begin your journey in learning how to code.",
     },
+
     {
       title: "Understanding the Goal of Coding",
       description:
@@ -67,6 +68,15 @@ export const steps = {
       },
     },
     {
+      title: "Review With AI Conversation",
+      isConversationReview: true,
+      description: "Review the subjects you've answered",
+      question: {
+        questionText: "Let's chat about the questions we've worked on so far.",
+        range: [1, 4], // Indices of steps to review
+      },
+    },
+    {
       title: "Introduction to Objects",
       description:
         "In this step, you will learn what an object is in programming.",
@@ -75,6 +85,7 @@ export const steps = {
         questionText: "What is an object in programming?",
       },
     },
+
     {
       title: "Creating a Simple Class",
       description:
@@ -1495,6 +1506,16 @@ export const steps = {
       question: {
         questionText:
           "Explica con tus propias palabras cómo se aplica la lógica en la programación para controlar el flujo de un programa.",
+      },
+    },
+    {
+      title: "Revisión con Conversación AI",
+      isConversationReview: true,
+      description: "Revisa los temas que has respondido",
+      question: {
+        questionText:
+          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
+        range: [1, 4], // Índices de los pasos a revisar
       },
     },
     {

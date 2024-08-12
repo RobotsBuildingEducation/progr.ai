@@ -67,6 +67,7 @@ import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 
 import Confetti from "react-confetti";
 import { About } from "./About";
+import ConversationReview from "./components/ConversationReview/ConversationReview";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -113,7 +114,7 @@ const AwardScreen = () => {
   );
 };
 
-const VoiceInput = ({
+export const VoiceInput = ({
   value,
   onChange,
   isCodeEditor,
@@ -127,6 +128,7 @@ const VoiceInput = ({
   step,
   userLanguage,
   currentStep,
+  steps = [],
 }) => {
   const {
     transcript,
@@ -315,18 +317,41 @@ const VoiceInput = ({
   // New function for handling the "Learn" button click
   const handleLearnClick = async () => {
     onOpen();
-    await submitEducationalPrompt([
-      {
-        content: `Generate educational material about ${JSON.stringify(
-          step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other tom encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
-          step
-        )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
-          userLanguage === "en" ? "english" : "spanish"
-        }`,
-        role: "user",
-      },
-    ]);
+
+    if (!step?.isConversationReview) {
+      await submitEducationalPrompt([
+        {
+          content: `Generate educational material about ${JSON.stringify(
+            step
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
+            step
+          )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+            userLanguage === "en" ? "english" : "spanish"
+          }`,
+          role: "user",
+        },
+      ]);
+    } else {
+      const relevantSteps = steps[userLanguage].slice(
+        step.question.range[0],
+        step.question.range[1] + 1
+      );
+
+      console.log("relevant steps", relevantSteps);
+
+      await submitEducationalPrompt([
+        {
+          content: `Generate educational material about ${JSON.stringify(
+            relevantSteps
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
+            step
+          )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+            userLanguage === "en" ? "english" : "spanish"
+          }`,
+          role: "user",
+        },
+      ]);
+    }
   };
 
   useEffect(() => {
@@ -353,6 +378,7 @@ const VoiceInput = ({
             onMouseDown={handleVoiceStart}
             colorScheme="purple"
             variant={"outline"}
+            isDisabled={isUnsupportedBrowser()}
           >
             {translation[userLanguage]["app.button.voiceToText"]}
           </Button>
@@ -360,6 +386,7 @@ const VoiceInput = ({
             onMouseDown={handleAiStart}
             colorScheme="purple"
             variant={"outline"}
+            isDisabled={isUnsupportedBrowser()}
           >
             {" "}
             {translation[userLanguage]["app.button.voiceToAI"]}
@@ -810,6 +837,8 @@ const Step = ({
 
   const [isPostingWithNostr, setIsPostingWithNostr] = useState(false);
 
+  const [finalConversation, setFinalConversation] = useState([]);
+
   // Fetch user data and manage streaks and timers
   useEffect(() => {
     const fetchUserData = async () => {
@@ -873,11 +902,29 @@ const Step = ({
       answer = selectedOption;
     } else if (step.isSelectOrder) {
       answer = items;
+    } else if (step.isConversationReview) {
+      answer = finalConversation;
     }
 
     console.log("answer", answer);
 
-    if (step.isMultipleChoice || step.isSelectOrder) {
+    if (step.isConversationReview) {
+      const relevantSteps = steps[userLanguage].slice(
+        step.question.range[0],
+        step.question.range[1] + 1
+      );
+
+      console.log("relevant steps", relevantSteps);
+      console.log("finalConversation", finalConversation);
+      await submitPrompt([
+        {
+          content: `The user is having a conversation and reviewing the following subjects"${relevantSteps}". The user provided the following conversation "${answer}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not mention the previous details. Your feedback will include a grade out of 100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade. For example, if users input nothing meaningful, give them a 0. Be tough and fair and don't worry about being nice. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    } else if (step.isMultipleChoice || step.isSelectOrder) {
       await submitPrompt([
         {
           content: `The user is answering the following question "${
@@ -1006,7 +1053,7 @@ const Step = ({
       {
         content: `Generate educational material about ${JSON.stringify(
           step
-        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other tom encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
+        )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
           step
         )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
           userLanguage === "en" ? "english" : "spanish"
@@ -1127,6 +1174,17 @@ const Step = ({
           onLearnClick={handleLearnClick}
           userLanguage={userLanguage}
           step={step}
+        />
+      )}
+      {step.isConversationReview && (
+        <ConversationReview
+          question={step.question}
+          userLanguage={userLanguage}
+          steps={steps}
+          step={step}
+          onSubmit={handleAnswerClick} // Or any other relevant logic
+          setFinalConversation={setFinalConversation}
+          finalConversation={finalConversation}
         />
       )}
       {isPostingWithNostr ? (

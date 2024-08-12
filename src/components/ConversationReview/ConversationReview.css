@@ -1,0 +1,4 @@
+.markdown-container pre {
+  white-space: pre-wrap; /* Wraps the code block */
+  word-wrap: unset; /* Break long words to fit within the container */
+}
