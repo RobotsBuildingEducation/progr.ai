@@ -9,6 +9,10 @@ The most notable file is App.jsx, since it's maintained by AI.
   ignore.
   ignorar.
 
+  - `/dev-dist`
+    Files to set up downloadable web app.
+    Archivos para configurar la aplicación web descargable.
+
 - `/src`
   Component files and folders.
   Archivos y carpetas de componentes.
