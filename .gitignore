@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dev-dist
 dist-ssr
 *.local
 DATA
@@ -27,3 +28,4 @@ DATA
 *.env
 # Sentry Config File
 .env.sentry-build-plugin
+
