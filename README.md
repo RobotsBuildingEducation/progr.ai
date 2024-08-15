@@ -1,7 +1,41 @@
-Welcome to the Program AI App Codebase.
+The codebase in english/spanish.
+The most notable file is App.jsx, since it's maintained by AI.
 
-This is what relevant files do. Below are caveats or extra considerations.
-The most notable file is App.jsx, because it's written and maintained by AI.
+- `/progr.ai`
+  Configuration files and folders to set up the app.
+  Archivos y carpetas de configuración para configurar la aplicación.
 
-- vite.config.js
-  This is a file setup by Vite when you create a react project. It includes a critical feature to allow for the the app to be downloaded from the browser with VitePWA.
+- `/public & /assets & .firebase`
+  ignore.
+  ignorar.
+
+- `/src`
+  Component files and folders.
+  Archivos y carpetas de componentes.
+
+- `/src/assets`
+  ignore.
+  ignorar.
+
+- `/src/components`
+  Components are products or ideas.
+  Los componentes son productos o ideas.
+
+- `/src/database`
+  Connects to firebase.
+  Conecta a Firebase.
+
+- `/src/elements`
+  Smaller components that get used in various places.
+
+- `/src/hooks`
+  Abstractions of more complex software.
+  Componentes más pequeños que se utilizan en varios lugares.
+
+- `/src/hooks`
+  Abstractions of more complex software.
+  Abstracciones de software más complejo.
+
+- `src/utility`
+  A set of functions to handle behaviors in the app.
+  Un conjunto de funciones para manejar comportamientos en la aplicación.
