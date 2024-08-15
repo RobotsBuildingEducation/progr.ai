@@ -14,7 +14,7 @@ export let translation = {
       <div>
         It's time to overcome the challenge.
         <br />
-        Use intelligent assistance to work through 100 coding questions.
+        Use intelligent assistance to work through 100+ coding questions.
       </div>
     ),
     "landing.button.createAccount": "Create Account",
@@ -402,7 +402,7 @@ export let translation = {
       <div>
         Es hora de superar el desafío.
         <br />
-        Usa asistencia inteligente para resolver 100 preguntas de codificación.
+        Usa asistencia inteligente para resolver 100+ preguntas de codificación.
       </div>
     ),
     "landing.button.createAccount": "Crear Cuenta",

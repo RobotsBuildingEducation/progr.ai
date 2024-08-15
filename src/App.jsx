@@ -51,7 +51,7 @@ import {
   incrementUserStep,
   updateUserData,
 } from "./utility/nosql";
-import { steps } from "./utility/content";
+import { getObjectsByGroup, steps } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { database } from "./database/firebaseResources";
@@ -160,6 +160,7 @@ export const VoiceInput = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const pauseTimeoutRef = useRef(null);
+  const toast = useToast();
 
   useEffect(() => {
     let modifiedTranscript = transcript;
@@ -183,11 +184,11 @@ export const VoiceInput = ({
     if (aiListening && modifiedTranscript) {
       pauseTimeoutRef.current = setTimeout(() => {
         handleAiStop();
-      }, 1000); // 1 second
+      }, 1750); // 1 second
     } else if (isListening && modifiedTranscript) {
       pauseTimeoutRef.current = setTimeout(() => {
         handleVoiceStop();
-      }, 1000); // 1 second
+      }, 1750); // 1 second
     }
   }, [transcript, listening, onChange, isCodeEditor, aiListening]);
 
@@ -323,18 +324,16 @@ export const VoiceInput = ({
         {
           content: `Generate educational material about ${JSON.stringify(
             step
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
-            step
-          )}", output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
             userLanguage === "en" ? "english" : "spanish"
           }`,
           role: "user",
         },
       ]);
     } else {
-      const relevantSteps = steps[userLanguage].slice(
-        step.question.range[0],
-        step.question.range[1] + 1
+      const relevantSteps = getObjectsByGroup(
+        step?.groupReference,
+        steps[userLanguage]
       );
 
       console.log("relevant steps", relevantSteps);
@@ -378,7 +377,7 @@ export const VoiceInput = ({
             onMouseDown={handleVoiceStart}
             colorScheme="purple"
             variant={"outline"}
-            isDisabled={isUnsupportedBrowser()}
+            // isDisabled={isUnsupportedBrowser()}
           >
             {translation[userLanguage]["app.button.voiceToText"]}
           </Button>
@@ -386,7 +385,7 @@ export const VoiceInput = ({
             onMouseDown={handleAiStart}
             colorScheme="purple"
             variant={"outline"}
-            isDisabled={isUnsupportedBrowser()}
+            // isDisabled={isUnsupportedBrowser()}
           >
             {" "}
             {translation[userLanguage]["app.button.voiceToAI"]}
@@ -468,7 +467,16 @@ export const VoiceInput = ({
       )}
 
       {isCodeEditor ? (
-        <Box width="99%" height="400px" style={{ border: "1px solid #f0f0f0" }}>
+        <Box
+          width="99%"
+          height="400px"
+          bg="white"
+          style={{
+            padding: 15,
+            borderRadius: "8px",
+            border: "1px solid black",
+          }}
+        >
           <MonacoEditor
             height="100%"
             width="100%"
@@ -797,6 +805,7 @@ function TerminalComponent({
         style={{ width: "100%", maxWidth: "600px", marginTop: 12, height: 300 }}
       >
         <ReactBash
+          isDisabled
           structure={structure}
           history={history}
           prefix={`${translation[userLanguage]["mockTerminal.userName"]}${cwd}$`}
@@ -893,6 +902,8 @@ const Step = ({
 
   // Handle answer submission
   const handleAnswerClick = async () => {
+    resetMessages();
+    setFeedback("");
     setIsSending(true);
     setResetVoiceState(true);
     setStopListening(true);
@@ -906,31 +917,47 @@ const Step = ({
       answer = finalConversation;
     }
 
-    console.log("answer", answer);
-
     if (step.isConversationReview) {
-      const relevantSteps = steps[userLanguage].slice(
-        step.question.range[0],
-        step.question.range[1] + 1
+      const relevantSteps = getObjectsByGroup(
+        step?.groupReference,
+        steps[userLanguage]
       );
 
       console.log("relevant steps", relevantSteps);
       console.log("finalConversation", finalConversation);
+      console.log("answer", answer);
       await submitPrompt([
         {
-          content: `The user is having a conversation and reviewing the following subjects"${relevantSteps}". The user provided the following conversation "${answer}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not mention the previous details. Your feedback will include a grade out of 100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade. For example, if users input nothing meaningful, give them a 0. Be tough and fair and don't worry about being nice. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct. The user is speaking ${
+          content: `The user is having a conversation and reviewing the following subjects"${JSON.stringify(
+            relevantSteps
+          )}". The user provided the following conversation "${JSON.stringify(
+            answer
+          )}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not mention the previous details. Your feedback will include a grade ranging from 0-100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade or even a 0 if a user inputs nothing relevant. Be tough and fair and don't worry about being nice. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct, therefore isCorrect is always true. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
         },
       ]);
-    } else if (step.isMultipleChoice || step.isSelectOrder) {
+    } else if (step.isSelectOrder) {
       await submitPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
-          }". The answer to the question is ${step.question.answer}
-        and the user provided the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+          }". The answer to the question is an array [${step.question.answer}]
+        and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    } else if (step.isMultipleChoice) {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }". The answer to the question is defined as ${
+            step.question.answer
+          } and the user submitted the following answer array ${answer}. Is this answer correct? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -941,7 +968,7 @@ const Step = ({
         {
           content: `The user is answering the following question "${
             step.question.questionText
-          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -950,8 +977,12 @@ const Step = ({
     }
     cashTap();
 
-    setInputValue("");
-    setSelectedOption(""); // Reset the selected option after submission
+    if (isCorrect) {
+      setInputValue("");
+      setSelectedOption(""); // Reset the selected option after submission
+    } else {
+    }
+
     setIsSending(false);
     setResetVoiceState(false);
   };
@@ -1018,7 +1049,7 @@ const Step = ({
     } else {
       setIsPostingWithNostr(true);
       await postNostrContent(
-        `I just completed question ${currentStep} on  \n\n---\n\n${step.question?.questionText}`
+        `I just completed question ${currentStep} on https://program-ai.app!\n\n${step.question?.questionText}`
       );
       setIsPostingWithNostr(false);
       navigate(`/q/${currentStep + 1}`);
@@ -1051,7 +1082,7 @@ const Step = ({
     onOpen();
     await submitEducationalPrompt([
       {
-        content: `Generate educational material about ${JSON.stringify(
+        content: `Generate educational Javascript material about ${JSON.stringify(
           step
         )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { input: "${JSON.stringify(
           step
@@ -1099,7 +1130,11 @@ const Step = ({
         {currentStep}. {step.title}
       </Text>
       {step.question && (
-        <Text style={{ width: "100%", maxWidth: 600 }} fontSize="sm">
+        <Text
+          style={{ width: "100%", maxWidth: 400, width: "fit-content" }}
+          fontSize="sm"
+          textAlign={"left"}
+        >
           {step.question.questionText}
         </Text>
       )}
@@ -1190,45 +1225,67 @@ const Step = ({
       {isPostingWithNostr ? (
         <SunsetCanvas />
       ) : (
-        <HStack spacing={4}>
-          {step.title === "Welcome to the Program AI App!" ? (
-            <>
-              <Button colorScheme="purple" onMouseDown={handleNextClick}>
-                Let's start
-              </Button>
-              {isPostingWithNostr ? <SunsetCanvas /> : null}
-            </>
-          ) : (
-            step.question && (
-              <Button
-                fontSize="sm"
-                onMouseDown={handleAnswerClick}
-                isLoading={isSending}
+        <>
+          {messages.length > 0 && !feedback && (
+            <Box mt={0} p={4} borderRadius="lg" width="100%" maxWidth={"600px"}>
+              <Text textAlign={"left"}>
+                {messages[messages.length - 1]?.content}
+              </Text>
+            </Box>
+          )}
+          {feedback && (
+            <Box
+              mt={0}
+              p={4}
+              borderRadius="3xl"
+              width="100%"
+              maxWidth="600px"
+              background={isCorrect ? "#dcecfc" : "#fcdcdc"}
+              transition="0.2s all ease-in-out"
+            >
+              <Text
+                textAlign={"left"}
+                color={isCorrect ? "blue.500" : "red.500"}
               >
-                {translation[userLanguage]["app.button.answer"]}
-              </Button>
-            )
-          )}
+                {feedback}
+              </Text>
+            </Box>
+          )}{" "}
+          <HStack spacing={4}>
+            {step.title === "Welcome to the Program AI App!" ? (
+              <>
+                <Button colorScheme="purple" onMouseDown={handleNextClick}>
+                  Let's start
+                </Button>
+                {isPostingWithNostr ? <SunsetCanvas /> : null}
+              </>
+            ) : (
+              step.question && (
+                <Button
+                  fontSize="sm"
+                  onMouseDown={handleAnswerClick}
+                  isLoading={isSending}
+                  mb={4}
+                >
+                  {translation[userLanguage]["app.button.answer"]}
+                </Button>
+              )
+            )}
 
-          {isCorrect && (
-            <>
-              <Button variant={"outline"} onMouseDown={handleNextClick}>
-                {translation[userLanguage]["app.button.nextQuestion"]}{" "}
-              </Button>
-            </>
-          )}
-        </HStack>
-      )}
-
-      {messages.length > 0 && !feedback && (
-        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="600px">
-          <Text>{messages[messages.length - 1]?.content}</Text>
-        </Box>
-      )}
-      {feedback && (
-        <Box mt={4} p={4} borderRadius="lg" width="100%" maxWidth="600px">
-          <Text color={isCorrect ? "green.500" : "red.500"}>{feedback}</Text>
-        </Box>
+            {isCorrect && (
+              <>
+                <Button
+                  background="white"
+                  variant={"outline"}
+                  onMouseDown={handleNextClick}
+                  mb={4}
+                >
+                  {translation[userLanguage]["app.button.nextQuestion"]}{" "}
+                </Button>
+              </>
+            )}
+          </HStack>
+        </>
       )}
 
       <EducationalModal
@@ -1397,7 +1454,7 @@ const Home = ({
             <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div> */}
             <Text fontSize="sm" maxWidth={"600px"}>
               {" "}
-              {translation[userLanguage]["createAccount.instructions"]}{" "}
+              <b>{translation[userLanguage]["createAccount.instructions"]} </b>
             </Text>
             <Input
               style={{ maxWidth: 300 }}
@@ -1487,7 +1544,8 @@ const Home = ({
       {view === "created" && keys && (
         <VStack spacing={4}>
           <Confetti
-            numberOfPieces={300}
+            // gravity={0.75}
+            numberOfPieces={100}
             recycle={false}
             colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
           />
@@ -1645,6 +1703,17 @@ function App() {
       </Box>
     );
   }
+
+  // let list = steps["en"];
+  // let finalOutcome = [];
+  // for (let i = 0; i < list.length; i++) {
+  //   if (list[i].isConversationReview) {
+  //     finalOutcome.push({
+  //       index: i,
+  //       obj: list[i],
+  //     });
+  //   }
+  // }
 
   return (
     <Box textAlign="center" fontSize="xl" p={4}>

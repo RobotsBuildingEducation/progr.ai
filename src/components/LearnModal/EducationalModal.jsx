@@ -73,7 +73,17 @@ const EducationalModal = ({
 
           {educationalMessages.length > 0 && !educationalContent.length > 0 ? (
             <div style={{ color: "#FAF3E0" }}>
-              <b> {translation[userLanguage]["modal.learn.instructions"]}</b>
+              <b
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  padding: 4,
+                  borderRadius: "6px",
+                }}
+              >
+                {" "}
+                {translation[userLanguage]["modal.learn.instructions"]}
+              </b>
               <br />
               <br />
               {educationalMessages[educationalMessages.length - 1]?.content}

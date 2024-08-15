@@ -1,8 +1,7 @@
-# React + Vite
+Welcome to the Program AI App Codebase.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is what relevant files do. Below are caveats or extra considerations.
+The most notable file is App.jsx, because it's written and maintained by AI.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- vite.config.js
+  This is a file setup by Vite when you create a react project. It includes a critical feature to allow for the the app to be downloaded from the browser with VitePWA.

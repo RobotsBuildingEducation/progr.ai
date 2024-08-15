@@ -18,7 +18,7 @@ const MultipleChoiceQuestion = ({
       <VStack align={"stretch"} width="100%" maxWidth={"600px"}>
         {question.options.map((option, index) => (
           <Button
-            p={12}
+            p={8}
             variant={"outline"}
             key={index}
             onMouseDown={() => setSelectedOption(option)}

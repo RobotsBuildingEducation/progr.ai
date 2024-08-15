@@ -81,10 +81,15 @@ const SelectOrderQuestion = ({
                         }`,
                         borderRadius: "4px",
                         backgroundColor: "white",
-                        boxShadow: "0 2px 3px rgba(0,0,0,0.1)",
+                        boxShadow: borderSwitches[index]
+                          ? "0 0px 0px 0px rgba(0,0,0,1)"
+                          : index === 0
+                          ? "0 1px 1px 2px rgba(0,0,0,1)"
+                          : "0 0.5px 0.5px 1px rgba(0,0,0,1)",
+                        textAlign: "left",
                       }}
                     >
-                      {item}
+                      {index + 1 + ". " + item}
                     </div>
                   )}
                 </Draggable>

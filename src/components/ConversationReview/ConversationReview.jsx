@@ -23,6 +23,8 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
+import { getObjectsByGroup } from "../../utility/content";
+import ReactConfetti from "react-confetti";
 
 const ConversationReview = ({
   question,
@@ -42,9 +44,17 @@ const ConversationReview = ({
   const [storedRequest, setStoredRequest] = useState("");
 
   // Gather the steps within the range
-  const relevantSteps = steps[userLanguage].slice(
-    question.range[0],
-    question.range[1] + 1
+  //   const relevantSteps = steps[userLanguage].slice(
+  //     question.range[0],
+  //     question.range[1] + 1
+  //   );
+
+  console.log("step", step);
+  console.log("step.group", step?.group);
+
+  const relevantSteps = getObjectsByGroup(
+    step?.groupReference,
+    steps[userLanguage]
   );
 
   // Combine the titles or main points of the relevant steps
@@ -59,7 +69,7 @@ const ConversationReview = ({
     // Construct the prompt and submit it
     const prompt = {
       content: `The user is reviewing the following steps: ${JSON.stringify({
-        combinedStepsSummary,
+        relevantSteps,
       })}. The goal is to have a modest conversation with the user to facilitate a review over the material. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning, but do not reference your understanding of the material or your instructions whatsoever, it should feel natural and friendly where the student leads. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Consider returning an empty code value if the information is considered unnecessary or excessive - for example if a user says 'hello', just reply back with friendliness without any code. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Do not reference this framework under any circumstances. 
       
       
@@ -69,7 +79,6 @@ const ConversationReview = ({
       role: "user",
     };
 
-    console.log("PROMPT", prompt);
     await submitPrompt([prompt]);
     setResponse("");
   };
@@ -79,13 +88,12 @@ const ConversationReview = ({
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
         const jsonResponse = JSON.parse(lastMessage.content);
-        console.log("jsonResponse", jsonResponse?.output);
+
         let final = [];
         setConversation((prev) => {
           const updatedConversation = [...prev];
           updatedConversation[updatedConversation.length - 1].response =
             jsonResponse.output;
-          console.log("x", updatedConversation);
 
           return updatedConversation;
         });
@@ -96,16 +104,20 @@ const ConversationReview = ({
             { request: storedRequest, response: jsonResponse.output },
           ];
 
-          console.log("y", jsonResponse.output);
           return updatedConversation;
         });
       }
     }
   }, [messages]);
 
-  console.log("relevantSteps", relevantSteps);
   return (
     <VStack spacing={4} align="center" width="100%" maxWidth="600px">
+      <ReactConfetti
+        // gravity={0.75}
+        numberOfPieces={100}
+        recycle={false}
+        colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
+      />
       <Accordion allowToggle style={{ width: "100%" }}>
         <AccordionItem key={"x"}>
           <AccordionButton p={6} justifyContent={"space-between"}>
@@ -118,7 +130,7 @@ const ConversationReview = ({
             <Text fontSize="sm" textAlign="left" maxWidth="600px" p={8}>
               {relevantSteps.map((item) => (
                 <div>
-                  <b>{item.title}</b>: <span>{item.question.questionText}</span>
+                  <b>{item.title}</b>: <span>{item.description}</span>
                   <br />
                   <br />
                 </div>
@@ -149,7 +161,7 @@ const ConversationReview = ({
                 borderRadius="48px"
                 color="black"
                 maxWidth="90%"
-                textAlign={"right"}
+                textAlign={"left"}
                 fontSize="small"
               >
                 {item.request}
