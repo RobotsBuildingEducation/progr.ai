@@ -8,6 +8,7 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  Link,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { translation } from "../../../utility/translation";
@@ -87,6 +88,17 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
             text={translation[userLanguage]["settings.button.nostrApps"]}
             userLanguage={userLanguage}
           />
+          <br />
+          <br />
+          <Link
+            type="external"
+            as="a"
+            href="https://primal.net/p/npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+            target="_blank"
+            textDecor={"underline"}
+          >
+            {translation[userLanguage]["link.connectWithMe"]}
+          </Link>
         </ModalBody>
         <ModalFooter>
           <Button mr={3} onMouseDown={onClose}>

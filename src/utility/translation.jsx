@@ -392,6 +392,7 @@ export let translation = {
     ),
     "button.addToConversation": "Add To Conversation",
     "button.subjectsCovered": "Subjects Covered",
+    "link.connectWithMe": "Connect with me!",
   },
   es: {
     "toast.title.keysCopied": "Claves copiadas.",
@@ -476,7 +477,7 @@ export let translation = {
     "modal.openTutor.title": "Abrir Tutor",
     "modal.openTutor.instructions": "¡No olvides tus claves antes de irte!",
     "modal.openTutor.startButton": "Iniciar aplicación de tutoría",
-    "modal.openSocialWallet.title": "Decentralize",
+    "modal.openSocialWallet.title": "Descentralizar",
     "modal.openSocialWallet.instructions":
       "¡No olvides tus claves antes de irte!",
     "modal.openSocialWallet.startButton": "Ir a la Billetera Social",
@@ -785,5 +786,6 @@ export let translation = {
     "settings.button.yourTutor": "Tu Tutor",
     "settings.button.yourProfile": "Tu Perfil",
     "settings.button.nostrApps": "Colección de Apps",
+    "link.connectWithMe": "¡Conéctate conmigo!",
   },
 };
