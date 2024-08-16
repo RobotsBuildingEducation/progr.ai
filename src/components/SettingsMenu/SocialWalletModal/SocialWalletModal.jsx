@@ -8,11 +8,28 @@ import {
   ModalBody,
   ModalFooter,
   Button,
-  background,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { translation } from "../../../utility/translation";
 import { SunsetCanvas } from "../../../elements/SunsetCanvas";
+
+const ActionButton = ({ href, text, userLanguage }) => (
+  <Button
+    as="a"
+    href={href}
+    mt={2}
+    mb={4}
+    variant={"outline"}
+    target="_blank"
+    width="45%"
+    margin={2}
+    height={100}
+    boxShadow={"0px 0.5px 0.5px 1px black"}
+    fontSize={"small"}
+  >
+    {text}
+  </Button>
+);
 
 const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
   const toast = useToast();
@@ -48,15 +65,28 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
           </Button>
           <br />
           <br />
-          <Button
-            as="a"
+          <ActionButton
+            href={`https://primal.net/p/${localStorage.getItem("local_npub")}`}
+            text={translation[userLanguage]["settings.button.yourProfile"]}
+            userLanguage={userLanguage}
+          />
+          <ActionButton
+            href="https://robotsbuildingeducation.com"
+            text={translation[userLanguage]["settings.button.yourTutor"]}
+            userLanguage={userLanguage}
+          />
+          <ActionButton
             href="https://primal.net/home"
-            mt={2}
-            mb={4}
-            variant={"outline"}
-          >
-            {translation[userLanguage]["modal.openSocialWallet.startButton"]}
-          </Button>
+            text={
+              translation[userLanguage]["modal.openSocialWallet.startButton"]
+            }
+            userLanguage={userLanguage}
+          />
+          <ActionButton
+            href="https://nostrapps.com"
+            text={translation[userLanguage]["settings.button.nostrApps"]}
+            userLanguage={userLanguage}
+          />
         </ModalBody>
         <ModalFooter>
           <Button mr={3} onMouseDown={onClose}>

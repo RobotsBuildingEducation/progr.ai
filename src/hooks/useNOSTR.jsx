@@ -56,7 +56,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     console.log("user.npub", publicKey);
 
     if (!localStorage.getItem("local_nsec")) {
-      await postNostrContent(
+      postNostrContent(
         JSON.stringify({
           name: userDisplayName,
           about: "A student onboarded with Robots Building Education",

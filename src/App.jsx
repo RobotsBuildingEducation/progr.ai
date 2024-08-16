@@ -68,6 +68,7 @@ import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 import Confetti from "react-confetti";
 import { About } from "./About";
 import ConversationReview from "./components/ConversationReview/ConversationReview";
+import RandomCharacter from "./elements/RandomCharacter";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -1048,8 +1049,8 @@ const Step = ({
       navigate("/award");
     } else {
       setIsPostingWithNostr(true);
-      await postNostrContent(
-        `I just completed question ${currentStep} on https://program-ai.app!\n\n${step.question?.questionText}`
+      postNostrContent(
+        `I just completed question ${currentStep} on https://program-ai.app!\n\n${step.question?.questionText} https://m.primal.net/KBLq.png `
       );
       setIsPostingWithNostr(false);
       navigate(`/q/${currentStep + 1}`);
@@ -1242,15 +1243,30 @@ const Step = ({
               maxWidth="600px"
               background={isCorrect ? "#dcecfc" : "#fcdcdc"}
               transition="0.2s all ease-in-out"
+              borderBottomRightRadius={"0px"}
             >
               <Text
                 textAlign={"left"}
                 color={isCorrect ? "blue.500" : "red.500"}
               >
                 {feedback}
-              </Text>
+              </Text>{" "}
             </Box>
           )}{" "}
+          {feedback && (
+            <div
+              style={{
+                width: "100%",
+                maxWidth: "600px",
+                display: "flex",
+                justifyContent: "flex-end",
+                padding: 0,
+                marginTop: "-36px",
+              }}
+            >
+              <RandomCharacter />
+            </div>
+          )}
           <HStack spacing={4}>
             {step.title === "Welcome to the Program AI App!" ? (
               <>
@@ -1467,7 +1483,7 @@ const Home = ({
             <VStack>
               <Button
                 onMouseDown={handleCreateAccount}
-                colorScheme="purple"
+                colorScheme="cyan"
                 variant={"outline"}
                 isDisabled={userName.length < 1}
                 style={{ width: "150px" }}
@@ -1549,7 +1565,14 @@ const Home = ({
             recycle={false}
             colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
           />
-          <Text maxWidth="600px">
+          <Text
+            p={4}
+            maxWidth="600px"
+            textAlign={"left"}
+            style={{ backgroundColor: "#dcecfc" }}
+            borderRadius="24px"
+            borderBottomRightRadius={"0px"}
+          >
             <Text>
               {translation[userLanguage]["createAccount.successMessage"]}
             </Text>{" "}
@@ -1581,6 +1604,20 @@ const Home = ({
               .
             </Text>
           </Text>
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "300px",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginTop: "-36px",
+              marginRight: "-16px",
+            }}
+          >
+            {" "}
+            <RandomCharacter />
+          </div>
+
           <Button onMouseDown={handleCopyKeys}>
             🔑 {translation[userLanguage]["button.copyKey"]}
           </Button>

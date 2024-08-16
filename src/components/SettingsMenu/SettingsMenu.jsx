@@ -187,7 +187,7 @@ const SettingsMenu = ({
                 {translation[userLanguage]["settings.button.feedback"] ||
                   "Feedback"}
               </Button>
-              <Button
+              {/* <Button
                 p={6}
                 style={{ width: "100%" }}
                 onMouseDown={onRoxModalOpen}
@@ -195,6 +195,14 @@ const SettingsMenu = ({
                 variant={"outline"}
               >
                 {translation[userLanguage]["settings.button.tutor"]}
+              </Button> */}
+              <Button
+                p={6}
+                style={{ width: "100%" }}
+                onMouseDown={onSocialWalletOpen}
+                variant={"outline"}
+              >
+                {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
               <Button
                 p={6}
@@ -204,14 +212,6 @@ const SettingsMenu = ({
                 variant={"outline"}
               >
                 {translation[userLanguage]["settings.button.tutorGPT"]}
-              </Button>
-              <Button
-                p={6}
-                style={{ width: "100%" }}
-                onMouseDown={onSocialWalletOpen}
-                variant={"outline"}
-              >
-                {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
               <Button
                 as="a"
