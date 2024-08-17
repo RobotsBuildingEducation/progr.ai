@@ -11,6 +11,7 @@ import {
   Text,
   VStack,
   useToast,
+  Link,
 } from "@chakra-ui/react";
 import QRCode from "qrcode.react";
 import { useCashuWallet } from "../../../hooks/useCashuWallet";
@@ -83,7 +84,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
           <Text
             mb={4}
             textAlign={"left"}
-            background="#757474"
+            background="#a8a8a8"
             color="white"
             p={6}
             borderRadius="12px"
@@ -94,7 +95,16 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
               </b>
             ) : (
               <b>
-                {translation[userLanguage]["modal.bitcoinMode.instructions"]}
+                {translation[userLanguage]["modal.bitcoinMode.instructions"]}{" "}
+                <br />
+                <br />
+                <a
+                  target="_blank"
+                  style={{ textDecoration: "underline", color: "lightgreen" }}
+                  href="https://cash.app"
+                >
+                  Cash App
+                </a>
               </b>
             )}
           </Text>
