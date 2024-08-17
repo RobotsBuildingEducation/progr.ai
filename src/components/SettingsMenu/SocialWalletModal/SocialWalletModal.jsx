@@ -45,7 +45,6 @@ const SocialWalletModal = ({ isOpen, onClose, userLanguage }) => {
       duration: 1500,
       isClosable: true,
       position: "top",
-      icon: <SunsetCanvas />,
     });
   };
 

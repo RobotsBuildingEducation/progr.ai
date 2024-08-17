@@ -201,6 +201,7 @@ const SettingsMenu = ({
                 style={{ width: "100%" }}
                 onMouseDown={onSocialWalletOpen}
                 variant={"outline"}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
               >
                 {translation[userLanguage]["settings.button.socialWallet"]}
               </Button>
@@ -210,6 +211,7 @@ const SettingsMenu = ({
                 href="https://chatgpt.com/g/g-09h5uQiFC-rox"
                 style={{ width: "100%" }}
                 variant={"outline"}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
               >
                 {translation[userLanguage]["settings.button.tutorGPT"]}
               </Button>
@@ -219,6 +221,7 @@ const SettingsMenu = ({
                 p={6}
                 style={{ width: "100%" }}
                 variant={"outline"}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
               >
                 {translation[userLanguage]["settings.button.patreon"]}
               </Button>

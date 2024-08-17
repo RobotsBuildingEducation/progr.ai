@@ -16,22 +16,26 @@ import QRCode from "qrcode.react";
 import { useCashuWallet } from "../../../hooks/useCashuWallet";
 import { IdentityCard } from "../../../elements/IdentityCard";
 import { translation } from "../../../utility/translation";
+import { SunsetCanvas } from "../../../elements/SunsetCanvas";
 
 const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
   const [isModalActive, setisModalActive] = useState(false);
   const [isRecharging, setIsRecharging] = useState(false);
   const toast = useToast();
-  const { balance, handleSwapSend, recharge } = useCashuWallet(
-    false,
-    isModalActive
-  );
+  const { balance, handleSwapSend, recharge, handleMint, lightningAddress } =
+    useCashuWallet(false, isModalActive);
 
   useEffect(() => {
     setisModalActive(isOpen);
   }, [isOpen]);
 
+  // useEffect(() => {
+  //   setisModalActive(true);
+  // }, []);
+
   useEffect(() => {
     setisModalActive(true);
+    handleMint();
   }, []);
 
   useEffect(() => {
@@ -39,6 +43,10 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
       recharge();
     }
   }, [balance]);
+
+  useEffect(() => {
+    console.log("address has changed", localStorage.getItem("address"));
+  }, [localStorage.getItem("address")]);
 
   const cashTap = () => {
     /**
@@ -62,6 +70,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     });
   };
 
+  console.log("running");
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -93,7 +102,9 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                   }
                 </Button>
               </>
-            ) : null}
+            ) : balance > 0 ? null : (
+              <SunsetCanvas />
+            )}
 
             {balance > 0 ? (
               <IdentityCard

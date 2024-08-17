@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { FadeInComponent } from "./RandomCharacter";
 
 export const hexToHSL = (hex) => {
   // Convert hex to RGB first
@@ -41,7 +42,7 @@ export const hexToHSL = (hex) => {
   return { hue: h, saturation: s, lightness: l };
 };
 
-export const SunsetCanvas = () => {
+export const SunsetCanvas = (alternativeSpeed = null) => {
   const canvasRef = useRef(null);
   let requestId;
 
@@ -130,11 +131,13 @@ export const SunsetCanvas = () => {
   }, []);
 
   return (
-    <canvas
-      style={{
-        borderRadius: "45%",
-      }}
-      ref={canvasRef}
-    ></canvas>
+    <FadeInComponent speed={"1s"}>
+      <canvas
+        style={{
+          borderRadius: "45%",
+        }}
+        ref={canvasRef}
+      ></canvas>
+    </FadeInComponent>
   );
 };

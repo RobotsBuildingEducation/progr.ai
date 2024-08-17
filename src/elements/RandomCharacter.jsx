@@ -17,6 +17,17 @@ import character14 from "../assets/14.png";
 import { keyframes } from "@emotion/react";
 import { Box } from "@chakra-ui/react";
 
+const riseAnimation = keyframes`
+  from {
+    transform: translateY(25px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
 const fadeInAnimation = keyframes`
   from {
     opacity: 0;
@@ -26,8 +37,65 @@ const fadeInAnimation = keyframes`
   }
 `;
 
+const panLeft = keyframes`
+from {
+  transform: translateX(-25px);
+}
+to {
+  transform: translateX(0); // Adjust as needed
+}
+`;
+
+const panRight = keyframes`
+  from {
+    transform: translateX(25px);
+  }
+  to {
+    transform: translateX(0); // Adjust as needed
+  }
+`;
+
 // Create the FadeInComponent using Chakra UI
-export const FadeInComponent = ({ children, speed = "0.45s" }) => {
+export const PanRightComponent = ({ children, speed = "0.15s" }) => {
+  return (
+    <Box
+      display="flex"
+      justifyContent={"center"}
+      animation={`${panRight} ${speed} ease-in-out`} // Apply the animation with dynamic speed
+    >
+      {children}
+    </Box>
+  );
+};
+
+// Create the FadeInComponent using Chakra UI
+export const PanLeftComponent = ({ children, speed = "0.15s" }) => {
+  return (
+    <Box
+      display="flex"
+      justifyContent={"center"}
+      animation={`${panLeft} ${speed} ease-in-out`} // Apply the animation with dynamic speed
+    >
+      {children}
+    </Box>
+  );
+};
+
+// Create the FadeInComponent using Chakra UI
+export const RiseUpAnimation = ({ children, speed = "0.15s" }) => {
+  return (
+    <Box
+      display="flex"
+      justifyContent={"center"}
+      animation={`${riseAnimation} ${speed} ease-in-out`} // Apply the animation with dynamic speed
+    >
+      {children}
+    </Box>
+  );
+};
+
+// Create the FadeInComponent using Chakra UI
+export const FadeInComponent = ({ children, speed = "0.15s" }) => {
   return (
     <Box
       display="flex"
@@ -148,30 +216,28 @@ const RandomCharacter = ({
   }, [isTimed]);
 
   return (
-    <FadeInComponent speed={speed}>
-      <div
-        style={{
-          height: 100,
-          display: "flex",
-          flexDirection: "column",
-          alignContent: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div>
-          <img
-            src={
-              notSoRandomCharacter
-                ? characterImagesMap[notSoRandomCharacter]
-                : image
-            }
-            alt=""
-            width={width}
-            height={width}
-          />
-        </div>
+    <div
+      style={{
+        height: 100,
+        display: "flex",
+        flexDirection: "column",
+        alignContent: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div>
+        <img
+          src={
+            notSoRandomCharacter
+              ? characterImagesMap[notSoRandomCharacter]
+              : image
+          }
+          alt=""
+          width={width}
+          height={width}
+        />
       </div>
-    </FadeInComponent>
+    </div>
   );
 };
 

@@ -24,6 +24,7 @@ import {
   ListItem,
   Icon,
   IconButton,
+  Fade,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -68,7 +69,12 @@ import SelectOrderQuestion from "./components/SelectOrder/SelectOrder";
 import Confetti from "react-confetti";
 import { About } from "./About";
 import ConversationReview from "./components/ConversationReview/ConversationReview";
-import RandomCharacter from "./elements/RandomCharacter";
+import RandomCharacter, {
+  FadeInComponent,
+  PanLeftComponent,
+  PanRightComponent,
+  RiseUpAnimation,
+} from "./elements/RandomCharacter";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -457,13 +463,37 @@ export const VoiceInput = ({
       {isListening && (
         <HStack spacing={2} alignItems="center">
           <SunsetCanvas />
-          <small> {translation[userLanguage]["app.listening"]}</small>
+          <FadeInComponent speed="0.25s">
+            <Text
+              fontSize={"smaller"}
+              backgroundColor="white"
+              color="black"
+              fontWeight={"bold"}
+              borderRadius="8px"
+              padding="10px"
+            >
+              {" "}
+              {translation[userLanguage]["app.listening"]}
+            </Text>
+          </FadeInComponent>
         </HStack>
       )}
       {aiListening && (
         <HStack spacing={2} alignItems="center">
           <SunsetCanvas />
-          <small> {translation[userLanguage]["app.listening"]}</small>
+          <FadeInComponent speed="0.25s">
+            <Text
+              fontSize={"smaller"}
+              backgroundColor="white"
+              color="black"
+              fontWeight={"bold"}
+              borderRadius="8px"
+              padding="10px"
+            >
+              {" "}
+              {translation[userLanguage]["app.listening"]}
+            </Text>
+          </FadeInComponent>
         </HStack>
       )}
 
@@ -1235,23 +1265,25 @@ const Step = ({
             </Box>
           )}
           {feedback && (
-            <Box
-              mt={0}
-              p={4}
-              borderRadius="3xl"
-              width="100%"
-              maxWidth="600px"
-              background={isCorrect ? "#dcecfc" : "#fcdcdc"}
-              transition="0.2s all ease-in-out"
-              borderBottomRightRadius={"0px"}
-            >
-              <Text
-                textAlign={"left"}
-                color={isCorrect ? "blue.500" : "red.500"}
+            <FadeInComponent>
+              <Box
+                mt={0}
+                p={4}
+                borderRadius="3xl"
+                width="100%"
+                maxWidth="600px"
+                background={isCorrect ? "#dcecfc" : "#fcdcdc"}
+                transition="0.2s all ease-in-out"
+                borderBottomRightRadius={"0px"}
               >
-                {feedback}
-              </Text>{" "}
-            </Box>
+                <Text
+                  textAlign={"left"}
+                  color={isCorrect ? "blue.500" : "red.500"}
+                >
+                  {feedback}
+                </Text>{" "}
+              </Box>
+            </FadeInComponent>
           )}{" "}
           {feedback && (
             <div
@@ -1264,28 +1296,24 @@ const Step = ({
                 marginTop: "-36px",
               }}
             >
-              <RandomCharacter />
+              <RiseUpAnimation speed="0.1s">
+                <RandomCharacter />
+              </RiseUpAnimation>
             </div>
           )}
           <HStack spacing={4}>
-            {step.title === "Welcome to the Program AI App!" ? (
-              <>
-                <Button colorScheme="purple" onMouseDown={handleNextClick}>
-                  Let's start
-                </Button>
-                {isPostingWithNostr ? <SunsetCanvas /> : null}
-              </>
+            {step.question && !isSending ? (
+              <Button
+                fontSize="sm"
+                onMouseDown={handleAnswerClick}
+                isLoading={isSending}
+                mb={4}
+                boxShadow={"0px 0.5px 0.5px 1px black"}
+              >
+                {translation[userLanguage]["app.button.answer"]}
+              </Button>
             ) : (
-              step.question && (
-                <Button
-                  fontSize="sm"
-                  onMouseDown={handleAnswerClick}
-                  isLoading={isSending}
-                  mb={4}
-                >
-                  {translation[userLanguage]["app.button.answer"]}
-                </Button>
-              )
+              <SunsetCanvas speed={"0.25"} />
             )}
 
             {isCorrect && (
@@ -1295,6 +1323,7 @@ const Step = ({
                   variant={"outline"}
                   onMouseDown={handleNextClick}
                   mb={4}
+                  boxShadow={"0px 0.5px 0.5px 1px black"}
                 >
                   {translation[userLanguage]["app.button.nextQuestion"]}{" "}
                 </Button>
@@ -1452,7 +1481,14 @@ const Home = ({
               <HStack spacing={2} alignItems="center">
                 <SunsetCanvas />{" "}
                 {isCreatingAccount ? (
-                  <Text>
+                  <Text
+                    fontSize={"smaller"}
+                    backgroundColor="white"
+                    color="black"
+                    fontWeight={"bold"}
+                    borderRadius="8px"
+                    padding="10px"
+                  >
                     {translation[userLanguage]["createAccount.isLoading"]}
                   </Text>
                 ) : null}
@@ -1565,45 +1601,47 @@ const Home = ({
             recycle={false}
             colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
           />
-          <Text
-            p={4}
-            maxWidth="600px"
-            textAlign={"left"}
-            style={{ backgroundColor: "#dcecfc" }}
-            borderRadius="24px"
-            borderBottomRightRadius={"0px"}
-          >
-            <Text>
-              {translation[userLanguage]["createAccount.successMessage"]}
-            </Text>{" "}
-            <Text fontSize="sm" maxWidth={"300px"}>
-              {translation[userLanguage]["createAccount.awareness"]}
-              {isCheckboxChecked ? (
-                <Link
-                  href="https://robotsbuildingeducation.com"
-                  color="teal.500"
-                  style={{ textDecoration: "underline" }}
-                >
-                  {translation[userLanguage]["createAccount.roxLink"]}
-                </Link>
-              ) : (
-                translation[userLanguage]["createAccount.roxLink"]
-              )}{" "}
-              {translation[userLanguage]["or"] + " "}
-              {isCheckboxChecked ? (
-                <Link
-                  href="https://primal.net/home"
-                  color="teal.500"
-                  style={{ textDecoration: "underline" }}
-                >
-                  {translation[userLanguage]["createAccount.primalLink"]}
-                </Link>
-              ) : (
-                translation[userLanguage]["createAccount.primalLink"]
-              )}
-              .
+          <PanRightComponent>
+            <Text
+              p={4}
+              maxWidth="600px"
+              textAlign={"left"}
+              style={{ backgroundColor: "#dcecfc" }}
+              borderRadius="24px"
+              borderBottomRightRadius={"0px"}
+            >
+              <Text>
+                {translation[userLanguage]["createAccount.successMessage"]}
+              </Text>{" "}
+              <Text fontSize="sm" maxWidth={"300px"}>
+                {translation[userLanguage]["createAccount.awareness"]}
+                {isCheckboxChecked ? (
+                  <Link
+                    href="https://robotsbuildingeducation.com"
+                    color="teal.500"
+                    style={{ textDecoration: "underline" }}
+                  >
+                    {translation[userLanguage]["createAccount.roxLink"]}
+                  </Link>
+                ) : (
+                  translation[userLanguage]["createAccount.roxLink"]
+                )}{" "}
+                {translation[userLanguage]["or"] + " "}
+                {isCheckboxChecked ? (
+                  <Link
+                    href="https://primal.net/home"
+                    color="teal.500"
+                    style={{ textDecoration: "underline" }}
+                  >
+                    {translation[userLanguage]["createAccount.primalLink"]}
+                  </Link>
+                ) : (
+                  translation[userLanguage]["createAccount.primalLink"]
+                )}
+                .
+              </Text>
             </Text>
-          </Text>
+          </PanRightComponent>
           <div
             style={{
               width: "100%",
@@ -1615,7 +1653,9 @@ const Home = ({
             }}
           >
             {" "}
-            <RandomCharacter />
+            <RiseUpAnimation>
+              <RandomCharacter />
+            </RiseUpAnimation>
           </div>
 
           <Button onMouseDown={handleCopyKeys}>

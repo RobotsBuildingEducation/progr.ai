@@ -76,6 +76,8 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
   const { addProofs, balance, removeProofs, getProofsByAmount } =
     useProofStorage();
 
+  const [lightningAddress, setLightningAddress] = useState("");
+
   useEffect(() => {
     if (isUnactivated && !localStorage.getItem("address") && balance < 1) {
     } else {
@@ -118,32 +120,42 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
   };
 
   const handleMint = async (walletRef) => {
-    const amount = parseInt(formData.mintAmount);
-    let w = wallet || walletRef;
-    console.log("wwww,", w);
-    const quote = await w.getMintQuote(amount);
+    if (
+      parseInt(localStorage.getItem("balance")) < 1 ||
+      isNaN(parseInt(localStorage.getItem("balance")))
+    ) {
+      const amount = parseInt(formData.mintAmount);
+      let w = wallet || walletRef;
+      console.log("wwww,", w);
+      const quote = await w.getMintQuote(amount);
 
-    localStorage.setItem("address", quote.request);
+      localStorage.setItem("address", quote.request);
 
-    let count = 0;
-    const intervalId = setInterval(async () => {
-      try {
-        if (count === 5) {
-          clearInterval(intervalId);
-        } else {
-          const { proofs } = await w.mintTokens(amount, quote.quote, {
-            keysetId: w.keys.id,
-          });
+      setLightningAddress(quote.request);
 
-          setFormData((prevData) => ({ ...prevData }));
-          addProofs(proofs);
-          clearInterval(intervalId);
+      let count = 0;
+
+      const intervalId = setInterval(async () => {
+        try {
+          if (count === 36 || parseInt(localStorage.getItem(balance)) > 0) {
+            clearInterval(intervalId);
+          } else {
+            const { proofs } = await w.mintTokens(amount, quote.quote, {
+              keysetId: w.keys.id,
+            });
+
+            setFormData((prevData) => ({ ...prevData }));
+            addProofs(proofs);
+            clearInterval(intervalId);
+          }
+        } catch (error) {
+          count++;
+          console.error("Quote probably not paid: ", quote.request, error);
         }
-      } catch (error) {
-        count++;
-        console.error("Quote probably not paid: ", quote.request, error);
-      }
-    }, 5000);
+      }, 5000);
+    } else {
+      console.log("failed to run");
+    }
   };
 
   const handleSwapSend = async () => {
@@ -165,6 +177,7 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
       addProofs(returnChange);
 
       setCashuToken(encodedToken);
+      console.log("cashu token", encodedToken);
       return encodedToken;
     } catch (error) {
       console.error(error);
@@ -199,5 +212,6 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
     handleSwapSend,
     recharge,
     cashTap,
+    lightningAddress,
   };
 };

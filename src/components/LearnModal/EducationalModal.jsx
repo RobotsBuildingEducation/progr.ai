@@ -150,8 +150,7 @@ const EducationalModal = ({
             onMouseDown={onClose}
             variant="solid"
             size="lg"
-            borderRadius="full"
-            border="1px solid transparent"
+            boxShadow={"0px 0.5px 0.5px 1px black"}
           >
             {translation[userLanguage]["button.close"]}
           </Button>
