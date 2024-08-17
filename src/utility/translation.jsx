@@ -78,7 +78,7 @@ export let translation = {
     "modal.adaptiveLearning.stepsTaken": "Steps taken",
     "modal.bitcoinMode.title": "Bitcoin Wallet",
     "modal.bitcoinMode.instructions":
-      "Scan the QR code with Cash App to deposit Bitcoin",
+      "Scan the QR code with Cash App to deposit Bitcoin. This is a test feature that will deposit $0.01 worth of Bitcoin to show that you can create scholarships by using and learning with the app.",
     "modal.bitcoinMode.copyAddressButton": "Copy Address",
     "modal.bitcoinMode.rechargeButton": "Generate Address",
     "modal.bitcoinMode.successMessage": "You're now using Bitcoin!",
@@ -467,7 +467,7 @@ export let translation = {
     "modal.adaptiveLearning.stepsTaken": "Pasos dados",
     "modal.bitcoinMode.title": "Billetera Bitcoin",
     "modal.bitcoinMode.instructions":
-      "Escanea el código QR con Cash App para depositar Bitcoin",
+      "Escanea el código QR con Cash App para depositar Bitcoin. Esta es una función de prueba que depositará $0.01 en Bitcoin para mostrar que puedes crear becas utilizando y aprendiendo con la aplicación.",
     "modal.bitcoinMode.copyAddressButton": "Copiar dirección",
     "modal.bitcoinMode.rechargeButton": "Generar Dirección",
     "modal.bitcoinMode.successMessage": "¡Ahora estás usando Bitcoin!",

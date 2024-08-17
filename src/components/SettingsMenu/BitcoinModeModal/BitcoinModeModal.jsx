@@ -80,10 +80,23 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text mb={4} textAlign={"center"}>
-            {balance > 0
-              ? translation[userLanguage]["modal.bitcoinMode.successMessage"]
-              : translation[userLanguage]["modal.bitcoinMode.instructions"]}
+          <Text
+            mb={4}
+            textAlign={"left"}
+            background="#757474"
+            color="white"
+            p={6}
+            borderRadius="12px"
+          >
+            {balance > 0 ? (
+              <b>
+                {translation[userLanguage]["modal.bitcoinMode.successMessage"]}
+              </b>
+            ) : (
+              <b>
+                {translation[userLanguage]["modal.bitcoinMode.instructions"]}
+              </b>
+            )}
           </Text>
           <VStack style={{ display: "flex", justifyContent: "center" }}>
             {localStorage.getItem("address") && balance === 0 ? (
@@ -93,14 +106,17 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                   size={256}
                   style={{ zIndex: 1000000 }}
                 />
-                <Button onMouseDown={handleCopyKeys}>
-                  🔑{" "}
-                  {
-                    translation[userLanguage][
-                      "modal.bitcoinMode.copyAddressButton"
-                    ]
-                  }
-                </Button>
+                <div style={{ marginTop: "8px" }}>
+                  {translation[userLanguage]["or"]} &nbsp;
+                  <Button onMouseDown={handleCopyKeys}>
+                    🔑{" "}
+                    {
+                      translation[userLanguage][
+                        "modal.bitcoinMode.copyAddressButton"
+                      ]
+                    }
+                  </Button>
+                </div>
               </>
             ) : balance > 0 ? null : (
               <SunsetCanvas />
