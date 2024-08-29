@@ -2,13 +2,21 @@ import React from "react";
 import { Button, VStack, HStack, Box, Text } from "@chakra-ui/react";
 import { translation } from "../../utility/translation";
 
-const MultipleChoiceQuestion = ({
+const MultipleAnswerQuestion = ({
   question,
-  selectedOption,
-  setSelectedOption,
-  onLearnClick, // New prop for learn button
+  selectedOptions,
+  setSelectedOptions,
+  onLearnClick,
   userLanguage,
 }) => {
+  const handleOptionClick = (option) => {
+    if (selectedOptions.includes(option)) {
+      setSelectedOptions(selectedOptions.filter((opt) => opt !== option)); // Deselect if already selected
+    } else {
+      setSelectedOptions([...selectedOptions, option]); // Select if not selected
+    }
+  };
+
   return (
     <VStack spacing={4}>
       <Button onMouseDown={onLearnClick} colorScheme="purple">
@@ -21,25 +29,27 @@ const MultipleChoiceQuestion = ({
             p={8}
             variant={"outline"}
             key={index}
-            onMouseDown={() => setSelectedOption(option)}
-            colorScheme={selectedOption === option ? "purple" : "gray"}
+            onMouseDown={() => handleOptionClick(option)}
+            colorScheme={selectedOptions.includes(option) ? "purple" : "gray"}
             justifyContent="start"
-            whiteSpace="normal" // Allow text to wrap normally
-            wordWrap="break-word" // Break words that are too long
+            whiteSpace="normal"
+            wordWrap="break-word"
             textAlign="left"
           >
             <HStack spacing={4} width="100%" alignItems="center">
               <Box
                 width="24px"
                 height="24px"
-                flexShrink={0} // Prevents the box from shrinking when text is long
-                borderRadius="44%"
+                flexShrink={0}
+                borderRadius="15%"
                 borderWidth="2px"
                 borderColor={
-                  selectedOption === option ? "purple.500" : "gray.300"
+                  selectedOptions.includes(option) ? "purple.500" : "gray.300"
                 }
                 backgroundColor={
-                  selectedOption === option ? "purple.500" : "transparent"
+                  selectedOptions.includes(option)
+                    ? "purple.500"
+                    : "transparent"
                 }
               />
               <Text flex="1" noOfLines={[2, 3, 4]}>
@@ -53,4 +63,4 @@ const MultipleChoiceQuestion = ({
   );
 };
 
-export default MultipleChoiceQuestion;
+export default MultipleAnswerQuestion;

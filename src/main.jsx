@@ -42,6 +42,11 @@ const theme = extendTheme({
   },
 });
 
+let statement = "hello";
+
+//ok.
+console.log("hello");
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>
     <AppWrapper />

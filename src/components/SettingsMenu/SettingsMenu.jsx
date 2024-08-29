@@ -38,6 +38,8 @@ const SettingsMenu = ({
   currentStep,
   userLanguage,
   setUserLanguage,
+  view,
+  setView,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -245,6 +247,7 @@ const SettingsMenu = ({
                     localStorage.setItem("userLanguage", translateValue);
                   }
                   onClose();
+                  setView("buttons");
                   navigate("/");
                 }}
                 p={6}

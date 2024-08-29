@@ -84,7 +84,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
           <Text
             mb={4}
             textAlign={"left"}
-            background="#a8a8a8"
+            background="#7a7a7a"
             color="white"
             p={6}
             borderRadius="12px"
@@ -100,7 +100,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
                 <br />
                 <a
                   target="_blank"
-                  style={{ textDecoration: "underline", color: "lightgreen" }}
+                  style={{ textDecoration: "underline", color: "#05fcb6" }}
                   href="https://cash.app"
                 >
                   Cash App

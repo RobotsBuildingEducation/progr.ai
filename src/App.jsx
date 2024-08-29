@@ -54,7 +54,14 @@ import {
 } from "./utility/nosql";
 import { getObjectsByGroup, steps } from "./utility/content";
 import { PrivateRoute } from "./PrivateRoute";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
 import { database } from "./database/firebaseResources";
 import { translation } from "./utility/translation";
 import { useCashuWallet } from "./hooks/useCashuWallet";
@@ -75,6 +82,8 @@ import RandomCharacter, {
   PanRightComponent,
   RiseUpAnimation,
 } from "./elements/RandomCharacter";
+import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/MultipleAnswerQuestion";
+import { DataTags } from "./elements/DataTag";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -102,25 +111,114 @@ const applySymbolMappings = (text) => {
 };
 
 const AwardScreen = () => {
+  const [documentIds, setDocumentIds] = useState([]); // State to store document IDs
+
   const navigate = useNavigate();
 
   const handleRestart = () => {
     navigate("/q/0"); // Navigate to the first step to restart the quiz
   };
 
+  useEffect(() => {
+    // Retrieve user ID from local storage
+    const userID = localStorage.getItem("local_npub");
+
+    // Push to Firestore "completed" collection
+    const saveCompletionData = async () => {
+      if (userID) {
+        try {
+          // Create a reference to the document using the userID
+          const docRef = doc(database, "completed", userID);
+
+          // Set the document with the current timestamp
+          await setDoc(docRef, {
+            completedAt: new Date().toISOString(),
+          });
+
+          console.log("Completion data saved to Firestore!");
+        } catch (error) {
+          console.error("Error saving completion data: ", error);
+        }
+      }
+    };
+
+    const fetchCompletedDocuments = async () => {
+      try {
+        const completedCollection = collection(database, "completed");
+        const querySnapshot = await getDocs(completedCollection);
+
+        // Extract document IDs
+        const ids = querySnapshot.docs.map((doc) => doc.id);
+        setDocumentIds(ids); // Set document IDs in state
+      } catch (error) {
+        console.error("Error fetching document IDs: ", error);
+      }
+    };
+
+    fetchCompletedDocuments();
+
+    saveCompletionData();
+  }, []);
+
   return (
-    <Box textAlign="center" p={5}>
-      <Text fontSize="2xl" fontWeight="bold">
-        Congratulations!
-      </Text>
-      <Text>You have completed the quiz. Well done!</Text>
-      <Button mt={4} colorScheme="purple" onMouseDown={handleRestart}>
-        Restart Quiz
-      </Button>
+    <Box
+      textAlign="center"
+      p={5}
+      display="flex"
+      flexDirection={"column"}
+      alignItems={"center"}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "48px",
+          width: "100%",
+        }}
+      >
+        <img
+          src={
+            "https://res.cloudinary.com/dtkeyccga/image/upload/v1724208228/Screenshot_2024-08-20_at_7.43.28_PM_fioetr.png"
+          }
+          height={300}
+          width={375}
+          style={{ boxShadow: "0px 0.25px 0.25px 0.5px rgba(0,0,0, 0.25)" }}
+        />
+      </div>
+      <br />
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "600px",
+        }}
+      >
+        <Text fontSize="2xl" fontWeight="bold">
+          Congratulations!
+        </Text>
+        <Text fontSize="medium">
+          You have completed the quiz. You should be proud because most people
+          don't get this far. Well done!
+        </Text>
+        <br />
+        <Text fontSize={"sm"}>Connect with everyone that has finished</Text>
+        <br />
+        <ul style={{ listStyleType: "none", padding: 0 }}>
+          {documentIds.length > 0 ? (
+            documentIds.map((id) => (
+              <li key={id}>
+                <a href={`https://primal.net/p/${id}`}>
+                  https://primal.net/p/{id.substr(0, 8)}
+                </a>
+              </li>
+            ))
+          ) : (
+            <Text fontSize="sm">Loading...</Text>
+          )}
+        </ul>
+      </div>
     </Box>
   );
 };
-
 export const VoiceInput = ({
   value,
   onChange,
@@ -233,6 +331,7 @@ export const VoiceInput = ({
   const handleVoiceStart = () => {
     resetFeedbackMessages();
     setFeedback("");
+    // setGrade("");
     setIsListening(true);
     setAiListening(false);
     resetTranscript();
@@ -259,6 +358,7 @@ export const VoiceInput = ({
   const handleAiStart = () => {
     resetFeedbackMessages();
     setFeedback("");
+    // setGrade("");
     setAiListening(true);
     setIsListening(false);
     resetTranscript();
@@ -343,8 +443,6 @@ export const VoiceInput = ({
         steps[userLanguage]
       );
 
-      console.log("relevant steps", relevantSteps);
-
       await submitEducationalPrompt([
         {
           content: `Generate educational material about ${JSON.stringify(
@@ -402,7 +500,7 @@ export const VoiceInput = ({
           </Button>
         </HStack>
       ) : null}
-      {isWarningNotDismissed && isUnsupportedBrowser() && currentStep === 3 ? (
+      {isWarningNotDismissed && isUnsupportedBrowser() && currentStep === 4 ? (
         <>
           <br />
           <VStack
@@ -851,11 +949,13 @@ const Step = ({
   userLanguage,
   setUserLanguage,
   postNostrContent,
+  assignExistingBadgeToNpub,
 }) => {
   const { stepIndex } = useParams();
   const currentStepIndex = parseInt(stepIndex, 10);
   const [inputValue, setInputValue] = useState("");
   const [selectedOption, setSelectedOption] = useState(""); // For Multiple Choice
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const [items, setItems] = useState([]); // For Select Order
   const [isSending, setIsSending] = useState(false);
   const [isCorrect, setIsCorrect] = useState(null);
@@ -867,6 +967,7 @@ const Step = ({
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
   const { cashTap } = useCashuWallet(true);
+  const [grade, setGrade] = useState("");
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
     response_format: { type: "json_object" },
@@ -918,6 +1019,17 @@ const Step = ({
     }
   }, [step]);
 
+  useEffect(() => {
+    if (isCorrect) {
+      postNostrContent(
+        `I just completed question ${currentStep} with a grade of ${grade}% on https://program-ai.app \n\n${step.question?.questionText} https://m.primal.net/KBLq.png `
+      );
+      assignExistingBadgeToNpub(
+        "naddr1qq99getnwsk5yctyvajszrthwden5te0dehhxtnvdakqyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5us4wadzn"
+      );
+    }
+  }, [isCorrect]);
+
   // Calculate progress through the steps
   const calculateProgress = () => {
     return ((currentStep - 1) / (steps[userLanguage].length - 1)) * 100;
@@ -935,6 +1047,7 @@ const Step = ({
   const handleAnswerClick = async () => {
     resetMessages();
     setFeedback("");
+    setGrade("");
     setIsSending(true);
     setResetVoiceState(true);
     setStopListening(true);
@@ -946,6 +1059,8 @@ const Step = ({
       answer = items;
     } else if (step.isConversationReview) {
       answer = finalConversation;
+    } else if (step.isMultipleAnswerChoice) {
+      answer = selectedOptions;
     }
 
     if (step.isConversationReview) {
@@ -954,16 +1069,13 @@ const Step = ({
         steps[userLanguage]
       );
 
-      console.log("relevant steps", relevantSteps);
-      console.log("finalConversation", finalConversation);
-      console.log("answer", answer);
       await submitPrompt([
         {
           content: `The user is having a conversation and reviewing the following subjects"${JSON.stringify(
             relevantSteps
           )}". The user provided the following conversation "${JSON.stringify(
             answer
-          )}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not mention the previous details. Your feedback will include a grade ranging from 0-100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade or even a 0 if a user inputs nothing relevant. Be tough and fair and don't worry about being nice. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct, therefore isCorrect is always true. The user is speaking ${
+          )}". The answer is always correct since this is just a check-in feature. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not mention the previous details. Your feedback will include a grade ranging from 0-100 based on the quality of the conversation. Be a tough grader and don't be afraid to give users a failing grade or even a 0 if a user inputs nothing relevant to the conversation. Be tough and fair and don't worry about being nice. If the information they put is irrelevant, straight up just flunk them with a 0. Always include the grade in every circumstance. Do not include the answer or solution in your feedback as there is none and the "answer" is always correct, therefore isCorrect is always true. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -975,7 +1087,7 @@ const Step = ({
           content: `The user is answering the following question "${
             step.question.questionText
           }". The answer to the question is an array [${step.question.answer}]
-        and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+        and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction.  Your feedback will include a grade ranging from 0-100 based on the quality of the answer -  however if the answer is correct just reward a 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -988,7 +1100,44 @@ const Step = ({
             step.question.questionText
           }". The answer to the question is defined as ${
             step.question.answer
-          } and the user submitted the following answer array ${answer}. Is this answer correct? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. The user is speaking ${
+          } and the user submitted the following answer array ${answer}. Is this answer correct? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if the answer is correct just reward a 100. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    } else if (step.isMultipleAnswerChoice) {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }". The answer to the question is defined as ${JSON.stringify(
+            step.question.answer
+          )} and the user submitted the following answer array ${JSON.stringify(
+            answer
+          )}. Is this answer correct? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    } else if (step.isText) {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string, comprehensive: boolean }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  - however award a grade of 100 if comprehensive boolean is true. If the answer is correct but kind of lazy, award a grade of less than an 80. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
+          role: "user",
+        },
+      ]);
+    } else if (step.isTerminal) {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  - however if the answer is correct just award a 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -999,7 +1148,7 @@ const Step = ({
         {
           content: `The user is answering the following question "${
             step.question.questionText
-          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. The user is speaking ${
+          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean,  feedback: string, grade: string, comprehensive: boolean }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  - however if the answer is correct, provide a grade of 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -1018,14 +1167,32 @@ const Step = ({
     setResetVoiceState(false);
   };
 
+  const validateMultipleChoiceAnswers = (selectedOptions, correctAnswers) => {
+    // // Check if selected options are the same as correct answers
+    // if (selectedOptions.length !== correctAnswers.length) {
+    //   return false;
+    // }
+    // let areChoicesCorrect = selectedOptions.every((option) =>
+    //   correctAnswers.includes(option)
+    // );
+    // setIsCorrect(areChoicesCorrect);
+    // if (areChoicesCorrect) {
+    //   setFeedback("Correct! Well done.");
+    // } else {
+    //   setFeedback("Incorrect. Try again.");
+    // }
+  };
+
   // Store correct answers in the database
-  const storeCorrectAnswer = async (step, answer) => {
+  const storeCorrectAnswer = async (step, feedback) => {
     const userId = localStorage.getItem("local_npub");
     const answerRef = collection(database, `users/${userId}/answers`);
     await addDoc(answerRef, {
+      title: step.title,
+      description: step.description,
       step: currentStep,
       question: step.question.questionText,
-      correctAnswer: answer,
+      feedback: feedback,
       timestamp: new Date(),
     });
 
@@ -1048,18 +1215,18 @@ const Step = ({
 
   // Stream messages and handle feedback
   useEffect(() => {
+    console.log("messages", messages);
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
         const jsonResponse = JSON.parse(lastMessage.content);
 
+        console.log("jsonResponse", jsonResponse);
         setIsCorrect(jsonResponse.isCorrect);
         setFeedback(jsonResponse.feedback);
 
         if (jsonResponse.isCorrect) {
-          const npub = localStorage.getItem("local_npub");
-          incrementUserStep(npub);
-          storeCorrectAnswer(step, jsonResponse.feedback);
+          setGrade(jsonResponse.grade);
         }
       }
     }
@@ -1069,21 +1236,28 @@ const Step = ({
   useEffect(() => {
     setInputValue("");
     setFeedback("");
+    setFeedback("");
     setIsCorrect(null);
     resetMessages();
   }, [step]);
 
   // Navigate to the next step
   const handleNextClick = async () => {
-    if (currentStep === steps.length - 1) {
+    if (currentStep >= steps[userLanguage].length - 1) {
       navigate("/award");
     } else {
       setIsPostingWithNostr(true);
-      postNostrContent(
-        `I just completed question ${currentStep} on https://program-ai.app!\n\n${step.question?.questionText} https://m.primal.net/KBLq.png `
-      );
-      setIsPostingWithNostr(false);
-      navigate(`/q/${currentStep + 1}`);
+
+      try {
+        const npub = localStorage.getItem("local_npub");
+        await incrementUserStep(npub);
+        await storeCorrectAnswer(step, feedback);
+
+        setIsPostingWithNostr(false);
+        navigate(`/q/${currentStep + 1}`);
+      } catch (error) {
+        setIsPostingWithNostr(false);
+      }
     }
   };
 
@@ -1141,6 +1315,7 @@ const Step = ({
     }
   }, [educationalMessages]);
 
+  console.log("feedback", feedback);
   return (
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
@@ -1151,10 +1326,11 @@ const Step = ({
         </b>
         <Progress
           value={calculateProgress()}
-          size="xs"
+          size="md"
           colorScheme="purple"
           width="100%"
           mb={4}
+          borderRadius="4px"
         />
       </VStack>
       <Text fontSize="xl">
@@ -1233,6 +1409,15 @@ const Step = ({
           onLearnClick={handleLearnClick}
         />
       )}
+      {step.isMultipleAnswerChoice && (
+        <MultipleAnswerQuestion
+          question={step.question}
+          selectedOptions={selectedOptions}
+          setSelectedOptions={setSelectedOptions}
+          onLearnClick={handleLearnClick}
+          userLanguage={userLanguage}
+        />
+      )}
       {step.isSelectOrder && (
         <SelectOrderQuestion
           items={items}
@@ -1280,7 +1465,13 @@ const Step = ({
                   textAlign={"left"}
                   color={isCorrect ? "blue.500" : "red.500"}
                 >
-                  {feedback}
+                  {feedback}{" "}
+                  {grade ? (
+                    <DataTags
+                      userLanguage={userLanguage}
+                      grade={translation[userLanguage]["tags.grade"] + grade}
+                    />
+                  ) : null}
                 </Text>{" "}
               </Box>
             </FadeInComponent>
@@ -1351,8 +1542,10 @@ const Home = ({
   setUserLanguage,
   generateNostrKeys,
   auth,
+  view,
+  setView,
 }) => {
-  const [view, setView] = useState("buttons");
+  // const [view, setView] = useState("buttons");
   const [userName, setUserName] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [keys, setKeys] = useState(null);
@@ -1365,6 +1558,7 @@ const Home = ({
   const navigate = useNavigate();
   const toast = useToast();
   // const { width, height } = useWindow();
+  // const { authWithSigner } = useSharedNostr();
 
   const handleCreateAccount = async () => {
     setIsCreatingAccount(true);
@@ -1372,7 +1566,6 @@ const Home = ({
     setKeys(newKeys);
 
     localStorage.setItem("displayName", userName);
-    setIsSignedIn(true);
 
     const defaultInterval = 2880;
     const currentTime = new Date();
@@ -1387,6 +1580,7 @@ const Home = ({
       currentTime, // Start time
       endTime // End time, 48 hours from start time
     );
+    setIsSignedIn(true);
     setView("created");
     setIsCreatingAccount(false);
   };
@@ -1535,6 +1729,7 @@ const Home = ({
               >
                 {translation[userLanguage]["landing.button.signIn"]}{" "}
               </Button>
+
               <br />
               <br />
               <FormControl
@@ -1590,6 +1785,10 @@ const Home = ({
             >
               {translation[userLanguage]["landing.button.signIn"]}
             </Button>
+
+            {/* <Button onMouseDown={authWithSigner} colorScheme="purple">
+              signin with extension
+            </Button> */}
           </HStack>
         </VStack>
       )}
@@ -1698,15 +1897,20 @@ const Home = ({
 };
 
 function App() {
+  const [view, setView] = useState("buttons");
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(0); // State to store current step
   const [userLanguage, setUserLanguage] = useState("en"); // State to store user language preference
   const navigate = useNavigate();
   const location = useLocation();
-  console.log("location", location);
 
-  const { generateNostrKeys, auth, postNostrContent } = useSharedNostr(
+  const {
+    generateNostrKeys,
+    auth,
+    postNostrContent,
+    assignExistingBadgeToNpub,
+  } = useSharedNostr(
     localStorage.getItem("local_npub"),
     localStorage.getItem("local_nsec")
   );
@@ -1760,7 +1964,10 @@ function App() {
       setLoading(false);
     };
 
-    initializeApp();
+    if (window.location.pathname === "/award") {
+    } else {
+      initializeApp();
+    }
   }, [navigate]);
 
   if (loading) {
@@ -1802,6 +2009,8 @@ function App() {
           userLanguage={userLanguage}
           setUserLanguage={setUserLanguage}
           currentStep={currentStep} // Pass current step to SettingsMenu
+          view={view}
+          setView={setView}
         />
       )}
 
@@ -1816,6 +2025,8 @@ function App() {
               setUserLanguage={setUserLanguage}
               generateNostrKeys={generateNostrKeys}
               auth={auth}
+              view={view}
+              setView={setView}
             />
           }
         />
@@ -1831,6 +2042,7 @@ function App() {
                     userLanguage={userLanguage}
                     setUserLanguage={setUserLanguage}
                     postNostrContent={postNostrContent}
+                    assignExistingBadgeToNpub={assignExistingBadgeToNpub}
                   />
                 </PrivateRoute>
               }

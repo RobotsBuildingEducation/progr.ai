@@ -171,6 +171,75 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
+  const getHexNPub = (npub) => {
+    // Decode the npub from Bech32
+    const { words: npubWords } = bech32.decode(npub);
+    const hexNpub = Buffer.from(bech32.fromWords(npubWords)).toString("hex");
+
+    return hexNpub;
+  };
+
+  const assignExistingBadgeToNpub = async (
+    badgeNaddr,
+    awardeeNpub = localStorage.getItem("local_npub"), // The public key of the user being awarded
+    ownerNsec = import.meta.env.SECRET_KEY // Your private key to sign the event
+  ) => {
+    if (!awardeeNpub) {
+      console.error("Awardee public key is required to award the badge.");
+      return;
+    }
+
+    if (!ownerNsec) {
+      console.error(
+        "Owner's private key is required to sign the badge award event."
+      );
+      return;
+    }
+
+    // Connect to Nostr as the badge owner
+    const connection = await connectToNostr(
+      "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+      ownerNsec
+    );
+    if (!connection) return;
+
+    const { ndkInstance, signer } = connection;
+
+    // Create the event for awarding the badge
+    const badgeAwardEvent = new NDKEvent(ndkInstance, {
+      kind: NDKKind.BadgeAward, // Badge Award event kind
+      tags: [
+        ["a", badgeNaddr], // Reference to the Badge Definition event
+        [
+          "p",
+          //npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt
+          getHexNPub(localStorage.getItem("local_npub")),
+        ], // Public key of the awardee
+      ],
+      created_at: Math.floor(Date.now() / 1000),
+      //npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt
+      pubkey: getHexNPub(
+        "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt"
+      ),
+      // Your public key as the issuer
+    });
+
+    // Sign the badge event
+    try {
+      await badgeAwardEvent.sign(signer);
+    } catch (error) {
+      console.error("Error signing badge event:", error);
+    }
+
+    // Publish the badge event
+    try {
+      await badgeAwardEvent.publish();
+      console.log("Badge awarded successfully to:", awardeeNpub);
+    } catch (error) {
+      console.error("Error publishing badge event:", error);
+    }
+  };
+
   return {
     isConnected,
     errorMessage,
@@ -179,5 +248,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     generateNostrKeys,
     postNostrContent,
     auth,
+    assignExistingBadgeToNpub,
   };
 };

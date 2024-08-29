@@ -60,7 +60,7 @@ export let translation = {
     "settings.button.yourTutor": "Your Tutor",
     "settings.button.yourProfile": "Your Profile",
     "settings.button.nostrApps": "App Collection",
-    "settings.button.patreon": "Open Patreon",
+    "settings.button.patreon": "Subscription",
     "settings.button.feedback": "Feedback",
     "settings.button.signOut": "Sign Out",
     "modal.title.selfPace": "Self-pace",
@@ -393,8 +393,10 @@ export let translation = {
     "button.addToConversation": "Add To Conversation",
     "button.subjectsCovered": "Subjects Covered",
     "link.connectWithMe": "Connect with me!",
+    "tags.grade": "Grade: ",
   },
   es: {
+    "tags.grade": "Calificación: ",
     "toast.title.keysCopied": "Claves copiadas.",
     "toast.description.keysCopied":
       "Tus claves se han copiado al portapapeles.",
@@ -449,7 +451,7 @@ export let translation = {
     "settings.button.tutor": "Abrir Tutor",
     "settings.button.tutorGPT": "Abrir Tutor (GPT)",
     "settings.button.socialWallet": "Descentralizar",
-    "settings.button.patreon": "Abrir Patreon",
+    "settings.button.patreon": "Suscripción",
     "settings.button.feedback": "Comentarios",
     "settings.button.signOut": "Cerrar sesión",
     "modal.title.selfPace": "Auto ritmo",

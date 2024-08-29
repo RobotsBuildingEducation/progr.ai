@@ -60,10 +60,12 @@ export const KnowledgeLedgerModal = ({
     resetMessages();
     try {
       const userAnswers = await fetchUserAnswers();
-      console.log("user answers", userAnswers);
+
+      console.log("USER ANSWERS", userAnswers);
+
       await submitPrompt([
         {
-          content: `Based on the user's completed steps and their answers: ${JSON.stringify(
+          content: `The individual is learning about computer science and how to code in 130 steps, starting with elementary knowledge and ending with the ability to create apps and understand algorithms. Based on the user's completed steps: ${JSON.stringify(
             userAnswers
           )}, suggest the next best topic for them to learn. Explain why it's best. Respond as if you're talking to the individual. Do not include code or headers headers/titles formatting - at most simply bold test to indicate sections. Format in minimalist markdown. The user is speaking in ${
             userLanguage === "en" ? "English" : "Spanish"

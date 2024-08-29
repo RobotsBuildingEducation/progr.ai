@@ -15,6 +15,7 @@ export const steps = {
       title: "Understanding Coding",
       description: "Grasp the basic concept of coding.",
       isMultipleChoice: true,
+      // isMultipleAnswerChoice: true,
       question: {
         questionText: "Which of the following best describes coding?",
         options: [
@@ -53,21 +54,22 @@ export const steps = {
       title: "Introduction to Variables",
       description:
         "In this step, you will learn about variables and how to use them in your code.",
-      isSelectOrder: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Arrange the following steps to correctly declare a variable in JavaScript:",
+          "Select all the steps involved in correctly declaring a variable in JavaScript:",
         options: [
           "Use the var/let/const keyword",
-          "Choose a variable name",
-          "Assign a value to the variable",
-          "End the line with a semicolon",
+          "Choose a descriptive variable name",
+          "Assign a value using the single equals sign (=)",
+          "Initialize the variable inside curly braces {}",
+          "Declare the variable after assigning a value",
+          "Capitalize the first letter of the variable name",
         ],
         answer: [
           "Use the var/let/const keyword",
-          "Choose a variable name",
-          "Assign a value to the variable",
-          "End the line with a semicolon",
+          "Choose a descriptive variable name",
+          "Assign a value using the single equals sign (=)",
         ],
       },
     },
@@ -2007,21 +2009,22 @@ export const steps = {
       title: "Introducción a las Variables",
       description:
         "En este paso, aprenderás sobre las variables y cómo usarlas en tu código.",
-      isSelectOrder: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Organiza los siguientes pasos para declarar correctamente una variable en JavaScript:",
+          "Selecciona todos los pasos involucrados en declarar correctamente una variable en JavaScript:",
         options: [
-          "Usar la palabra clave var/let/const",
-          "Elegir un nombre para la variable",
-          "Asignar un valor a la variable",
-          "Terminar la línea con un punto y coma",
+          "Usa la palabra clave var/let/const",
+          "Elige un nombre descriptivo para la variable",
+          "Asigna un valor usando el signo de igual simple (=)",
+          "Inicializa la variable dentro de llaves {}",
+          "Declara la variable después de asignar un valor",
+          "Capitaliza la primera letra del nombre de la variable",
         ],
         answer: [
-          "Usar la palabra clave var/let/const",
-          "Elegir un nombre para la variable",
-          "Asignar un valor a la variable",
-          "Terminar la línea con un punto y coma",
+          "Usa la palabra clave var/let/const",
+          "Elige un nombre descriptivo para la variable",
+          "Asigna un valor usando el signo de igual simple (=)",
         ],
       },
     },
