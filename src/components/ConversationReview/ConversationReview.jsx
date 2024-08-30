@@ -112,12 +112,6 @@ const ConversationReview = ({
 
   return (
     <VStack spacing={4} align="center" width="100%" maxWidth="600px">
-      <ReactConfetti
-        // gravity={0.75}
-        numberOfPieces={100}
-        recycle={false}
-        colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
-      />
       <Accordion allowToggle style={{ width: "100%" }}>
         <AccordionItem key={"x"}>
           <AccordionButton p={6} justifyContent={"space-between"}>

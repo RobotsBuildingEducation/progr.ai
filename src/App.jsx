@@ -84,6 +84,8 @@ import RandomCharacter, {
 } from "./elements/RandomCharacter";
 import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/MultipleAnswerQuestion";
 import { DataTags } from "./elements/DataTag";
+import { transcript } from "./utility/transcript";
+import AwardModal from "./components/AwardModal/AwardModal";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -980,6 +982,12 @@ const Step = ({
 
   const [finalConversation, setFinalConversation] = useState([]);
 
+  const {
+    isOpen: isAwardModalOpen,
+    onOpen: onAwardModalOpen,
+    onClose: onAwardModalClose,
+  } = useDisclosure();
+
   // Fetch user data and manage streaks and timers
   useEffect(() => {
     const fetchUserData = async () => {
@@ -1010,6 +1018,7 @@ const Step = ({
     };
 
     fetchUserData();
+    onAwardModalOpen();
   }, []);
 
   // Initialize items for Select Order question
@@ -1024,9 +1033,11 @@ const Step = ({
       postNostrContent(
         `I just completed question ${currentStep} with a grade of ${grade}% on https://program-ai.app \n\n${step.question?.questionText} https://m.primal.net/KBLq.png `
       );
-      assignExistingBadgeToNpub(
-        "naddr1qq99getnwsk5yctyvajszrthwden5te0dehhxtnvdakqyg9ty9kqftakjrsw5p55z5nnsqwxld6xns5darqsrey7kqcuqrlz6upsgqqqw5us4wadzn"
-      );
+      if (step.isConversationReview) {
+        assignExistingBadgeToNpub(transcript[step.groupReference]["address"]);
+        console.log("it has run..");
+        onAwardModalOpen();
+      }
     }
   }, [isCorrect]);
 
@@ -1215,13 +1226,11 @@ const Step = ({
 
   // Stream messages and handle feedback
   useEffect(() => {
-    console.log("messages", messages);
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
       if (!lastMessage.meta.loading) {
         const jsonResponse = JSON.parse(lastMessage.content);
 
-        console.log("jsonResponse", jsonResponse);
         setIsCorrect(jsonResponse.isCorrect);
         setFeedback(jsonResponse.feedback);
 
@@ -1315,7 +1324,6 @@ const Step = ({
     }
   }, [educationalMessages]);
 
-  console.log("feedback", feedback);
   return (
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
@@ -1531,6 +1539,19 @@ const Step = ({
         educationalContent={educationalContent}
         userLanguage={userLanguage}
       />
+
+      {isAwardModalOpen ? (
+        <>
+          <AwardModal
+            isOpen={isAwardModalOpen}
+            onClose={onAwardModalClose}
+            // educationalMessages={educationalMessages}
+            // educationalContent={educationalContent}
+            userLanguage={userLanguage}
+            step={step}
+          />
+        </>
+      ) : null}
     </VStack>
   );
 };

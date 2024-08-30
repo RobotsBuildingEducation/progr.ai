@@ -22,12 +22,10 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     const storedNsec = localStorage.getItem("local_nsec");
 
     if (storedNpub) {
-      console.log("storing key", storedNpub);
       setNostrPubKey(storedNpub);
     }
 
     if (storedNsec) {
-      console.log("storing key");
       setNostrPrivKey(storedNsec);
     }
   }, []);
@@ -51,9 +49,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
     setNostrPrivKey(encodedNsec);
     setNostrPubKey(publicKey);
-
-    console.log("encded npub", encodedNpub);
-    console.log("user.npub", publicKey);
 
     if (!localStorage.getItem("local_nsec")) {
       postNostrContent(
@@ -81,9 +76,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
     const nsec = nsecRef || nostrPrivKey || defaultNsec;
     const npub = npubRef || nostrPubKey || defaultNpub;
-
-    console.log("nsec ent", nsec);
-    console.log("npub ent", npub);
 
     try {
       // Decode the nsec from Bech32
@@ -114,8 +106,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   };
 
   const auth = async (nsecPassword) => {
-    console.log("nsecPassword is running..", nsecPassword);
-
     let testnsec = nsecPassword;
 
     let decoded = nip19.decode(testnsec);
@@ -147,7 +137,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
     const { ndkInstance, hexNpub, signer } = connection;
 
-    console.log("x", hexNpub);
     // Create a new note event
     const noteEvent = new NDKEvent(ndkInstance, {
       kind,
@@ -182,7 +171,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
   const assignExistingBadgeToNpub = async (
     badgeNaddr,
     awardeeNpub = localStorage.getItem("local_npub"), // The public key of the user being awarded
-    ownerNsec = import.meta.env.SECRET_KEY // Your private key to sign the event
+    ownerNsec = import.meta.env.VITE_SECRET_KEY // Your private key to sign the event
   ) => {
     if (!awardeeNpub) {
       console.error("Awardee public key is required to award the badge.");
@@ -240,6 +229,140 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   };
 
+  const getAddressPointer = (naddr) => {
+    return nip19.decode(naddr).data;
+  };
+
+  const getBadgeData = async (addy) => {
+    try {
+      // Connect to Nostr
+      const connection = await connectToNostr();
+      if (!connection) return [];
+
+      const { ndkInstance, hexNpub } = connection;
+
+      const addressPointer = await getAddressPointer(addy);
+
+      console.log("BDT", addressPointer);
+      // Create a filter for badge events (kind 30008) for the given user
+      const filter = {
+        kinds: [NDKKind.BadgeDefinition], // Use the NDKKind enum for better readability
+        authors: [addressPointer.pubkey], // The user's hex-encoded npub
+        "#d": [addressPointer.identifier],
+        limit: 1,
+      };
+
+      // Create a subscription to fetch the events
+      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
+
+      // Array to hold badges
+      const badges = [];
+
+      // Listen for events
+      subscription.on("event", (event) => {
+        const badgeInfo = {
+          content: event.content,
+          createdAt: event.created_at,
+          tags: event.tags,
+        };
+        badges.push(badgeInfo);
+      });
+
+      // Wait for the subscription to finish
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      // Log the retrieved badges
+
+      return badges;
+    } catch (error) {
+      console.error("Error retrieving badges:", error);
+      setErrorMessage(error.message);
+      return [];
+    }
+  };
+  const getUserBadges = async (npub = localStorage.getItem("local_npub")) => {
+    try {
+      const connection = await connectToNostr();
+      if (!connection) return [];
+
+      const { ndkInstance } = connection;
+      const hexNpub = getHexNPub(npub); // Convert npub to hex
+
+      // Create a filter for badge award events (kind 30009) where the user is the recipient
+      const filter = {
+        kinds: [NDKKind.BadgeAward], // Kind 30009 for badge awards
+        "#p": [hexNpub], // Filter by the user's hex-encoded public key as the recipient
+        limit: 100, // Adjust the limit as needed
+      };
+
+      const subscription = ndkInstance.subscribe(filter, { closeOnEose: true });
+
+      const badges = [];
+
+      subscription.on("event", (event) => {
+        const badgeInfo = {
+          content: event.content,
+          createdAt: event.created_at,
+          tags: event.tags,
+        };
+        badges.push(badgeInfo);
+      });
+
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      console.log("badges", badges);
+      const uniqueNAddresses = [
+        ...new Set(
+          badges.flatMap(
+            (badge) =>
+              badge.tags
+                .filter((tag) => tag[0] === "a" && tag[1]) // Find tags where the first element is "a"
+                .map((tag) => tag[1]) // Extract the naddress
+          )
+        ),
+      ];
+
+      console.log("uniqueNAddresses", uniqueNAddresses);
+      let badgeData = uniqueNAddresses.map((naddress) =>
+        getBadgeData(naddress)
+      );
+
+      let resolvedBadges = await Promise.all(badgeData);
+
+      const formattedBadges = [];
+
+      // Loop through each outer array in the badgeDataArray
+      resolvedBadges.forEach((badgeArray) => {
+        // For each inner badge object array (which should have one object), extract name and image
+        console.log("badge arr", badgeArray);
+        badgeArray.forEach((badge) => {
+          let name = "";
+          let image = "";
+
+          badge.tags.forEach((tag) => {
+            if (tag[0] === "name") {
+              name = tag[1];
+            }
+            if (tag[0] === "image") {
+              image = tag[1];
+            }
+          });
+
+          // Push the object containing name and image to the badges array
+          if (name && image) {
+            formattedBadges.push({ name, image });
+          }
+        });
+      });
+
+      console.log("formattedBadges", formattedBadges);
+      return formattedBadges;
+    } catch (error) {
+      console.error("Error retrieving badges:", error);
+      return [];
+    }
+  };
+
   return {
     isConnected,
     errorMessage,
@@ -249,5 +372,6 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     postNostrContent,
     auth,
     assignExistingBadgeToNpub,
+    getUserBadges,
   };
 };
