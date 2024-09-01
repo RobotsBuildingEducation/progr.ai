@@ -1018,7 +1018,7 @@ const Step = ({
     };
 
     fetchUserData();
-    onAwardModalOpen();
+    // onAwardModalOpen();
   }, []);
 
   // Initialize items for Select Order question
@@ -1035,7 +1035,7 @@ const Step = ({
       );
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(transcript[step.groupReference]["address"]);
-        console.log("it has run..");
+
         onAwardModalOpen();
       }
     }
@@ -1540,18 +1540,17 @@ const Step = ({
         userLanguage={userLanguage}
       />
 
-      {isAwardModalOpen ? (
-        <>
-          <AwardModal
-            isOpen={isAwardModalOpen}
-            onClose={onAwardModalClose}
-            // educationalMessages={educationalMessages}
-            // educationalContent={educationalContent}
-            userLanguage={userLanguage}
-            step={step}
-          />
-        </>
-      ) : null}
+      <>
+        <AwardModal
+          isOpen={isAwardModalOpen}
+          onClose={onAwardModalClose}
+          // educationalMessages={educationalMessages}
+          // educationalContent={educationalContent}
+          userLanguage={userLanguage}
+          step={step}
+          isCorrect={isCorrect}
+        />
+      </>
     </VStack>
   );
 };
@@ -1967,8 +1966,9 @@ function App() {
         const userSnapshot = await getDoc(userDoc);
         if (userSnapshot.exists()) {
           const userData = userSnapshot.data();
+          console.log("userData.userLanguage", userData.language);
           setUserLanguage(userData.userLanguage || "en"); // Set user language preference
-          localStorage.setItem("userLanguage", userData.userLanguage);
+          localStorage.setItem("userLanguage", userData.language);
         }
 
         if (location.pathname === "/about") {
@@ -2032,6 +2032,7 @@ function App() {
           currentStep={currentStep} // Pass current step to SettingsMenu
           view={view}
           setView={setView}
+          step={steps[userLanguage][currentStep]}
         />
       )}
 

@@ -5,6 +5,7 @@ import { keyframes } from "@emotion/react";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import { AppWrapper } from "./App.jsx";
+import "./index.css";
 // localStorage.clear();
 
 const gradientAnimation = keyframes`
@@ -43,6 +44,14 @@ const theme = extendTheme({
 });
 
 let statement = "hello";
+
+//let -> \ux0 -> 0011100 ->
+// statement
+// =
+// "
+// hello, h e l l o
+// "
+// ;
 
 //ok.
 console.log("hello");

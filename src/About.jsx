@@ -76,6 +76,7 @@ export const About = ({ userLanguage, handleToggle }) => {
           "roxGPT",
           "Patreon",
           "decentralizedIdentity",
+          "decentralizedTranscripts",
           "spanishMode",
           "streaks",
           "quizSeries",

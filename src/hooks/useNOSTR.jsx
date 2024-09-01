@@ -264,6 +264,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
           content: event.content,
           createdAt: event.created_at,
           tags: event.tags,
+          badgeAddress: addy,
         };
         badges.push(badgeInfo);
       });
@@ -300,6 +301,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       const badges = [];
 
       subscription.on("event", (event) => {
+        console.log("EVENT", event);
         const badgeInfo = {
           content: event.content,
           createdAt: event.created_at,
@@ -340,6 +342,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
           let image = "";
 
           badge.tags.forEach((tag) => {
+            console.log("TAG", tag);
             if (tag[0] === "name") {
               name = tag[1];
             }
@@ -350,7 +353,11 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
           // Push the object containing name and image to the badges array
           if (name && image) {
-            formattedBadges.push({ name, image });
+            formattedBadges.push({
+              name,
+              image,
+              badgeAddress: badge.badgeAddress,
+            });
           }
         });
       });

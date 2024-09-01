@@ -1,0 +1,9 @@
+html {
+  scrollbar-color: #7f5ad5 #e0e0e0;
+}
+body {
+  overflow: auto;
+  overscroll-behavior: none;
+  scrollbar-gutter: stable both-edges;
+  scrollbar-color: #7f5ad5 #e0e0e0;
+}

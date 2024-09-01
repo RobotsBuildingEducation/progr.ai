@@ -30,6 +30,7 @@ import FeedbackModal from "./FeedbackModal/FeedbackModal"; // Import the feedbac
 import { translation } from "../../utility/translation";
 import { database } from "../../database/firebaseResources";
 import { doc, updateDoc } from "firebase/firestore";
+import TranscriptModal from "./TranscriptModal/TranscriptModal";
 
 const SettingsMenu = ({
   isSignedIn,
@@ -40,6 +41,7 @@ const SettingsMenu = ({
   setUserLanguage,
   view,
   setView,
+  step,
 }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
@@ -82,6 +84,12 @@ const SettingsMenu = ({
     onClose: onFeedbackClose,
   } = useDisclosure(); // Feedback modal
 
+  const {
+    isOpen: isTranscriptOpen,
+    onOpen: onTranscriptOpen,
+    onClose: onTranscriptClose,
+  } = useDisclosure(); // Feedback modal
+
   const [interval, setInterval] = useState(120);
 
   const handleToggle = async () => {
@@ -108,7 +116,7 @@ const SettingsMenu = ({
       localStorage.getItem("local_npub")
     );
     updateDoc(userDocRef, {
-      userLanguage: userLanguage,
+      language: userLanguage,
     });
   }, []);
 
@@ -180,6 +188,14 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.bitcoinMode"]}
               </Button>{" "}
+              <Button
+                p={6}
+                colorScheme="purple"
+                style={{ width: "100%" }}
+                onMouseDown={onTranscriptOpen}
+              >
+                {translation[userLanguage]["settings.button.transcript"]}
+              </Button>
               <Button
                 p={6}
                 colorScheme="purple"
@@ -298,6 +314,13 @@ const SettingsMenu = ({
         userLanguage={userLanguage}
         isOpen={isFeedbackOpen}
         onClose={onFeedbackClose} // Feedback modal
+      />
+
+      <TranscriptModal
+        userLanguage={userLanguage}
+        isOpen={isTranscriptOpen}
+        onClose={onTranscriptClose} // Feedback modal
+        step={step}
       />
     </>
   );

@@ -63,6 +63,7 @@ export let translation = {
     "settings.button.patreon": "Subscription",
     "settings.button.feedback": "Feedback",
     "settings.button.signOut": "Sign Out",
+    "modal.title.decentralizedTranscript": "Decentralized Transcript",
     "modal.title.selfPace": "Self-pace",
     "modal.selfPace.instruction":
       "Choose how much time can elapse to grow your streak.",
@@ -257,6 +258,15 @@ export let translation = {
         into the decentralized world.
       </div>
     ),
+    "about.title.decentralizedTranscripts": "Cross-platform Transcripts",
+    "about.feature.decentralizedTranscripts": (
+      <div>
+        <DataTags isRox isProgramAI />
+        Making progress on either app will award you transcript badges that you
+        can carry cross-platform to other apps. This makes online education more
+        awesome and representative of effort.
+      </div>
+    ),
     "about.feature.spanishMode": (
       <div>
         <DataTags isProgramAI />
@@ -394,6 +404,34 @@ export let translation = {
     "button.subjectsCovered": "Subjects Covered",
     "link.connectWithMe": "Connect with me!",
     "tags.grade": "Grade: ",
+    "Program AI App Tutorial": "Program AI App Tutorial",
+    "Basics of Coding": "Basics of Coding",
+    "Object-Oriented Programming": "Object-Oriented Programming",
+    "Frontend Development": "Frontend Development",
+    "Backend Engineering Fundamentals": "Backend Engineering Fundamentals",
+    "Creating Apps & Experiences": "Creating Apps & Experiences",
+    "Computer Science": "Computer Science",
+    "Introduction to Engineering": "Introduction to Engineering",
+    "Programming Fundamentals": "Programming Fundamentals",
+    "Frontend Software Engineering": "Frontend Software Engineering",
+    "Backend Software Engineering": "Backend Software Engineering",
+    "Data Structures & Algorithms": "Data Structures & Algorithms",
+    "Full-stack Software Engineering": "Full-stack Software Engineering",
+    "Psychology of Self-esteem": "Psychology of Self-esteem",
+    "Philosophy of Critical Theory & Technology":
+      "Philosophy of Critical Theory & Technology",
+    "Human-Computer Interaction": "Human-Computer Interaction",
+    "Business Writing": "Business Writing",
+    "Introduction to Finance": "Introduction to Finance",
+    "modal.decentralizedTranscript.youEarned": "You earned",
+    "modal.decentralizedTranscript.awareness":
+      "These awards can be transferred to other platforms like",
+    "modal.decentralizedTranscript.awardsEarned": "Awards Earned",
+    loading: "Loading...",
+    "settings.button.transcript": "Transcript",
+    "modal.transcript.instructions": "",
+    yourID: "Your ID",
+    noTranscriptFound: "No older transcripts awards were found.",
   },
   es: {
     "tags.grade": "Calificación: ",
@@ -630,6 +668,16 @@ export let translation = {
     "about.title.guides": "Guías",
     "about.title.insights": "Percepciones",
     "about.title.ofi": "Inteligencia a la Antigüita",
+    "about.title.decentralizedTranscripts": "Transcripciones Cruzadas",
+    "about.feature.decentralizedTranscripts": (
+      <div>
+        <DataTags isRox isProgramAI />
+        El progreso en cualquier aplicación te otorgará insignias de
+        transcripción que podrás llevar de una plataforma a otra. Esto hace que
+        la educación en línea sea más impresionante y representativa del
+        esfuerzo realizado.
+      </div>
+    ),
     "about.feature.decentralizedIdentity": (
       <div>
         <DataTags isRox isProgramAI />
@@ -789,5 +837,35 @@ export let translation = {
     "settings.button.yourProfile": "Tu Perfil",
     "settings.button.nostrApps": "Colección de Apps",
     "link.connectWithMe": "¡Conéctate conmigo!",
+    "Program AI App Tutorial": "Tutorial de Program AI App",
+    "Basics of Coding": "Fundamentos de la Programación",
+    "Object-Oriented Programming": "Programación Orientada a Objetos",
+    "Frontend Development": "Desarrollo Frontend",
+    "Backend Engineering Fundamentals": "Fundamentos de Ingeniería Backend",
+    "Creating Apps & Experiences": "Creación de Aplicaciones y Experiencias",
+    "Computer Science": "Ciencias de la Computación",
+    "Introduction to Engineering": "Introducción a la Ingeniería",
+    "Programming Fundamentals": "Fundamentos de la Programación",
+    "Frontend Software Engineering": "Ingeniería de Software Frontend",
+    "Backend Software Engineering": "Ingeniería de Software Backend",
+    "Data Structures & Algorithms": "Estructuras de Datos y Algoritmos",
+    "Full-stack Software Engineering": "Ingeniería de Software Full-stack",
+    "Psychology of Self-esteem": "Psicología de la Autoestima",
+    "Philosophy of Critical Theory & Technology":
+      "Filosofía de la Teoría Crítica y Tecnología",
+    "Human-Computer Interaction": "Interacción Humano-Computadora",
+    "Business Writing": "Redacción Comercial",
+    "Introduction to Finance": "Introducción a las Finanzas",
+    "modal.title.decentralizedTranscript": "Transcripción Descentralizada",
+    "modal.decentralizedTranscript.youEarned": "Has ganado",
+    "modal.decentralizedTranscript.awareness":
+      "Estos premios se pueden transferir a otras plataformas como",
+    "modal.decentralizedTranscript.awardsEarned": "Premios Ganados",
+    loading: "Cargando...",
+    "settings.button.transcript": "Transcripción",
+    "modal.transcript.instructions": "",
+    yourID: "Tu ID público: ",
+    noTranscriptFound:
+      "No se encontraron premios de transcripciones anteriores.",
   },
 };

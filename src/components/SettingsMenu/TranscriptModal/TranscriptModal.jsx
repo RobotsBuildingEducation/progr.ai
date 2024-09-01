@@ -2,33 +2,32 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  VStack,
   Text,
-  Spinner,
   Modal,
   ModalOverlay,
   ModalContent,
   ModalHeader,
   ModalFooter,
   ModalBody,
-  ModalCloseButton,
-  useDisclosure,
   HStack,
-  extendTheme,
-  useStyleConfig,
+  useToast,
 } from "@chakra-ui/react";
-import { SunsetCanvas } from "../../elements/SunsetCanvas";
-import Editor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs/components/prism-core";
+
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
-import { translation } from "../../utility/translation";
-import { transcript } from "../../utility/transcript";
 import ReactConfetti from "react-confetti";
-import { useSharedNostr } from "../../hooks/useNOSTR";
 
-const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
+import { transcript } from "../../../utility/transcript";
+
+import { useSharedNostr } from "../../../hooks/useNOSTR";
+import { SunsetCanvas } from "../../../elements/SunsetCanvas";
+import { translation } from "../../../utility/translation";
+import { CopyButtonIcon } from "../../../elements/CopyButtonIcon";
+
+const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
+  const toast = useToast();
+
   const [badges, setBadges] = useState([]);
   const [areBadgesLoading, setAreBadgesLoading] = useState(true);
   const { getUserBadges } = useSharedNostr(
@@ -42,21 +41,40 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
       setAreBadgesLoading(false);
     }
 
-    if (step.isConversationReview && isCorrect) getBadges();
-  }, [step, isCorrect]);
+    if (isOpen) {
+      getBadges();
+    } else {
+      setAreBadgesLoading(true);
+    }
+  }, [isOpen]);
 
-  const handleCopyKeys = () => {
-    const keys = localStorage.getItem("local_nsec"); // replace with actual keys
-    navigator.clipboard.writeText(keys);
-    toast({
-      title: translation[userLanguage]["toast.title.keysCopied"],
-      description: translation[userLanguage]["toast.description.keysCopied"],
-      status: "success",
-      duration: 1500,
-      isClosable: true,
-      position: "top",
-    });
+  const handleCopyKeys = (id) => {
+    if (id) {
+      const keys = id; // replace with actual keys
+      navigator.clipboard.writeText(keys);
+      toast({
+        title: translation[userLanguage]["toast.title.keysCopied"],
+        description: translation[userLanguage]["toast.description.keysCopied"],
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+      });
+    } else {
+      const keys = localStorage.getItem("local_nsec"); // replace with actual keys
+      navigator.clipboard.writeText(keys);
+      toast({
+        title: translation[userLanguage]["toast.title.keysCopied"],
+        description: translation[userLanguage]["toast.description.keysCopied"],
+        status: "success",
+        duration: 1500,
+        isClosable: true,
+        position: "top",
+      });
+    }
   };
+
+  console.log("badges", badges);
 
   return (
     <Modal
@@ -92,54 +110,55 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
         </ModalHeader>
 
         <ModalBody p={8} style={{ width: "100%", color: "white" }}>
-          <ReactConfetti
-            // gravity={0.75}
-            numberOfPieces={100}
-            recycle={false}
-            colors={["#FFCCCC", "#CCEFFF", "#D9A8FF", "#FF99CC", "#FFD1B3"]} // Array of colors matching the logo
-          />
-          {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
-          <br />
-          <Text fontSize={"large"} fontWeight={"bold"} mb={2}>
-            {translation[userLanguage][transcript[step.groupReference]?.name]}
-          </Text>
-          <a
-            target="_blank"
-            href={`https://badges.page/a/${
-              transcript[step.groupReference]["address"]
-            }`}
+          <div
+            style={{
+              display: "flex",
+            }}
+            onMouseDown={() =>
+              handleCopyKeys(localStorage.getItem("local_npub") || "")
+            }
           >
-            <img
-              src={transcript[step.groupReference]?.["imgSrc"]}
-              width={150}
-              style={{
-                borderRadius: "33%",
-                boxShadow: "0px 1px 1px 2px black",
-              }}
-            />
-          </a>
+            <div style={{ width: "min-content" }}>
+              <CopyButtonIcon />
+            </div>
+            &nbsp;
+            <div>
+              <b>{translation[userLanguage]["yourID"]}</b>
+              &nbsp;
+              {localStorage?.getItem("local_npub")?.substr(0, 16) || ""}
+            </div>
+          </div>
+
           <br />
           <br />
-          <Button onMouseDown={handleCopyKeys} mb={2}>
-            🔑 {translation[userLanguage]["button.copyKey"]}
-          </Button>
 
           <div>
             {
               translation[userLanguage][
                 "modal.decentralizedTranscript.awareness"
               ]
-            }{" "}
-            <a
-              href="https://robotsbuildingeducation.com"
-              style={{ textDecoration: "underline", fontWeight: "bold" }}
+            }
+            &nbsp;
+            <span>
+              <a
+                target="_blank"
+                href="https://robotsbuildingeducation.com"
+                style={{ textDecoration: "underline", fontWeight: "bold" }}
+              >
+                {translation[userLanguage][
+                  "settings.button.yourTutor"
+                ].toLowerCase()}
+              </a>
+              &nbsp;
+            </span>
+            <Button
+              width="fit-content"
+              onMouseDown={handleCopyKeys}
+              fontSize={"smaller"}
             >
-              {translation[userLanguage][
-                "settings.button.yourTutor"
-              ].toLowerCase()}
-            </a>
+              🔑 {translation[userLanguage]["button.copyKey"]}
+            </Button>
           </div>
-
           <br />
           <br />
           <b>
@@ -151,6 +170,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           </b>
           {areBadgesLoading ? (
             <div style={{ width: "fit-content" }}>
+              <br />
               <SunsetCanvas /> {translation[userLanguage]["loading"]}
             </div>
           ) : badges.length < 1 ? (
@@ -212,4 +232,4 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
   );
 };
 
-export default AwardModal;
+export default TranscriptModal;

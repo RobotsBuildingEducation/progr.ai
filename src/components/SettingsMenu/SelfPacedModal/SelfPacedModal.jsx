@@ -41,12 +41,13 @@ const SelfPacedModal = ({
       setStreak(userData.streak || 0);
       setStartTime(new Date(userData.startTime));
       setEndTime(new Date(userData.endTime));
+      setInterval(userData.timer);
     };
 
-    if (userId) {
+    if (userId || isOpen) {
       fetchUserData();
     }
-  }, [userId]);
+  }, [userId, isOpen]);
 
   const handleSliderChange = (val) => {
     setInterval(val);
