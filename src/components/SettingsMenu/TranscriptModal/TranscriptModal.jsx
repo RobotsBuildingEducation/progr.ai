@@ -153,7 +153,9 @@ const TranscriptModal = ({ isOpen, onClose, userLanguage }) => {
             </span>
             <Button
               width="fit-content"
-              onMouseDown={handleCopyKeys}
+              onMouseDown={() =>
+                handleCopyKeys(localStorage.getItem("local_nsec"))
+              }
               fontSize={"smaller"}
             >
               🔑 {translation[userLanguage]["button.copyKey"]}

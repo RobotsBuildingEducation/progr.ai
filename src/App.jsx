@@ -86,6 +86,7 @@ import MultipleAnswerQuestion from "./components/MultipleAnswerQuestion/Multiple
 import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
+import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -208,8 +209,8 @@ const AwardScreen = () => {
           {documentIds.length > 0 ? (
             documentIds.map((id) => (
               <li key={id}>
-                <a href={`https://primal.net/p/${id}`}>
-                  https://primal.net/p/{id.substr(0, 8)}
+                <a href={`https://nostter.app/${id}`}>
+                  https://nostter.app/{id.substr(0, 8)}
                 </a>
               </li>
             ))
@@ -236,6 +237,7 @@ export const VoiceInput = ({
   userLanguage,
   currentStep,
   steps = [],
+  isSingleLineText = false,
 }) => {
   const {
     transcript,
@@ -459,6 +461,15 @@ export const VoiceInput = ({
       ]);
     }
   };
+  // Dynamically adjust the height of the textarea as the content changes
+  useEffect(() => {
+    if (isTextInput) {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto"; // Reset height
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Adjust height based on content
+      }
+    }
+  }, [value]); // Re-run effect every time the value changes
 
   useEffect(() => {
     if (educationalMessages?.length > 0) {
@@ -475,6 +486,8 @@ export const VoiceInput = ({
       }
     }
   }, [educationalMessages]);
+
+  const textareaRef = useRef(null);
 
   return (
     <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
@@ -502,7 +515,7 @@ export const VoiceInput = ({
           </Button>
         </HStack>
       ) : null}
-      {isWarningNotDismissed && isUnsupportedBrowser() && currentStep === 4 ? (
+      {isWarningNotDismissed && isUnsupportedBrowser() && currentStep === 5 ? (
         <>
           <br />
           <VStack
@@ -612,21 +625,37 @@ export const VoiceInput = ({
             height="100%"
             width="100%"
             language="javascript"
-            theme="light"
+            // theme="light"
             value={value}
             onChange={(value) => onChange(value, resetMessages)}
             options={{
-              wordWrap: "on",
+              fontSize: "10px",
+              wordWrap: "off",
               scrollBeyondLastLine: false,
               automaticLayout: true,
+              minimap: {
+                enabled: false,
+              },
             }}
           />
         </Box>
+      ) : isSingleLineText ? (
+        <Input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={translation[userLanguage]["app.input.placeholder"]}
+          maxWidth="600px"
+          width="100%"
+          style={{ boxShadow: "0px 0px 0px 1px rgba(0,0,0,0.35)" }}
+        />
       ) : (
         <Textarea
+          ref={textareaRef}
+          style={{ boxShadow: "0px 0px 24px -20px rgba(0,0,0,0.75)" }}
           type="textarea"
-          maxWidth={"333px"}
-          height={"150px"}
+          maxWidth={"100%"}
+          minHeight={isTerminal ? "100px" : "400px"}
           value={aiListening ? aiTranscript : value}
           onChange={(e) => {
             onChange(e.target.value);
@@ -1031,7 +1060,7 @@ const Step = ({
   useEffect(() => {
     if (isCorrect) {
       postNostrContent(
-        `I just completed question ${currentStep} with a grade of ${grade}% on https://program-ai.app \n\n${step.question?.questionText} https://m.primal.net/KBLq.png `
+        `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://program-ai.app \n\n${step.question?.questionText} #LearnWithNostr https://m.primal.net/KBLq.png`
       );
       if (step.isConversationReview) {
         assignExistingBadgeToNpub(transcript[step.groupReference]["address"]);
@@ -1066,6 +1095,8 @@ const Step = ({
     let answer = inputValue;
     if (step.isMultipleChoice) {
       answer = selectedOption;
+    } else if (step.isCodeCompletion) {
+      answer = selectedOption;
     } else if (step.isSelectOrder) {
       answer = items;
     } else if (step.isConversationReview) {
@@ -1099,19 +1130,32 @@ const Step = ({
             step.question.questionText
           }". The answer to the question is an array [${step.question.answer}]
         and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction.  Your feedback will include a grade ranging from 0-100 based on the quality of the answer -  however if the answer is correct just reward a 100. The user is speaking ${
+          userLanguage === "es" ? "spanish" : "english"
+        }.`,
+          role: "user",
+        },
+      ]);
+    } else if (step.isMultipleChoice || step.isCodeCompletion) {
+      await submitPrompt([
+        {
+          content: `The user is answering the following question "${
+            step.question.questionText
+          }". The question's answer is defined as ${
+            step.question.answer
+          } and the user submitted the following answer array: ${answer}. Is this answer correct? Determine by strictly comparing the question's answer and the submitted user answer. Only the question's answer is acceptabe. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if the answer is correct just reward a 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
         },
       ]);
-    } else if (step.isMultipleChoice) {
+    } else if (step.isSingleLineText) {
       await submitPrompt([
         {
           content: `The user is answering the following question "${
             step.question.questionText
           }". The answer to the question is defined as ${
             step.question.answer
-          } and the user submitted the following answer array ${answer}. Is this answer correct? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if the answer is correct just reward a 100. The user is speaking ${
+          } and the user submitted the following answer: ${answer}. Is this answer correct or logically equivalent? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if the answer is correct just reward a 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -1137,7 +1181,7 @@ const Step = ({
         {
           content: `The user is answering the following question "${
             step.question.questionText
-          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string, comprehensive: boolean }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction, also dont be super opinionated - if the user essentially got the answer right then just accept it. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  - however award a grade of 100 if comprehensive boolean is true. If the answer is correct but kind of lazy, award a grade of less than an 80. The user is speaking ${
+          }" with the following answer "${answer}". Is this answer correct? Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string, comprehensive: boolean }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Do not be super opinionated - if the user essentially got the answer right then just accept it. If it appears the user provided or attempted depth of understanding, provide a score of 100. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  - however award a grade of 100 if comprehensive boolean is true. If the answer is correct but lazy, award a grade of less than an 80 but higher than a 50 . The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -1252,6 +1296,7 @@ const Step = ({
 
   // Navigate to the next step
   const handleNextClick = async () => {
+    console.log("currentStep...", currentStep);
     if (currentStep >= steps[userLanguage].length - 1) {
       navigate("/award");
     } else {
@@ -1324,21 +1369,71 @@ const Step = ({
     }
   }, [educationalMessages]);
 
+  const getColorScheme = (group) => {
+    const colorMap = {
+      tutorial: "gray",
+      1: "pink",
+      2: "purple",
+      3: "cyan",
+      4: "blue",
+      5: "teal",
+      6: "green",
+    };
+
+    // Default to a medium shade if group doesn't match any key
+    console.log("colorMap", colorMap[group]);
+    return colorMap[group] || "purple.500";
+  };
+  const lightenColor = (color, percent) => {
+    // Remove the '#' character if it's there
+    const hex = color.replace(/^#/, "");
+
+    // Convert hex to RGB
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+
+    // Calculate the new color, increasing brightness
+    r = Math.min(255, Math.floor(r + (255 - r) * percent));
+    g = Math.min(255, Math.floor(g + (255 - g) * percent));
+    b = Math.min(255, Math.floor(b + (255 - b) * percent));
+
+    // Convert back to hex and return
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+  };
+
+  const getBackgroundScheme = (group) => {
+    const colorMap = {
+      tutorial: "#808080", // Gray
+      1: "#ff69b4", // Pink
+      2: "#800080", // Purple
+      3: "#00ffff", // Cyan
+      4: "#0000ff", // Blue
+      5: "#008080", // Teal
+      6: "#008000", // Green
+    };
+
+    const color = colorMap[group] || "#800080"; // Fallback to purple
+    return lightenColor(color, 0.9); // Lighten by 50%
+  };
+
   return (
     <VStack spacing={4} width="100%" mt={24}>
       <VStack textAlign={"left"} style={{ width: "100%", maxWidth: 400 }}>
         <b style={{ fontSize: "60%" }}>
           {translation[userLanguage]["app.progress"]} :{" "}
           {calculateProgress().toFixed(2)}% |{" "}
+          {translation[userLanguage]["chapter"]}: {step.group}&nbsp;|&nbsp;
           {translation[userLanguage]["app.streak"]}: {streak}
         </b>
         <Progress
           value={calculateProgress()}
           size="md"
-          colorScheme="purple"
+          colorScheme={getColorScheme(step.group)}
           width="100%"
           mb={4}
           borderRadius="4px"
+          background={getBackgroundScheme(step.group)}
         />
       </VStack>
       <Text fontSize="xl">
@@ -1354,6 +1449,22 @@ const Step = ({
         </Text>
       )}
 
+      {step.isSingleLineText && (
+        <VoiceInput
+          value={inputValue}
+          onChange={setInputValue}
+          isCodeEditor={false}
+          isTextInput={false}
+          isSingleLineText={true}
+          resetVoiceState={resetVoiceState}
+          useVoice={true}
+          stopListening={stopListening}
+          setFeedback={setFeedback}
+          resetFeedbackMessages={resetMessages}
+          step={step}
+          userLanguage={userLanguage}
+        />
+      )}
       {step.isText && (
         <VoiceInput
           value={inputValue}
@@ -1366,6 +1477,16 @@ const Step = ({
           setFeedback={setFeedback}
           resetFeedbackMessages={resetMessages}
           step={step}
+          userLanguage={userLanguage}
+        />
+      )}
+      {step.isCodeCompletion && (
+        <CodeCompletionQuestion
+          step={step}
+          question={step.question}
+          selectedOption={selectedOption}
+          setSelectedOption={setSelectedOption}
+          onLearnClick={handleLearnClick}
           userLanguage={userLanguage}
         />
       )}
@@ -1566,6 +1687,9 @@ const Home = ({
   setView,
 }) => {
   // const [view, setView] = useState("buttons");
+  const [loadingMessage, setLoadingMessage] = useState(
+    "createAccount.isCreating"
+  );
   const [userName, setUserName] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [keys, setKeys] = useState(null);
@@ -1582,7 +1706,12 @@ const Home = ({
 
   const handleCreateAccount = async () => {
     setIsCreatingAccount(true);
-    const newKeys = await generateNostrKeys(userName);
+    const newKeys = await generateNostrKeys(
+      userName,
+      setLoadingMessage,
+      translation[userLanguage]["nostrContent.onboardedProfileAbout"],
+      translation[userLanguage]["nostrContent.introductionPost"]
+    );
     setKeys(newKeys);
 
     localStorage.setItem("displayName", userName);
@@ -1702,8 +1831,14 @@ const Home = ({
                     fontWeight={"bold"}
                     borderRadius="8px"
                     padding="10px"
+                    width="250px"
+                    height="110px"
+                    display="flex"
+                    alignItems={"center"}
+                    textAlign={"left"}
+                    justifyContent={"center"}
                   >
-                    {translation[userLanguage]["createAccount.isLoading"]}
+                    {translation[userLanguage][loadingMessage]}
                   </Text>
                 ) : null}
               </HStack>

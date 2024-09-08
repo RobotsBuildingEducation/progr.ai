@@ -30,7 +30,59 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     }
   }, []);
 
-  const generateNostrKeys = async (userDisplayName = null) => {
+  const setProfilePicture = async (
+    profilePictureUrl = "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
+    npubRef,
+    nsecRef
+  ) => {
+    const connection = await connectToNostr(npubRef, nsecRef);
+    if (!connection) return;
+
+    const { ndkInstance, hexNpub, signer } = connection;
+
+    try {
+      // Fetch current metadata (kind: 0 event)
+      let currentMetadata = {};
+      const subscription = ndkInstance.subscribe({
+        kinds: [NDKKind.Metadata],
+        authors: [hexNpub],
+        limit: 1,
+      });
+
+      subscription.on("event", (event) => {
+        currentMetadata = JSON.parse(event.content);
+      });
+
+      await new Promise((resolve) => subscription.on("eose", resolve));
+
+      // Update the profile picture URL in the metadata
+      currentMetadata.picture = profilePictureUrl;
+
+      // Create a new metadata event (kind: 0)
+      const metadataEvent = new NDKEvent(ndkInstance, {
+        kind: NDKKind.Metadata,
+        pubkey: hexNpub,
+        created_at: Math.floor(Date.now() / 1000),
+        content: JSON.stringify(currentMetadata),
+      });
+
+      // Sign and publish the metadata event
+      await metadataEvent.sign(signer);
+      await metadataEvent.publish();
+
+      console.log("Profile picture updated successfully.");
+    } catch (err) {
+      console.error("Error setting profile picture on Nostr:", err);
+    }
+  };
+
+  const generateNostrKeys = async (
+    userDisplayName = null,
+    setLoadingMessage,
+    profileAbout,
+    introductionPost
+  ) => {
+    setLoadingMessage("createAccount.isCreating");
     const privateKeySigner = NDKPrivateKeySigner.generate();
 
     const privateKey = privateKeySigner.privateKey;
@@ -51,15 +103,43 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     setNostrPubKey(publicKey);
 
     if (!localStorage.getItem("local_nsec")) {
-      postNostrContent(
+      //Creating profile... 2/4
+      setLoadingMessage("createAccount.isCreatingProfile");
+      await postNostrContent(
         JSON.stringify({
           name: userDisplayName,
-          about: "A student onboarded with Robots Building Education",
+          about: profileAbout,
+          // profilePictureUrl:
+          //   "https://image.nostr.build/c8d21fe8773d7c5ddf3d6ef73ffe76dbeeec881c131bfb59927ce0b8b71a5607.png",
+          // // "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
         }),
         0,
         publicKey,
         encodedNsec
       );
+
+      setLoadingMessage("createAccount.isCreatingProfilePicture");
+      //Creating profile picture... 3/4
+      await setProfilePicture(
+        "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
+        publicKey,
+        encodedNsec
+      );
+
+      // if (
+      //   window.location.hostname !== "localhost" &&
+      //   window.location.hostname !== "127.0.0.1"
+      // ) {
+
+      setLoadingMessage("createAccount.isCreatingIntroPost");
+      //Creating introduction post... 4/4
+      await postNostrContent(introductionPost, 1, publicKey, encodedNsec);
+
+      // await followUserOnNostr(
+      //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",
+      //   publicKey,
+      //   encodedNsec
+      // );
     }
 
     localStorage.setItem("local_nsec", encodedNsec);
@@ -91,9 +171,11 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
         explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
       });
 
+      console.log("connect...");
       // Connect to the relays
       await ndkInstance.connect();
 
+      console.log("Ndk instance", ndkInstance);
       setIsConnected(true);
 
       // Return the connected NDK instance and signer
@@ -369,6 +451,76 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
       return [];
     }
   };
+
+  // const followUserOnNostr = async (pubkeyToFollow, npubRef, nsecRef) => {
+  //   const connection = await connectToNostr(npubRef, nsecRef);
+  //   if (!connection) return;
+
+  //   const { ndkInstance, hexNpub, signer } = connection;
+
+  //   try {
+  //     const contactList = [];
+  //     let subscription;
+
+  //     // Subscribe to current user's kind-3 (Follow List) event
+  //     subscription = ndkInstance.subscribe({
+  //       kinds: [NDKKind.ContactList],
+  //       authors: [getHexNPub(pubkeyToFollow)],
+  //       limit: 1,
+  //     });
+
+  //     subscription.on("event", (event) => {
+  //       // Extract the follow list from the 'p' tags
+  //       event.tags.forEach((tag) => {
+  //         console.log("there is an event tag");
+  //         if (tag[0] === "p") {
+  //           console.log("there is a key", tag);
+
+  //           contactList.push(tag[1]); // Push hex key of followed profile
+  //         }
+  //       });
+  //     });
+
+  //     console.log("contactList...", contactList);
+  //     // Wait for the subscription to finish or timeout after 5 seconds
+  //     await new Promise((resolve, reject) => {
+  //       const timeout = setTimeout(() => {
+  //         console.warn("Subscription timed out.");
+  //         resolve();
+  //       }, 5000);
+
+  //       subscription.on("eose", () => {
+  //         clearTimeout(timeout);
+  //         subscription.unsub(); // Unsubscribe once we receive 'eose'
+  //         resolve();
+  //       });
+  //     });
+
+  //     // Check if the user is already being followed
+  //     if (!contactList.includes(pubkeyToFollow)) {
+  //       contactList.push(getHexNPub(pubkeyToFollow)); // Add new pubkey if not already in the list
+  //     }
+
+  //     // Construct the new kind-3 (Follow List) event
+  //     const contactListEvent = new NDKEvent(ndkInstance, {
+  //       kind: NDKKind.ContactList, // Kind 3 - Follow List
+  //       tags: contactList.map((pubkey) => ["p", pubkey, "", ""]), // Format as per NIP-02
+  //       pubkey: hexNpub, // Your public key
+  //       created_at: Math.floor(Date.now() / 1000), // Unix timestamp
+  //       content: "", // Content not used in kind 3 events
+  //     });
+
+  //     // Sign the event with the user's private key (via signer)
+  //     await contactListEvent.sign(signer);
+
+  //     // Publish the new kind-3 event (updated follow list)
+  //     await contactListEvent.publish();
+
+  //     console.log(`Successfully followed user with pubkey: ${pubkeyToFollow}`);
+  //   } catch (err) {
+  //     console.error("Error following user on Nostr:", err);
+  //   }
+  // };
 
   return {
     isConnected,

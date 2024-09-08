@@ -27,6 +27,20 @@ export let translation = {
     "button.save": "Save",
     "button.close": "Close",
     "createAccount.isLoading": "Creating...",
+
+    "createAccount.isCreating": "Creating account... 1/4",
+    "createAccount.isCreatingProfile": "Creating account... 2/4",
+    "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
+    "createAccount.isCreatingIntroPost":
+      "Creating community #introductions post... 4/4",
+    "nostrContent.answeredQuestion.1": "I just completed question",
+    "nostrContent.answeredQuestion.2": "with a grade of",
+    "nostrContent.answeredQuestion.3": "on",
+    "nostrContent.onboardedProfileAbout":
+      "A student onboarded with Robots Building Education",
+    "nostrContent.introductionPost":
+      "gm nostr! I'm here from Tiktok by creating an account through https://program-ai.app so I can learn how to code with AI. Looking forward to meeting folks in the cypherpunk community! #introductions #LearnWithNostr",
+
     "createAccount.successMessage": "That's it!",
     "createAccount.awareness":
       "Your account now works on a number of decentralized apps. Use your key to sign into apps like ",
@@ -432,8 +446,24 @@ export let translation = {
     "modal.transcript.instructions": "",
     yourID: "Your ID",
     noTranscriptFound: "No older transcripts awards were found.",
+    chapter: "Chapter",
+    tutorial: "Tutorial",
   },
   es: {
+    "nostrContent.answeredQuestion.1": "Acabo de completar la pregunta",
+    "nostrContent.answeredQuestion.2": "con una calificación de",
+    "nostrContent.answeredQuestion.3": "en",
+    "nostrContent.onboardedProfileAbout":
+      "Un estudiante se unió con Robots Building Education",
+    "nostrContent.introductionPost":
+      "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://program-ai.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
+    "createAccount.isCreating": "Creando cuenta... 1/4",
+    "createAccount.isCreatingProfile": "Creando perfil... 2/4",
+    "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
+    "createAccount.isCreatingIntroPost":
+      "Creando publicación de introducción en la comunidad #introductions... 4/4",
+    chapter: "Capítulo",
+    tutorial: "Tutorial",
     "tags.grade": "Calificación: ",
     "toast.title.keysCopied": "Claves copiadas.",
     "toast.description.keysCopied":

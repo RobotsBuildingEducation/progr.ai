@@ -106,7 +106,7 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           <a
             target="_blank"
             href={`https://badges.page/a/${
-              transcript[step.groupReference]["address"]
+              transcript[step.groupReference]?.["address"] || ""
             }`}
           >
             <img

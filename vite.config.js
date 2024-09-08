@@ -10,7 +10,7 @@ export default defineConfig({
       manifest: {
         name: "Program AI App",
         short_name: "Program AI App",
-        start_url: ".",
+        start_url: "./",
         display: "standalone",
         theme_color: "#000000",
         background_color: "#ffffff",

@@ -12,7 +12,7 @@ export const steps = {
     },
     {
       group: "tutorial",
-      title: "Understanding Coding",
+      title: "Understanding Codin g",
       description: "Grasp the basic concept of coding.",
       isMultipleChoice: true,
       // isMultipleAnswerChoice: true,
@@ -75,6 +75,46 @@ export const steps = {
     },
     {
       group: "tutorial",
+      title: "Understanding Variable Declarations for Lists",
+      description:
+        "Complete the code by selecting the correct way to declare a array of items (array) in JavaScript.",
+      isCodeCompletion: true,
+      question: {
+        questionText: "Which code block correctly declares a list of items?",
+        options: [
+          // Option 1: Correct array declaration
+
+          // Option 2: Function returning a string
+          `const items = function() {
+  return 'apple, banana, cherry';
+};`,
+
+          // Option 3: Single string of items
+          `const items = 'apple, banana, cherry';`,
+
+          // Option 4: Object with key-value pairs
+          `const items = {
+  fruit1: 'apple',
+  fruit2: 'banana',
+  fruit3: 'cherry'
+};`,
+
+          // Option 5: Class that stores items as properties
+          `class Items {
+  constructor() {
+    this.fruit1 = 'apple';
+    this.fruit2 = 'banana';
+    this.fruit3 = 'cherry';
+  }
+}
+const items = new Items();`,
+          `const items = ['apple', 'banana', 'cherry'];`,
+        ],
+        answer: `const items = ['apple', 'banana', 'cherry'];`,
+      },
+    },
+    {
+      group: "tutorial",
       title: "Variable Declaration in JavaScript",
       description: "Learn how to declare variables in JavaScript.",
       isCode: true,
@@ -82,6 +122,18 @@ export const steps = {
       question: {
         questionText:
           "Declare a variable named `age` and assign it the value `25`.",
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Understanding Data Types",
+      description: "Learn the basics of data types in JavaScript.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What keyword is used to declare a constant in JavaScript?",
+        placeholder: "Type your answer here...",
+        answer: "const",
       },
     },
     {
@@ -112,20 +164,40 @@ export const steps = {
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [1, 5], // Indices of steps to review
+        range: [1, 8], // Indices of steps to review
       },
     },
     // Cycle 2 (No Terminal)
     {
       group: "1",
       title: "Data Types in Programming",
-      description: "Identify different data types used in programming.",
-      isMultipleChoice: true,
+      description:
+        "Identify different primitive data types used in JavaScript.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Which of the following is NOT a primitive data type in JavaScript?",
-        options: ["String", "Number", "Boolean", "Object"],
-        answer: "Object",
+          "Which of the following are primitive data types in JavaScript?",
+        options: [
+          "String",
+          "Function",
+          "Number",
+          "Object",
+          "Boolean",
+          "Null",
+          "Array",
+          "BigInt",
+          "Undefined",
+          "Symbol",
+        ],
+        answer: [
+          "String",
+          "Number",
+          "Boolean",
+          "Null",
+          "Undefined",
+          "Symbol",
+          "BigInt",
+        ],
       },
     },
     {
@@ -191,27 +263,29 @@ export const steps = {
     {
       group: "1",
       title: "Order of Conditional Checks",
-      description: "Learn the sequence of evaluating conditions.",
-      isSelectOrder: true,
+      description: "Complete the code that evaluates an `if-else` statement.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop of evaluating an `if-else` statement.",
+          "Complete the following code to correctly implement an `if-else` statement that checks if a variable `x` is greater than 10, equal to 10, or less than 10.",
         options: [
-          "Evaluate the `if` condition",
-          "Execute `if` block if condition is true",
-          "Evaluate the `else if` condition",
-          "Execute `else if` block if condition is true",
-          "Evaluate the `else` condition",
-          "Execute `else` block if condition is false",
+          // Option 1: Partially complete if-else statement
+          "if (x > 10) { \n  console.log('x is greater than 10'); \n} else if (x === 10) { \n  console.log('x is equal to 10'); \n} else { \n  console.log('x is less than 10'); \n}",
+
+          // Option 2: Incorrect use of equality and missing else block
+          "if (x == 10) { \n  console.log('x is equal to 10'); \n} else if (x > 10) { \n  console.log('x is greater than 10'); \n}",
+
+          // Option 3: Missing else-if statement
+          "if (x > 10) { \n  console.log('x is greater than 10'); \n} else { \n  console.log('x is not greater than 10'); \n}",
+
+          // Option 4: Incorrect use of conditions
+          "if (x >= 10) { \n  console.log('x is greater than or equal to 10'); \n} else { \n  console.log('x is less than 10'); \n}",
+
+          // Option 5: Correct but over-complicated code with nested ifs
+          "if (x > 10) { \n  console.log('x is greater than 10'); \n  if (x === 10) { \n    console.log('x is equal to 10'); \n  } \n} else { \n  console.log('x is less than 10'); \n}",
         ],
-        answer: [
-          "Evaluate the `if` condition",
-          "Execute `if` block if condition is true",
-          "Evaluate the `else if` condition",
-          "Execute `else if` block if condition is true",
-          "Evaluate the `else` condition",
-          "Execute `else` block if condition is false",
-        ],
+        answer:
+          "if (x > 10) { \n  console.log('x is greater than 10'); \n} else if (x === 10) { \n  console.log('x is equal to 10'); \n} else { \n  console.log('x is less than 10'); \n}",
       },
     },
     {
@@ -227,13 +301,15 @@ export const steps = {
     },
     {
       group: "1",
-      title: "Understanding Logic in Programming",
+      title: "Understanding Conditional Logic in Programming",
       description:
-        "In this step, you will learn about logic in the context of programming.",
-      isText: true,
+        "Learn how logical operators like AND (&&) and OR (||) control conditions in programming.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Explain in your own words how logic is applied in programming to control the flow of a program.",
+          "Which logical operator is used to check if both conditions in a conditional statement are true?",
+        placeholder: "Type your answer here...",
+        answer: "&&",
       },
     },
     {
@@ -316,35 +392,51 @@ export const steps = {
     {
       group: "1",
       title: "Arrays in JavaScript",
-      description: "Identify characteristics of array types.",
-      isMultipleChoice: true,
+      description:
+        "Identify methods used for manipulating arrays in JavaScript.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Which of the following methods adds an element to the end of an array in JavaScript?",
-        options: ["push()", "pop()", "shift()", "unshift()"],
-        answer: "push()",
+          "Which of the following methods are valid for manipulating arrays in JavaScript?",
+        options: [
+          ".includes()",
+          ".push()",
+          ".pop()",
+          ".forEach()",
+          ".length()",
+          ".map()",
+          ".filter()",
+          ".join()",
+        ],
+        answer: [".push()", ".pop()", ".map()", ".filter()", ".join()"],
       },
     },
     {
       group: "1",
       title: "Order of Array Operations",
       description: "Understand how array operations are performed.",
-      isSelectOrder: true,
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to add and remove elements from an array.",
+          "Complete the code to declare an array, add an element to it, remove the last element, and then access an element.",
         options: [
-          "Declare an array",
-          "Use push() to add an element",
-          "Use pop() to remove the last element",
-          "Access array elements",
+          // Option 1: Correctly completes all steps
+
+          // Option 2: Incorrect placement of push and pop
+          "let fruits = ['apple', 'banana']; \nfruits.pop(); \nfruits.push('orange'); \nconsole.log(fruits[0]);",
+
+          // Option 3: Incorrect array declaration
+          "var fruits = 'apple', 'banana'; \nfruits.push('orange'); \nfruits.pop(); \nconsole.log(fruits[0]);",
+          "let fruits = ['apple', 'banana']; \nfruits.push('orange'); \nfruits.pop(); \nconsole.log(fruits[0]);",
+
+          // Option 4: Missing access of array element
+          "let fruits = ['apple', 'banana']; \nfruits.push('orange'); \nfruits.pop();",
+
+          // Option 5: Incorrect pop usage (removes specific element instead of last)
+          "let fruits = ['apple', 'banana']; \nfruits.push('orange'); \nfruits.pop('banana'); \nconsole.log(fruits[0]);",
         ],
-        answer: [
-          "Declare an array",
-          "Use push() to add an element",
-          "Use pop() to remove the last element",
-          "Access array elements",
-        ],
+        answer:
+          "let fruits = ['apple', 'banana']; \nfruits.push('orange'); \nfruits.pop(); \nconsole.log(fruits[0]);",
       },
     },
     {
@@ -381,21 +473,34 @@ export const steps = {
     },
     {
       group: "1",
-      title: "Understanding the Goal of Coding",
+      title: "Advanced Coding Output",
       description:
-        "In this step, you will learn about the primary goal of coding or programming.",
-      isMultipleChoice: true,
+        "Predict the output of the following code with arrays, conditionals, logical operators, and array functions.",
+      isSingleLineText: true,
       question: {
-        questionText:
-          "Which of the following best describes the primary goal of coding or programming?",
-        options: [
-          "To solve problems by creating efficient and effective solutions",
-          "To learn different programming languages",
-          "To write as much code as possible",
-          "To memorize syntax and functions",
-        ],
-        answer:
-          "To solve problems by creating efficient and effective solutions",
+        questionText: (
+          <div>
+            What will be the output of the following code?
+            <br />
+            <pre>
+              {`
+let arr = [1, 2, 3, 4];
+let x = 10;
+let y = 5;
+
+if (x > y && arr.length > 3) {
+  arr.push(x);  
+  arr = arr.filter(n => n % 2 === 0);
+}
+
+console.log(arr);
+
+             `}{" "}
+            </pre>
+          </div>
+        ),
+        placeholder: "Type your answer here...",
+        answer: "[2, 4, 10]",
       },
     },
     {
@@ -405,7 +510,7 @@ export const steps = {
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [6, 20], // Indices of steps to review
+        range: [10, 29], // Indices of steps to review
       },
     },
     {
@@ -413,20 +518,88 @@ export const steps = {
       title: "Introduction to Objects",
       description:
         "In this step, you will learn what an object is in programming.",
-      isText: true,
+      isSingleLineText: true, // Single line text question type
       question: {
-        questionText: "What is an object in programming?",
+        questionText:
+          "In programming, what keyword is used to create an object in JavaScript?",
+        placeholder: "Type your answer here...", // Placeholder for the input
+        answer: "new", // Expected one-word answer for object creation
       },
     },
     {
       group: "2",
-      title: "Creating a Simple Class",
+      title: "Understanding the Constructor Method",
       description:
-        "In this step, you will write a simple class definition in JavaScript.",
-      isCode: true,
-      isTerminal: false,
+        "In this step, you will learn about the purpose of the `constructor` method in a class.",
+      isCodeCompletion: true, // Correctly indicates it's a code completion problem
       question: {
-        questionText: `Write a simple class definition in JavaScript for a \`Car\` object with properties for \`make\` and \`model\`, and a method to display the car's details.`,
+        questionText: `Which of the following code blocks correctly defines the constructor method and uses the "new" keyword for class instantiation?`,
+
+        options: [
+          // Option 1: Correct constructor method with new keyword
+          `class Car {
+  constructor(brand) {
+    this.brand = brand;
+  }
+
+  drive() {
+    console.log('The car is driving');
+  }
+}
+
+const myCar = new Car('Toyota');`,
+
+          // Option 2: Incorrect - missing parameter
+          `class Car {
+  constructor() {
+    this.brand = 'Toyota';
+  }
+
+  drive() {
+    console.log('The car is driving');
+  }
+}
+
+const myCar = new Car();`,
+
+          // Option 3: Incorrect - wrong syntax
+          `class Car {
+  constructor = (brand) => {
+    this.brand = brand;
+  }
+
+  drive() {
+    console.log('The car is driving');
+  }
+}
+
+const myCar = new Car('Toyota');`,
+
+          // Option 4: Incorrect - uses method name instead of constructor
+          `class Car {
+  Car(brand) {
+    this.brand = brand;
+  }
+
+  drive() {
+    console.log('The car is driving');
+  }
+}
+
+const myCar = new Car('Toyota');`,
+        ],
+
+        answer: `class Car {
+  constructor(brand) {
+    this.brand = brand;
+  }
+
+  drive() {
+    console.log('The car is driving');
+  }
+}
+
+const myCar = new Car('Toyota');`, // The correct answer
       },
     },
     {
@@ -445,29 +618,29 @@ export const steps = {
       title: "Creating an Instance of a Class",
       description:
         "In this step, you will learn how to create an instance of a class in JavaScript.",
-      isSelectOrder: true,
+      isMultipleAnswerChoice: true, // Indicates it's a multiple answer question
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop in the correct order to create an instance of a class in JavaScript.",
+          "Select all the correct steps required to create an instance of a class in JavaScript:",
         options: [
-          "Define the class",
-          "Define the constructor method inside the class",
-          "Declare the variable to store the instance",
-          "Use the 'new' keyword",
-          "Call the class name",
-          "Pass any required arguments",
-          "Assign the instance to the variable",
-          "Use the instance to access properties or methods",
+          // Correct options
+          "Define a class using the `class` keyword",
+          "Define the class with the `function` keyword",
+          "Use the `new` keyword to create an instance",
+          "Declare the class instance with `const classInstance = Car()`",
+          "Pass arguments required by the constructor when calling the class",
+          "Store the new instance in a variable",
+          "Call the class directly without the `new` keyword",
+          "Instantiate the class before defining it",
+
+          // Incorrect options
         ],
         answer: [
-          "Define the class",
-          "Define the constructor method inside the class",
-          "Declare the variable to store the instance",
-          "Use the 'new' keyword",
-          "Call the class name",
-          "Pass any required arguments",
-          "Assign the instance to the variable",
-          "Use the instance to access properties or methods",
+          // The 4 correct options
+          "Define a class using the `class` keyword",
+          "Use the `new` keyword to create an instance",
+          "Pass arguments required by the constructor when calling the class",
+          "Store the new instance in a variable",
         ],
       },
     },
@@ -487,18 +660,80 @@ export const steps = {
       group: "2",
       title: "Using the `this` Keyword",
       description:
-        "In this step, you will understand the `this` keyword in the context of a class.",
-      isMultipleChoice: true,
+        "Complete the code by selecting the correct way to use the `this` keyword in a class method.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "What does the `this` keyword represent in a class method?",
+          "Which code block correctly uses the `this` keyword to refer to the object's property?",
         options: [
-          "The global object",
-          "The object that calls the method",
-          "The method itself",
-          "The class definition",
+          // Option 1: Correct use of the `this` keyword
+
+          // Option 2: Incorrect use of the global object
+          `class Car {
+  constructor(brand) {
+    this.brand = brand;
+  }
+
+  showBrand() {
+    console.log(brand);
+  }
+}
+
+const myCar = new Car('Toyota');
+myCar.showBrand();`,
+          `class Car {
+  constructor(brand) {
+    this.brand = brand;
+  }
+
+  showBrand() {
+    console.log(this.brand);
+  }
+}
+
+const myCar = new Car('Toyota');
+myCar.showBrand();`,
+
+          // Option 3: Incorrect reference to class name
+          `class Car {
+  constructor(brand) {
+    brand = this.brand;
+  }
+
+  showBrand() {
+    console.log(brand);
+  }
+}
+
+const myCar = new Car('Toyota');
+myCar.showBrand();`,
+
+          // Option 4: Incorrect reference to method name
+          `class Car {
+  constructor(brand) {
+    brand = this.brand;
+  }
+
+  showBrand() {
+    console.log(this.brand);
+  }
+}
+
+const myCar = new Car('Toyota');
+myCar.showBrand();`,
         ],
-        answer: "The object that calls the method",
+        answer: `class Car {
+  constructor(brand) {
+    this.brand = brand;
+  }
+
+  showBrand() {
+    console.log(this.brand);
+  }
+}
+
+const myCar = new Car('Toyota');
+myCar.showBrand();`,
       },
     },
     {
@@ -514,26 +749,26 @@ export const steps = {
     },
     {
       group: "2",
-      title: "Accessing Object Properties",
+      title: "Accessing and Modifying Object Properties",
       description:
-        "In this step, you will learn how to access properties of an object in JavaScript.",
-      isSelectOrder: true,
+        "In this step, you will learn how to get or set properties of an object in JavaScript, either by directly accessing properties or by using getter and setter functions.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly access a property in an object.",
+          "Which of the following are valid ways to get or set properties in a JavaScript object?",
         options: [
-          "Identify the object",
-          "Determine the property to access",
-          "Use dot or bracket notation",
-          "Specify the property name",
-          "Store the value in a variable or use it directly",
+          "Use a function call to delete a property (e.g., obj.deleteProperty())",
+          "Use bracket notation to access a property (e.g., obj['property'])",
+          "Use a setter function to update a property value",
+          "Use dot notation to access a property (e.g., obj.property)",
+          "Use a getter function to return a property value",
+          "Directly call obj.property() to access a property",
         ],
         answer: [
-          "Identify the object",
-          "Determine the property to access",
-          "Use dot or bracket notation",
-          "Specify the property name",
-          "Store the value in a variable or use it directly",
+          "Use dot notation to access a property (e.g., obj.property)",
+          "Use bracket notation to access a property (e.g., obj['property'])",
+          "Use a getter function to return a property value",
+          "Use a setter function to update a property value",
         ],
       },
     },
@@ -614,37 +849,15 @@ export const steps = {
     },
     {
       group: "2",
-      title: "Creating and Using an Array of Objects",
+      title: "Understanding Encapsulation",
       description:
-        "In this step, you will create and use an array of objects in JavaScript.",
-      isSelectOrder: true,
+        "In this step, you will define the concept of encapsulation in object-oriented programming with a single word.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly iterate over an array of objects.",
-        options: [
-          "Define the object structure",
-          "Create individual objects",
-          "Initialize an empty array",
-          "Add objects to the array",
-          "Verify the array structure",
-          "Choose a loop type (e.g., for, while, forEach)",
-          "Use a loop to iterate through the array",
-          "Access properties of each object inside the loop",
-          "Perform actions with the accessed properties",
-          "Store or output the results",
-        ],
-        answer: [
-          "Define the object structure",
-          "Create individual objects",
-          "Initialize an empty array",
-          "Add objects to the array",
-          "Verify the array structure",
-          "Choose a loop type (e.g., for, while, forEach)",
-          "Use a loop to iterate through the array",
-          "Access properties of each object inside the loop",
-          "Perform actions with the accessed properties",
-          "Store or output the results",
-        ],
+          "What is the primary concept encapsulation ensures in object-oriented programming?",
+        placeholder: "Type your answer here...",
+        answer: "Privacy",
       },
     },
     {
@@ -677,63 +890,200 @@ export const steps = {
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [6, 22], // Indices of steps to review
+        range: [31, 47], // Indices of steps to review
       },
     },
     {
       group: "3",
       title: "Introduction to React Components",
       description:
-        "In this step, you will learn about React components and their importance in creating user interfaces.",
+        "In this step, you will learn about React components, their role in creating reusable UI elements, and how they help manage the user interface efficiently.",
       isMultipleChoice: true,
       question: {
         questionText:
           "Which of the following best describes a React component?",
         options: [
-          "A function that returns HTML",
-          "A tool for server-side rendering",
-          "A method for handling events",
+          "A method for handling events in JavaScript",
+          "A feature exclusive to server-side rendering in React",
+          "A reusable piece of user interface defined as a function or class that returns JSX",
+          "A built-in HTML element in React",
         ],
-        answer: "A function that returns HTML",
+        answer:
+          "A reusable piece of user interface defined as a function or class that returns JSX",
       },
     },
     {
       group: "3",
-      title: "Understanding React Hooks",
+      title: "Key Concepts in React",
       description:
-        "In this step, you will learn about React hooks and how they are used to manage state and side effects in functional components.",
-      isSelectOrder: true,
+        "In this step, you will learn about the fundamental concepts of React, including properties (props), state, events, and styles.",
+      isMultipleAnswerChoice: true,
       question: {
-        questionText:
-          "Arrange the steps with drag-and-drop to use the useState hook correctly.",
+        questionText: "Which of the following are key concepts in React?",
         options: [
-          "Import useState from React",
-          "Declare the state variable",
-          "Provide an initial value for the state",
-          "Update the state using the setter function",
-          "Use the state variable in the component",
+          "Managing properties to pass data between components",
+          "Manipulating the DOM directly for better performance",
+          "Using state to manage data within a component",
+          "Handling events such as clicks with event handlers",
+          "Applying inline styles or CSS classes to components",
         ],
         answer: [
-          "Import useState from React",
-          "Declare the state variable",
-          "Provide an initial value for the state",
-          "Use the state variable in the component",
-          "Update the state using the setter function",
+          "Managing properties to pass data between components",
+          "Using state to manage data within a component",
+          "Handling events such as clicks with event handlers",
+          "Applying inline styles or CSS classes to components",
         ],
       },
     },
-
+    {
+      group: "3",
+      title: "Effect of State Changes on a Component",
+      description:
+        "In this step, you will explain what happens to a React component when its state changes.",
+      isText: true,
+      question: {
+        questionText:
+          "What happens to a React component when its state changes?",
+      },
+    },
     {
       group: "3",
       title: "Creating a Simple React Component",
       description:
-        "In this step, you will create a simple React component that displays a Tweet.",
-      isCode: true,
-      isTerminal: false,
+        "In this step, you will define a basic React component that returns some simple JSX.",
+      isCodeCompletion: true,
       question: {
-        questionText: `Write a simple React component that displays a Tweet with the user's name, handle, and text.`,
+        questionText:
+          "Which of the following code blocks correctly defines a simple React component that returns a heading and a paragraph?",
+        options: [
+          // Option 1: Correct answer
+          `function MyComponent() {
+  return (
+    <div>
+      <h1>Hello, World!</h1>
+    </div>
+  );
+}`,
+
+          // Option 2: Incorrect - missing return statement
+          `function MyComponent() {
+  <div>
+    <h1>Hello, World!</h1>
+  </div>;
+}`,
+
+          // Option 3: Incorrect - uses class instead of function
+          `class MyComponent {
+  render() {
+    return (
+      <div>
+        <h1>Hello, World!</h1>
+      </div>
+    );
+  }
+}`,
+
+          // Option 4: Incorrect - missing JSX inside the return
+          `function MyComponent() {
+  return (
+    <div>Hello</div>
+    <div>World</div>
+  );
+}`,
+        ],
+        answer: `function MyComponent() {
+  return (
+    <div>
+      <h1>Hello, World!</h1>
+    </div>
+  );
+}`,
       },
     },
+    {
+      group: "3",
+      title: "Handling Events in React",
+      description:
+        "In this step, you will define a basic React component that handles a button click event using the `onClick` attribute.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code blocks correctly defines a React component that handles a button click event?",
+        options: [
+          // Option 2: Incorrect - no event handler function defined
+          `function MyComponent() {
+  return (
+    <div>
+      <button 
+        onClick={
+          alert('Button clicked!')
+        }
+      >
+        Click me
+      </button>
+    </div>
+  );
+}`,
+
+          // Option 3: Incorrect - inline event handler, not recommended
+          `function MyComponent() {
+return (
+  <div>
+    <button 
+      onClick= () => {
+        alert('Button clicked!')
+      }
+    >
+      Click me
+    </button>
+  </div>
+);
+}`,
+          `function MyComponent() {
+  const handleClick = () => {
+    alert('Button clicked!');
+  };
+    
+  return (
+    <div>
+      <button 
+        onClick={handleClick}
+      >
+        Click me
+      </button>
+    </div>
+  );
+}`,
+
+          // Option 4: Incorrect - no onClick attribute
+          `function MyComponent() {
+return (
+  <div>
+    <button>
+      Click me
+    </button>
+  </div>
+);
+    }`,
+        ],
+        answer: `function MyComponent() {
+  const handleClick = () => {
+    alert('Button clicked!');
+  };
+
+  return (
+    <div>
+      <button 
+        onClick={handleClick}
+      >
+        Click me
+      </button>
+    </div>
+  );
+}`,
+      },
+    },
+
     {
       group: "3",
       title: "Managing State with useState Hook",
@@ -747,135 +1097,27 @@ export const steps = {
     },
     {
       group: "3",
-      title: "Handling Events in React",
-      description:
-        "In this step, you will learn how to handle events in React, such as clicks.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "What is the best way to handle a button click event in React?",
-        options: [
-          "Attach an event listener directly to the button in HTML",
-          "Use the onClick attribute in the JSX of the component",
-          "Write a custom event handler in plain JavaScript",
-          "Bind the event handler to the DOM element using querySelector",
-        ],
-        answer: "Use the onClick attribute in the JSX of the component",
-      },
-    },
-    {
-      group: "3",
       title: "Component Properties",
       description:
         "In this step, you will learn about passing properties to components in React.",
-      isText: true,
+      isSingleLineText: true,
       question: {
         questionText:
-          "What are properties in a React component and how are they used?",
+          "What is the term used for passing data to a React component?",
+        placeholder: "Type your answer here...",
+        answer: "props",
       },
     },
     {
       group: "3",
-      title: "Updating Component State",
+      title: "Passing and Using Props",
       description:
-        "In this step, you will learn how to update the state of a component based on user interactions.",
+        "In this step, you will learn how to pass and use props in a React component.",
       isCode: true,
       isTerminal: false,
       question: {
-        questionText: `Update the Tweet component to increment the like count each time the like button is clicked.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Creating a New React Project",
-      description:
-        "In this step, you will create a new React project using Vite.",
-      isSelectOrder: true,
-      question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly create a new React project using Vite.",
-        options: [
-          "Ensure Node.js is installed",
-          "Run the command to create a new Vite project",
-          "Choose the React template",
-          "Navigate to the project directory",
-          "Install dependencies",
-          "Start the development server",
-        ],
-        answer: [
-          "Ensure Node.js is installed",
-          "Run the command to create a new Vite project",
-          "Choose the React template",
-          "Navigate to the project directory",
-          "Install dependencies",
-          "Start the development server",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Terminal Practice: Listing Files",
-      description:
-        "In this step, you will learn how to list files in a bash terminal.",
-      isCode: true,
-      isTerminal: true,
-      question: {
-        questionText: `Use the terminal to list all the files using the list command.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Understanding JSX",
-      description:
-        "In this step, you will learn about JSX and how it is used to describe the UI in React components.",
-      isText: true,
-      question: {
-        questionText: "What is JSX and why is it used in React?",
-      },
-    },
-    {
-      group: "3",
-      title: "Styling React Components",
-      description:
-        "In this step, you will learn how to style React components using CSS.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Add styles to the Tweet component to improve its appearance.`,
-      },
-    },
-    {
-      group: "3",
-      title: "Using Flexbox for Layouts",
-      description:
-        "In this step, you will learn how to use Flexbox to create layouts in React.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following CSS properties in the order needed to create a basic Flexbox layout:",
-        options: [
-          "display: flex;",
-          "justify-content: center;",
-          "align-items: center;",
-          "flex-direction: row;",
-        ],
-        answer: [
-          "display: flex;",
-          "flex-direction: row;",
-          "justify-content: center;",
-          "align-items: center;",
-        ],
-      },
-    },
-    {
-      group: "3",
-      title: "Adding More State with useState",
-      description:
-        "In this step, you will learn how to manage multiple pieces of state in a component using the useState hook.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText: `Add a retweet button to the Tweet component that tracks the number of retweets.`,
+          "Update the Tweet component to accept and display the user's name, handle, and tweet content as props.",
       },
     },
     {
@@ -898,6 +1140,52 @@ export const steps = {
     },
     {
       group: "3",
+      title: "Terminal Practice: Listing Files",
+      description:
+        "In this step, you will learn how to list files in a bash terminal.",
+      isCode: true,
+      isTerminal: true,
+      question: {
+        questionText: `Use the terminal to list all the files using the list command.`,
+      },
+    },
+
+    {
+      group: "3",
+      title: "Styling React Components",
+      description:
+        "In this step, you will learn how to style React components using CSS.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText: `Add styles to the Tweet component to improve its appearance.`,
+      },
+    },
+    {
+      group: "3",
+      title: "Using Flexbox for Layouts",
+      description:
+        "In this step, you will learn how to use Flexbox to create layouts in React.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the following CSS properties in the order needed to center a basic layout with flexbox styling:",
+        options: [
+          "display: flex;",
+          "justify-content: center;",
+          "align-items: center;",
+          "flex-direction: row;",
+        ],
+        answer: [
+          "display: flex;",
+          "flex-direction: row;",
+          "justify-content: center;",
+          "align-items: center;",
+        ],
+      },
+    },
+    {
+      group: "3",
       title: "Lifting State Up",
       description:
         "In this step, you will learn how to lift state up to a common ancestor component to share state between components.",
@@ -907,6 +1195,19 @@ export const steps = {
         questionText: `Create a parent component that manages the state for multiple Tweet components and passes the state and event handlers as props.`,
       },
     },
+    {
+      group: "3",
+      title: "Using useEffect for Side Effects",
+      description:
+        "In this step, you will learn how to use the useEffect hook to handle side effects in a React component.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modify the Tweet component to use the useEffect hook to log a message to the console every time the number of retweets changes.",
+      },
+    },
+
     {
       group: "3",
       title: "Understanding Component Lifecycle",
@@ -975,13 +1276,40 @@ export const steps = {
       },
     },
     {
+      group: "3",
+      title: "Creating a New React Project with Vite",
+      description:
+        "In this step, you will learn how to create a new React project using Vite by following the correct steps and running command-line commands.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Arrange the steps with drag-and-drop to correctly create a new React project using Vite, including command-line commands.",
+        options: [
+          "Ensure Node.js, NPM and VSCode are installed",
+          "Run `npm create vite@latest` to create a new Vite project",
+          "Select the React template when prompted",
+          "Navigate to the project directory using `cd project-name`",
+          "Run `npm install` to install dependencies",
+          "Start the development server with `npm run dev`",
+        ],
+        answer: [
+          "Ensure Node.js, NPM and VSCode are installed",
+          "Run `npm create vite@latest` to create a new Vite project",
+          "Select the React template when prompted",
+          "Navigate to the project directory using `cd project-name`",
+          "Run `npm install` to install dependencies",
+          "Start the development server with `npm run dev`",
+        ],
+      },
+    },
+    {
       groupReference: "3",
       title: "Review With AI Conversation",
       isConversationReview: true,
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [24, 42], // Indices of steps to review
+        range: [49, 67], // Indices of steps to review
       },
     },
     {
@@ -999,52 +1327,59 @@ export const steps = {
       group: "4",
       title: "Main Lessons Overview",
       description:
-        "In this step, you will identify the main lessons covered in the backend engineering course.",
+        "In this step, you will identify a core responsibility of backend engineering covered in the course.",
       isMultipleChoice: true,
       question: {
         questionText:
-          "Which of the following is a core aspect of backend engineering?",
+          "Which of the following is a core responsibility in backend engineering?",
         options: [
-          "Designing user interfaces",
-          "Managing databases",
-          "Creating graphic design elements",
-          "Writing frontend HTML and CSS",
+          "Managing concurrency and ensuring thread safety in multi-user applications",
+          "Implementing user authentication directly in the user experience",
+          "Handling memory allocation and garbage collection in server environments",
+          "Designing scalable UI components for cross-browser compatibility",
+          "Optimizing database queries and ensuring data consistency",
         ],
-        answer: "Managing databases",
+        answer: "Optimizing database queries and ensuring data consistency",
       },
     },
     {
       group: "4",
-      title: "Relating Backend to Real World",
+      title: "Key Responsibilities of Backend Engineering",
       description:
-        "In this step, you will relate the operations of a kitchen in a restaurant to backend engineering.",
-      isSelectOrder: true,
+        "In this step, you will learn about the various responsibilities involved in backend engineering.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Arrange the following tasks in a restaurant kitchen to correspond with backend operations:",
+          "Which of the following are core responsibilities of backend engineering?",
         options: [
-          "Preparing ingredients",
-          "Cooking the food",
-          "Serving the dish",
-          "Cleaning up",
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing APIs to facilitate communication between systems",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
         ],
         answer: [
-          "Preparing ingredients",
-          "Cooking the food",
-          "Serving the dish",
-          "Cleaning up",
+          "Managing and optimizing databases for storing and retrieving data efficiently",
+          "Designing and implementing APIs to facilitate communication between systems",
+          "Ensuring security through user authentication and authorization mechanisms",
+          "Handling server-side logic, including business operations and calculations",
+          "Maintaining server reliability and performance under high traffic",
+          "Managing data integrity and consistency across distributed systems",
+          "Implementing logging and monitoring to ensure system health and debug issues",
         ],
       },
     },
     {
       group: "4",
-      title: "Understanding Operating Systems",
+      title: "Interfacing with the Terminal",
       description:
-        "In this step, you will learn why understanding operating systems is important in backend engineering.",
+        "In this step, you will learn about the importance of the terminal in backend engineering and how to interact with it for various tasks.",
       isText: true,
       question: {
         questionText:
-          "Why is it important to understand the operating system when studying backend engineering?",
+          "Why is learning to use the terminal important for operating systems, and what kinds of tasks can you perform using the terminal?",
       },
     },
     {
@@ -1055,7 +1390,7 @@ export const steps = {
       isText: true,
       question: {
         questionText:
-          "Use the terminal to install the node package manager (npm) globally onto your computer",
+          "Write the command to install the node package manager (npm) globally onto your computer",
       },
     },
     {
@@ -1070,20 +1405,15 @@ export const steps = {
     },
     {
       group: "4",
-      title: "Creating Users Concept",
+      title: "User Creation and Authentication",
       description:
-        "In this step, you will understand the concept of creating users in backend systems.",
-      isMultipleChoice: true,
+        "In this step, you will understand the key concept related to creating users in backend systems.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Which of the following is a key aspect of user creation in backend systems?",
-        options: [
-          "Generating unique user IDs",
-          "Designing user avatars",
-          "Selecting color themes",
-          "Creating social media profiles",
-        ],
-        answer: "Generating unique user IDs",
+          "What is the process called that verifies a user's identity during account creation?",
+        placeholder: "Type your answer here...",
+        answer: "authentication",
       },
     },
     {
@@ -1111,48 +1441,186 @@ export const steps = {
       group: "4",
       title: "Initiating A Firebase Project",
       description:
-        "In this step, you will understand how to start a Firebase project with the command line.",
-      isText: true,
+        "In this step, you will understand how to start a Firebase project using the command line.",
+      isSingleLineText: true,
       question: {
-        questionText: "Write the command to start a firebase project.",
+        questionText: "What is the command to start a Firebase project?",
+        answer: "firebase init",
       },
     },
     {
       group: "4",
-      title: "Storing Data Responsibly",
+      title: "Advanced Data Storage Practices",
       description:
-        "In this step, you will learn about responsible data storage practices.",
-      isText: true,
+        "In this step, you will learn advanced practices for storing data responsibly in backend systems.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "What are some best practices for storing data responsibly in a backend system?",
-      },
-    },
-    {
-      group: "4",
-      title: "Working with Collections and Documents",
-      description:
-        "In this step, you will learn about the process of setting up collections and documents in non-relational databases like Firebase or MongoDB.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the steps in the correct order to set up a collection and add a document in a non-relational database.",
+          "Which of the following are best practices for ensuring responsible data storage in a backend system?",
         options: [
-          "Create a new collection",
-          "Define document structure",
-          "Add a new document to the collection",
-          "Assign a unique document ID",
-          "Save the document",
-          "Query the collection for documents",
+          "Cache data in memory to reduce database access time",
+          "Use a large, centralized backup to reduce complexity and cost",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple data centers to improve fault tolerance",
         ],
         answer: [
-          "Create a new collection",
-          "Define document structure",
-          "Assign a unique document ID",
-          "Add a new document to the collection",
-          "Save the document",
-          "Query the collection for documents",
+          "Cache data in memory to reduce database access time",
+          "Encrypt sensitive data both at rest and in transit to ensure security",
+          "Implement database replication across multiple data centers to improve fault tolerance",
         ],
+      },
+    },
+    {
+      group: "4",
+      title: "Initializing Firebase and Working with Firestore v9",
+      description:
+        "In this step, you will learn how to initialize Firebase and set up Firestore collections and documents in Firestore v9.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Complete the code to initialize Firebase with the provided configuration and add a unique document to a Firestore collection.",
+        options: [
+          // Option 1: Correct code for initializing Firebase and adding a document
+
+          // Option 2: Incorrect - missing Firestore initialization
+          `import { 
+  initializeApp 
+} from 'firebase/app';
+
+import { 
+  collection, 
+  setDoc 
+} from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "progr-ai.firebaseapp.com",
+  projectId: "progr-ai",
+  storageBucket: "progr-ai.appspot.com",
+  messagingSenderId: "32042075426",
+  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+  measurementId: "G-0E37NCB4KB",
+};
+
+initializeApp(firebaseConfig);
+await setDoc(collection(db, 'users'), {
+  name: 'John Doe',
+  email: 'john@example.com'
+});`,
+
+          // Option 3: Incorrect - missing document ID in Firestore
+          `import { 
+  initializeApp 
+} from 'firebase/app';
+
+import { 
+  getFirestore, 
+  doc, 
+  setDoc 
+} from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "progr-ai.firebaseapp.com",
+  projectId: "progr-ai",
+  storageBucket: "progr-ai.appspot.com",
+  messagingSenderId: "32042075426",
+  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+  measurementId: "G-0E37NCB4KB",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Add document
+await setDoc(doc(db, 'users'), {
+  name: 'John Doe',
+  email: 'john@example.com'
+});`,
+          `import { 
+  initializeApp 
+} from 'firebase/app';
+
+import { 
+  getFirestore, 
+  doc, 
+  setDoc
+} from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "progr-ai.firebaseapp.com",
+  projectId: "progr-ai",
+  storageBucket: "progr-ai.appspot.com",
+  messagingSenderId: "32042075426",
+  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+  measurementId: "G-0E37NCB4KB",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Add document
+await addDoc(doc(db, 'users'), {
+  name: 'John Doe',
+  email: 'john@example.com'
+});`,
+
+          // Option 4: Incorrect - missing import for Firestore methods
+          `import { 
+  initializeApp 
+} from 'firebase/app';
+    
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "progr-ai.firebaseapp.com",
+  projectId: "progr-ai",
+  storageBucket: "progr-ai.appspot.com",
+  messagingSenderId: "32042075426",
+  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+  measurementId: "G-0E37NCB4KB",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Add document
+await addDoc(doc(db, 'users', 'user123'), {
+  name: 'John Doe',
+  email: 'john@example.com'
+});`,
+        ],
+        answer: `import { 
+  initializeApp 
+} from 'firebase/app';
+
+import { 
+  getFirestore, 
+  doc, 
+  setDoc 
+} from 'firebase/firestore';
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "progr-ai.firebaseapp.com",
+  projectId: "progr-ai",
+  storageBucket: "progr-ai.appspot.com",
+  messagingSenderId: "32042075426",
+  appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+  measurementId: "G-0E37NCB4KB",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Add document
+await addDoc(doc(db, 'users'), {
+  name: 'John Doe',
+  email: 'john@example.com'
+});`,
       },
     },
     {
@@ -1167,47 +1635,52 @@ export const steps = {
     },
     {
       group: "4",
-      title: "Creating a New User",
+      title: "Retrieving a User Document After Authentication",
       description:
-        "In this step, you will create a new user in a backend system.",
-      isText: true,
+        "In this step, you will learn how to retrieve a user document from Firestore using authentication data.",
+      isCode: true,
+      isTerminal: false,
       question: {
         questionText:
-          "Use the terminal to add a new user to the `Users` collection in your firestore database.",
+          "Write code to retrieve a user document from the `users` collection in Firestore using the authenticated user's ID.",
       },
     },
     {
       group: "4",
-      title: "Understanding Authentication",
+      title: "Understanding the Authentication Flow",
       description:
-        "In this step, you will learn about authentication processes in backend systems.",
-      isText: true,
-      question: {
-        questionText:
-          "What is authentication and why is it important in backend systems?",
-      },
-    },
-    {
-      group: "4",
-      title: "Authorization Servers",
-      description:
-        "In this step, you will learn about the role of authorization servers.",
+        "In this step, you will learn about the typical flow of authentication in backend systems.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly authorize a user.",
+          "Arrange the following steps in the correct order for a typical authentication flow in a backend system.",
         options: [
-          "User submits credentials",
-          "Server verifies credentials",
-          "Authorization token is generated",
-          "User is granted access to resources",
+          "User enters credentials (email and password) on the login form",
+          "The backend verifies the credentials with the authentication service",
+          "Identity tokens or sessions are created for the authenticated user",
+          "The system retrieves user data from your database based on your tokens",
+          "The user is granted access to the protected resources",
         ],
         answer: [
-          "User submits credentials",
-          "Server verifies credentials",
-          "Authorization token is generated",
-          "User is granted access to resources",
+          "User enters credentials (email and password) on the login form",
+          "The backend verifies the credentials with the authentication service",
+          "Identity tokens or sessions are created for the authenticated user",
+          "The system retrieves user data from your database based on your tokens",
+          "The user is granted access to the protected resources",
         ],
+      },
+    },
+    {
+      group: "4",
+      title: "OAuth Authentication",
+      description:
+        "In this step, you will learn about OAuth-style authentication systems.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "What is the widely used protocol for authorization that allows third-party services to access user data without exposing credentials?",
+        placeholder: "Type your answer here...",
+        answer: "OAuth",
       },
     },
     {
@@ -1233,15 +1706,30 @@ export const steps = {
     },
     {
       group: "4",
-      title: "Creating API Endpoints",
+      title: "Interfacing with an API",
       description:
-        "In this step, you will learn how to create API endpoints for a backend application.",
-      isMultipleChoice: true,
+        "In this step, you will learn the common HTTP methods used to interface with an API and some less common methods.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Which HTTP method is commonly used to create a new resource via an API?",
-        options: ["GET", "POST", "PUT", "DELETE"],
-        answer: "POST",
+          "Which of the following HTTP methods are commonly used to interface with an API, and what do they do?",
+        options: [
+          "GET (Retrieves data from the server)",
+          "POST (Creates a new resource on the server)",
+          "SEND (Sends data to the server for processing)",
+          "FETCH (Used to fetch data from a resource)",
+          "PATCH (Partially updates a resource on the server)",
+          "REMOVE (Removes data from a server)",
+          "PUT (Updates an existing resource on the server)",
+          "DELETE (Deletes a resource from the server)",
+        ],
+        answer: [
+          "GET (Retrieves data from the server)",
+          "POST (Creates a new resource on the server)",
+          "PUT (Updates an existing resource on the server)",
+          "DELETE (Deletes a resource from the server)",
+          "PATCH (Partially updates a resource on the server)",
+        ],
       },
     },
     {
@@ -1252,7 +1740,7 @@ export const steps = {
       isSelectOrder: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to implement user authentication using JWT.",
+          "Arrange the steps with drag-and-drop to implement user authentication using JSON Web Tokens.",
         options: [
           "Install JWT library",
           "Set up a user model in the database",
@@ -1288,7 +1776,7 @@ export const steps = {
       isText: true,
       question: {
         questionText:
-          "Write a  to deploy a Firebase application in the command line.",
+          "Write a command to deploy a Firebase application in the command line.",
       },
     },
     {
@@ -1298,72 +1786,51 @@ export const steps = {
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [44, 66], // Indices of steps to review
+        range: [69, 89], // Indices of steps to review
       },
     },
     {
       group: "5",
-      title: "Introduction to Full Application Development",
+      title: "Benefits of Serverless Cloud Platforms",
       description:
-        "Learn how to piece together everything you've learned to build a complete application.",
+        "In this step, you will explore the advantages of using serverless cloud platforms like Firebase or Vercel in software development.",
       isText: true,
       question: {
         questionText:
-          "What tools and resources can you use if you come across something you want to learn more about while building an application?",
+          "What are the key benefits of using serverless cloud platforms like Firebase or Vercel in software development, and how do they differ from traditional server-based models?",
       },
     },
     {
       group: "5",
-      title: "Installing VSCode",
+      title: "Understanding VSCode",
       description:
-        "Install Visual Studio Code (VSCode), the code editor for writing your code.",
+        "In this step, you will explore what Visual Studio Code (VSCode) is and why it is a popular code editor.",
       isText: true,
       question: {
         questionText:
-          "Write the terminal command to install VSCode on your operating system.",
+          "What is Visual Studio Code (VSCode) and why is it one of the most popular code editors among developers?",
       },
     },
     {
       group: "5",
-      title: "Installing Node.js",
+      title: "Installing Node.js and NPM",
       description:
         "Install Node.js, which lets you build JavaScript applications.",
       isText: true,
       question: {
         questionText:
-          "What is the purpose of Node.js in JavaScript development?",
+          "What is the purpose of Node.js and npm in JavaScript development in simple terms?",
       },
     },
     {
       group: "5",
       title: "Installing 'package.json' Packages.",
       description: "Installing the files found in package.json.",
-      isText: true,
+      isSingleLineText: true,
       question: {
         questionText:
           "Enter the command to install the packages found in a react project using npm.",
-      },
-    },
-    {
-      group: "5",
-      title: "Creating a Project Folder",
-      description: "Create a new folder for your project.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Arrange the following commands to create and navigate into a new project folder:",
-        options: [
-          "mkdir myProject",
-          "cd myProject",
-          "Creates the folder",
-          "Navigates into the folder",
-        ],
-        answer: [
-          "mkdir myProject",
-          "Creates the folder",
-          "cd myProject",
-          "Navigates into the folder",
-        ],
+        answer: "npm install",
       },
     },
     {
@@ -1371,41 +1838,63 @@ export const steps = {
       title: "Install Firebase Tools Globally",
       description: "Install Firebase tools globally using the command line.",
 
-      isText: true,
+      isSingleLineText: true,
       question: {
         questionText:
           "Use the terminal to install firebase-tools globally. What command do you use?",
+        answer: "npm install -g firebase-tools.",
       },
     },
     {
       group: "5",
-      title: "Running the React Application",
-      description: "Run your React application in development mode.",
+      title: "Setting Up a React and Firebase Project with VSCode",
+      description:
+        "In this step, you will arrange the steps required to set up a React project using Vite, connect Firebase services, and install the necessary tools using Visual Studio Code (VSCode).",
       isSelectOrder: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly run your React application.",
+          "Arrange the following steps in the correct order to set up a React project using Vite, install Node.js and npm, and connect Firebase services using VSCode.",
         options: [
-          "Open the terminal",
-          "Navigate to the project folder",
-          "Run the start script",
-          "View the app in the browser",
+          "Install Node.js and npm on your machine",
+          "Install Visual Studio Code (VSCode)",
+          "Open VSCode and navigate to the terminal",
+          "Run `npm create vite@latest` to create a new React project",
+          "Navigate to the project folder using `cd project-name`",
+          "Run `npm install` to install dependencies",
+          "Install Firebase CLI using `npm install -g firebase-tools`",
+          "Log into Firebase using `firebase login`",
+          "Initialize Firebase in the project using `firebase init`",
+          "Enable Firebase services such as Firestore or Authentication",
+          "Connect Firebase to your React project by adding Firebase config",
+          "Start the development server using `npm run dev`",
         ],
         answer: [
-          "Open the terminal",
-          "Navigate to the project folder",
-          "Run the start script",
-          "View the app in the browser",
+          "Install Node.js and npm on your machine",
+          "Install Visual Studio Code (VSCode)",
+          "Open VSCode and navigate to the terminal",
+          "Run `npm create vite@latest` to create a new React project",
+          "Navigate to the project folder using `cd project-name`",
+          "Run `npm install` to install dependencies",
+          "Install Firebase CLI using `npm install -g firebase-tools`",
+          "Log into Firebase using `firebase login`",
+          "Initialize Firebase in the project using `firebase init`",
+          "Enable Firebase services such as Firestore or Authentication",
+          "Connect Firebase to your React project by adding Firebase config",
+          "Start the development server using `npm run dev`",
         ],
       },
     },
+
     {
       group: "5",
       title: "Setting Up Firebase",
-      description: "Set up Firebase for your project.",
-      isText: true,
+      description:
+        "In this step, you will set up Firebase for your project, including Authentication, Firestore, and Analytics.",
+      isCode: true,
+      isTerminal: false,
       question: {
-        questionText: "What are the steps to set up Firebase for your project?",
+        questionText:
+          "Write the JavaScript code to initialize Firebase in your project, and connect Authentication, Firestore, and Analytics services.",
       },
     },
     {
@@ -1419,8 +1908,8 @@ export const steps = {
         options: [
           "Hosting websites",
           "Managing code repositories",
-          "Creating databases",
-          "Designing user interfaces",
+          "Decentralizing software",
+          "Collecting data",
         ],
         answer: "Managing code repositories",
       },
@@ -1429,78 +1918,79 @@ export const steps = {
       group: "5",
       title: "Cloning Github Projects",
       description: "Cloning Github projects in the command line.",
-      isText: true,
+      isCode: true,
+      isTerminal: true,
       question: {
         questionText:
-          "Use the terminal to clone a RobotsBuildingEducation Github project called programAI using git commands.",
+          "Use the terminal to clone a progr.ai Github project by Robots Building Education using git commands.",
+        answer:
+          "git clone https://github.com/RobotsBuildingEducation/progr.ai.git",
       },
     },
     {
       group: "5",
-      title: "Initializing Firebase",
+      title: "Popular Alternatives to Firebase",
       description:
-        "Initialize Firebase in your project and authenticate your account.",
-      isSelectOrder: true,
+        "In this step, you will explore some popular alternatives to Firebase for various backend services such as database management, authentication, and hosting.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly initialize Firebase in your project.",
+          "Which of the following are popular alternatives to Firebase for building full-stack applications?",
         options: [
-          "Install Firebase CLI",
-          "Login to Firebase",
-          "Initialize Firebase in the project",
-          "Choose project settings",
-          "Install Firebase SDK",
-          "Add Firebase configuration to your code",
-          "Enable Firebase services (e.g., Firestore, Authentication)",
-          "Set up security rules for your services",
-          "Deploy your app using Firebase Hosting (optional)",
-          "Test Firebase integration",
+          "Supabase", // Correct
+          "AWS Amplify", // Correct
+          "MongoDB Realm", // Correct
+          "HerokuDB", // Incorrect
+          "AngularJS", // Incorrect
+          "Vercel", // Incorrect
+          "Cloudflare", // Incorrect
         ],
-        answer: [
-          "Install Firebase CLI",
-          "Login to Firebase",
-          "Initialize Firebase in the project",
-          "Choose project settings",
-          "Install Firebase SDK",
-          "Add Firebase configuration to your code",
-          "Enable Firebase services (e.g., Firestore, Authentication)",
-          "Set up security rules for your services",
-          "Deploy your app using Firebase Hosting (optional)",
-          "Test Firebase integration",
-        ],
+        answer: ["Supabase", "AWS Amplify", "MongoDB Realm", "Cloudflare"], // Incorrect],
       },
     },
     {
       group: "5",
-      title: "Understanding Firebase Core Features",
+      title: "Most Common Firebase Products",
       description:
-        "Identify the core functionality of Firebase services like Firestore, Authentication, Storage, Hosting, and Cloud Functions.",
-      isSelectOrder: true,
+        "In this step, you will identify the core Firebase products commonly used in web and mobile app development.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Arrange the Firebase services with their core functions.",
+          "Which of the following are commonly used Firebase products?",
         options: [
-          "Firestore: Cloud NoSQL database for storing and syncing data",
-          "Authentication: User sign-in and identity management",
-          "Storage: File storage for user-generated content",
-          "Hosting: Web hosting for deploying static content",
-          "Cloud Functions: Serverless backend for running code in response to events",
+          "Firestore: Cloud NoSQL database for storing and syncing data", // Correct
+          "Firebase Ads: Platform for integrating advertising", // Incorrect
+          "Authentication: User sign-in and identity management", // Correct
+          "Firebase Functions: Serverless backend for running code", // Correct
+          "Firebase Storage: File storage for user-generated content", // Correct
+          "Firebase Machine Learning: ML tools for app features", // Correct
+          "Firebase Builder: Tool for creating Firebase services", // Incorrect
+          "Firebase Hosting: Web hosting for deploying static content", // Correct
+          "Firebase Cache: Caching service for high-performance storage", // Incorrect
+          "Firebase Realtime Database: Real-time syncing database", // Correct
+          "Firebase Firestore: A document-collection database", // Co
+          "Firebase Analytics: Tracks user engagement and events in your app", // Correct
         ],
         answer: [
           "Firestore: Cloud NoSQL database for storing and syncing data",
           "Authentication: User sign-in and identity management",
-          "Storage: File storage for user-generated content",
-          "Hosting: Web hosting for deploying static content",
-          "Cloud Functions: Serverless backend for running code in response to events",
+          "Firebase Realtime Database: Real-time syncing database",
+          "Firebase Hosting: Web hosting for deploying static content",
+          "Firebase Functions: Serverless backend for running code",
+          "Firebase Storage: File storage for user-generated content",
+          "Firebase Analytics: Tracks user engagement and events in your app",
+          "Firebase Firestore: A document-collection database", // Co
+          "Firebase Machine Learning: ML tools for app features",
         ],
       },
     },
+
     {
       group: "5",
       title: "Pulling Updates With Github",
       description: "Update your version of code by pulling with Github.",
 
-      isText: true,
+      isSingleLineText: true,
       question: {
         questionText:
           "Use the terminal to update your local Github project with the latest version available on Github",
@@ -1514,12 +2004,12 @@ export const steps = {
       isMultipleChoice: true,
       question: {
         questionText:
-          "Which package do you use to handle user authentication in Firebase?",
+          "Which package do you use to handle the user experience for authentication with Firebase?",
         options: [
           "firebase",
-          "react-firebaseui",
           "firebase-auth",
           "firebase-hooks",
+          "react-firebaseui",
           "firebase-admin",
           "firebase-functions",
           "firebase-storage",
@@ -1552,31 +2042,14 @@ export const steps = {
     },
     {
       group: "5",
-      title: "Rendering Sign-In Button",
+      title:
+        "Rendering Sign-In Button in React with Firebase and react-firebaseui",
       description:
-        "Render a sign-in button in your React application using Firebase and react-firebaseui.",
-      isSelectOrder: true,
+        "In this step, you will render a sign-in button in your React application using Firebase Authentication and the react-firebaseui library.",
+      isCode: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to correctly render a sign-in button using Firebase and react-firebaseui.",
-        options: [
-          "Install Firebase and react-firebaseui packages",
-          "Import the necessary Firebase modules",
-          "Initialize Firebase with your configuration",
-          "Configure Firebase Authentication in the Firebase Console",
-          "Create and configure the sign-in options",
-          "Render the Firebase UI component in your React component",
-          "Test the sign-in flow in your application",
-        ],
-        answer: [
-          "Install Firebase and react-firebaseui packages",
-          "Import the necessary Firebase modules",
-          "Initialize Firebase with your configuration",
-          "Configure Firebase Authentication in the Firebase Console",
-          "Create and configure the sign-in options",
-          "Render the Firebase UI component in your React component",
-          "Test the sign-in flow in your application",
-        ],
+          "Write the code to render a Firebase sign-in button in a React component using Firebase Authentication and react-firebaseui.",
       },
     },
     {
@@ -1593,7 +2066,7 @@ export const steps = {
       group: "5",
       title: "Updating User Profile",
       description:
-        "Update the user profile information in your Firebase database.",
+        "Update the user profile information in your Firebase database after they have logged in.",
       isCode: true,
       question: {
         questionText:
@@ -1604,13 +2077,13 @@ export const steps = {
       group: "5",
       title: "Updating A Github Project",
       description: "Chaining git commands to update a Github project.",
-      isText: true,
+      isSingleLineText: true,
       question: {
         questionText:
           "Enter the combination of github commands to write and update a codebase with a message.",
+        answer: `git add . && git commit -m "your_message" && git push origin main`,
       },
     },
-
     {
       group: "5",
       title: "Using GitHub Commands",
@@ -1618,18 +2091,22 @@ export const steps = {
       isSelectOrder: true,
       question: {
         questionText:
-          "Arrange the following Git commands in the correct order to create a new repository:",
+          "Arrange the following Git commands in the correct order to programmatically create a new repository and push to your GitHub account:",
         options: [
           "git init",
           "git add .",
           "git commit -m 'Initial commit'",
-          "git push origin main",
+          "git remote add origin <repository-url>",
+          "git branch -M main",
+          "git push -u origin main",
         ],
         answer: [
           "git init",
           "git add .",
           "git commit -m 'Initial commit'",
-          "git push origin main",
+          "git remote add origin <repository-url>",
+          "git branch -M main",
+          "git push -u origin main",
         ],
       },
     },
@@ -1640,7 +2117,7 @@ export const steps = {
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [68, 92], // Indices of steps to review
+        range: [91, 110], // Indices of steps to review
       },
     },
     {
@@ -1661,7 +2138,7 @@ export const steps = {
         "Explore how programming languages work and how computers understand code.",
       isCode: true,
       question: {
-        questionText: `Write a simple program in any language to demonstrate how autocorrect technology might identify and correct a misspelled word.`,
+        questionText: `Write a simple program, without any libraries, to demonstrate how autocorrect technology might identify and correct a misspelled word.`,
       },
     },
     {
@@ -1693,30 +2170,37 @@ export const steps = {
       isCode: true,
       question: {
         questionText:
-          'Write the code to break down the string "Drake" into an array of characters.',
+          "Write the code to break down the string 'Kendrick' into an array and then into an object mapping.",
       },
     },
     {
       group: "6",
       title: "Understanding Data Structures",
-      description: "Convert a string into an array of key-value pair objects.",
+      description:
+        "Convert a string into an array of key-value pair objects that map characters to their ASCII codes.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Convert the string 'Drake' into an array where each character is a key and its index is the value. Represent each character as an object with the character as the key and the index as the value.",
+          "Convert the string 'Kendrick' into an array of key-value pair objects where each character maps to its ASCII code.",
         options: [
-          "{ 'D': 0 }",
-          "{ 'r': 1 }",
-          "{ 'a': 2 }",
-          "{ 'k': 3 }",
-          "{ 'e': 4 }",
+          "{ 'K': 75 }",
+          "{ 'e': 101 }",
+          "{ 'n': 110 }",
+          "{ 'd': 100 }",
+          "{ 'r': 114 }",
+          "{ 'i': 105 }",
+          "{ 'c': 99 }",
+          "{ 'k': 107 }",
         ],
         answer: [
-          "{ 'D': 0 }",
-          "{ 'r': 1 }",
-          "{ 'a': 2 }",
-          "{ 'k': 3 }",
-          "{ 'e': 4 }",
+          "{ 'K': 75 }",
+          "{ 'e': 101 }",
+          "{ 'n': 110 }",
+          "{ 'd': 100 }",
+          "{ 'r': 114 }",
+          "{ 'i': 105 }",
+          "{ 'c': 99 }",
+          "{ 'k': 107 }",
         ],
       },
     },
@@ -1728,7 +2212,7 @@ export const steps = {
       isCode: true,
       question: {
         questionText:
-          'Write the binary representation for each character in the string "Drake".',
+          "Convert the object mapping of the ascii codes representing 'Kendrick' into a mapping of binary code.",
       },
     },
     {
@@ -1738,7 +2222,7 @@ export const steps = {
       isText: true,
       question: {
         questionText:
-          "Why is it important to understand how computers reserve space and create addresses to reference information?",
+          "Why is it important to understand how computers reserve space and create addresses to reference information? What are some real world examples of this operating at scale?",
       },
     },
     {
@@ -1761,11 +2245,217 @@ export const steps = {
     {
       group: "6",
       title: "Building a Linked List",
-      description: "Construct a simple linked list in JavaScript.",
+      description:
+        "Construct a simple linked list in JavaScript with the values 'meta', 'instagram', 'reels'.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Which of the following code snippets correctly creates a linked list with the values 'meta', 'instagram', and 'reels' in JavaScript?",
+        options: [
+          // Option 1: Correct linked list implementation
+          `class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+  }
+
+  add(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+  }
+}
+
+const list = new LinkedList();
+list.add('meta');
+list.add('instagram');
+list.add('reels');`,
+
+          // Option 2: Incorrect - Uses arrays instead of linked list
+          `class Node {
+  constructor(value) {
+    this.value = value;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+  }
+
+  add(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+  }
+}
+
+const list = new LinkedList();
+list.add('reels');
+list.add('instagram');
+list.add('meta');`,
+
+          // Option 3: Incorrect - Missing `next` pointer in Node class
+          `class Node {
+  constructor(value) {
+    this.value = value;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+  }
+
+  add(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+  }
+}
+
+const list = new LinkedList();
+list.add('meta');
+list.add('instagram');
+list.add('reels');`,
+
+          // Option 4: Incorrect - Circular linked list without terminating
+          `class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+  }
+
+  add(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+      newNode.next = this.head; 
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+      newNode.next = this.head; 
+    }
+  }
+}
+
+const list = new LinkedList();
+list.add('meta');
+list.add('instagram');
+list.add('reels');`,
+        ],
+        answer: `class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+  }
+
+  add(value) {
+    const newNode = new Node(value);
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+  }
+}
+
+const list = new LinkedList();
+list.add('meta');
+list.add('instagram');
+list.add('reels');`,
+      },
+    },
+    {
+      group: "6",
+      title: "Practical Linked List Application",
+      description: "Apply the LinkedList class to a real-world scenario.",
       isCode: true,
       question: {
         questionText:
-          'Write the JavaScript code to create a linked list with the following values: "meta", "instagram", "reels".',
+          "Write the code to create a linked list of Google's company departments and traverse through it.",
+      },
+    },
+    {
+      group: "6",
+      title: "Traversing a Linked List",
+      description:
+        "Implement a method to traverse a linked list and return the last item.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write a method in the LinkedList class that traverses the list and returns the last item.",
+      },
+    },
+    {
+      group: "6",
+      title: "Linked List Class Implementation",
+      description:
+        "Implement the LinkedList and ListItem classes in JavaScript.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "Which method would you use to add a new item to the end of a linked list?",
+        options: ["addAtIndex()", "append()", "insert()", "push()", "create()"],
+        answer: "append()",
+      },
+    },
+
+    {
+      group: "6",
+      title: "Reversing a Linked List",
+      description: "Reverse the direction of a linked list.",
+      isMultipleChoice: true,
+      question: {
+        questionText: "What is the time complexity of reversing a linked list?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)", "O(n log n)", "O(2^n)"],
+        answer: "O(n)",
       },
     },
     {
@@ -1803,31 +2493,10 @@ export const steps = {
       isCode: true,
       question: {
         questionText:
-          "Write the JavaScript code to create the following tree structure with Alphabet and Meta's organizations.",
+          "Write the JavaScript code to create the following tree structure that's 3 levels deep with Alphabet and Meta's companies.",
       },
     },
-    {
-      group: "6",
-      title: "Traversing a Linked List",
-      description:
-        "Implement a method to traverse a linked list and return the last item.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write a method in the LinkedList class that traverses the list and returns the last item.",
-      },
-    },
-    {
-      group: "6",
-      title: "Reversing a Linked List",
-      description: "Reverse the direction of a linked list.",
-      isMultipleChoice: true,
-      question: {
-        questionText: "What is the time complexity of reversing a linked list?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"],
-        answer: "O(n)",
-      },
-    },
+
     {
       group: "6",
       title: "Understanding Depth-First and Breadth-First Search",
@@ -1841,32 +2510,133 @@ export const steps = {
     },
     {
       group: "6",
-      title: "Depth-First Search Application",
-      description: "Apply depth-first search to a practical example.",
-      isSelectOrder: true,
+      title: "Implementing Depth-First Search with Recursion",
+      description:
+        "Complete the implementation of a depth-first search (DFS) using recursion to traverse a binary tree.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to implement depth-first search on a binary tree.",
+          "Which of the following code snippets correctly implements DFS using recursion on a binary tree in JavaScript?",
         options: [
-          "Start at the root node",
-          "Check if the current node is null",
-          "Recursively call DFS on the left child",
-          "Process the current node (e.g., print the value)",
-          "Recursively call DFS on the right child",
-          "Backtrack to the parent node if necessary",
-          "Process all nodes until all children are visited",
-          "Continue until the entire tree is traversed",
+          // Option 1: Correct DFS implementation with recursion (pre-order traversal)
+
+          // Option 2: Incorrect - Missing the base case check for null nodes
+          `class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function dfs(node) {
+  console.log(node.value);
+  dfs(node.left);
+  dfs(node.right);
+}
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+dfs(root);`,
+
+          // Option 3: Incorrect - Swapped traversal order (in-order instead of pre-order)
+          `class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function dfs(node) {
+  if (node === null) {
+    return;
+  }
+  dfs(node.left);
+  console.log(node.value);
+  dfs(node.right);
+}
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+dfs(root);`,
+
+          // Option 4: Incorrect - Infinite loop due to incorrect recursive call
+          `class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function dfs(node) {
+  if (node === null) {
+    return;
+  }
+  console.log(node.value);
+  dfs(node);
+}
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+dfs(root);`,
+          `class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function dfs(node) {
+  if (node === null) {
+    return;
+  }
+  console.log(node.value);
+  dfs(node.left);
+  dfs(node.right);
+}
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+dfs(root);`,
         ],
-        answer: [
-          "Start at the root node",
-          "Check if the current node is null",
-          "Recursively call DFS on the left child",
-          "Process the current node (e.g., print the value)",
-          "Recursively call DFS on the right child",
-          "Backtrack to the parent node if necessary",
-          "Process all nodes until all children are visited",
-          "Continue until the entire tree is traversed",
-        ],
+        answer: `class TreeNode {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+function dfs(node) {
+  if (node === null) {
+    return;
+  }
+  console.log(node.value);
+  dfs(node.left);
+  dfs(node.right);
+}
+
+const root = new TreeNode(1);
+root.left = new TreeNode(2);
+root.right = new TreeNode(3);
+root.left.left = new TreeNode(4);
+root.left.right = new TreeNode(5);
+dfs(root);`,
       },
     },
 
@@ -1878,32 +2648,10 @@ export const steps = {
       isCode: true,
       question: {
         questionText:
-          "Write an optimized version of the bubble sort algorithm in JavaScript.",
+          "Write an optimized version of the bubble sort algorithm in JavaScript without using recursion.",
       },
     },
-    {
-      group: "6",
-      title: "Linked List Class Implementation",
-      description:
-        "Implement the LinkedList and ListItem classes in JavaScript.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "Which method would you use to add a new item to the end of a linked list?",
-        options: ["addAtIndex()", "append()", "insert()", "push()"],
-        answer: "append()",
-      },
-    },
-    {
-      group: "6",
-      title: "Practical Linked List Application",
-      description: "Apply the LinkedList class to a real-world scenario.",
-      isCode: true,
-      question: {
-        questionText:
-          "Write the code to create a linked list of company departments and traverse through it.",
-      },
-    },
+
     {
       group: "6",
       title: "Exploring the N-Queens Problem",
@@ -1921,7 +2669,7 @@ export const steps = {
       isSelectOrder: true,
       question: {
         questionText:
-          "Arrange the steps with drag-and-drop to implement backtracking for the N-Queens problem.",
+          "Arrange the steps with drag-and-drop to implement backtracking for a 4x4 N-Queens problem.",
         options: [
           "Start with an empty board",
           "Place a queen in the current row",
@@ -1944,6 +2692,17 @@ export const steps = {
           "If the board is fully filled with safe placements, return the solution",
           "Continue this process until all possible solutions are found",
         ],
+      },
+    },
+    {
+      group: "6",
+      title: "Implementing Backtracking for 4x4 N-Queens",
+      description:
+        "Implement a backtracking algorithm to solve the 4x4 N-Queens problem.",
+      isCode: true,
+      question: {
+        questionText:
+          "Write the code to implement backtracking for solving the 4x4 N-Queens problem in JavaScript.",
       },
     },
     {
@@ -1953,28 +2712,27 @@ export const steps = {
       description: "Review the subjects you've answered",
       question: {
         questionText: "Let's chat about the questions we've worked on so far.",
-        range: [94, 114], // Indices of steps to review
+        range: [112, 132], // Indices of steps to review
       },
     },
   ],
   es: [
     {
       group: "0",
-      title: "¡Bienvenido a la aplicación Program AI!",
+      title: "¡Bienvenido a la aplicación de Program AI!",
       description:
-        "Presiona 'Empecemos' para comenzar tu viaje en el aprendizaje de cómo programar.",
+        "Presiona 'Empecemos' para comenzar tu viaje en el aprendizaje de programación.",
     },
     {
       group: "tutorial",
-      title: "Entendiendo la Programación",
+      group: "Entendiendo la Programación",
       description: "Comprende el concepto básico de la programación.",
       isMultipleChoice: true,
       question: {
-        questionText:
-          "¿Cuál de las siguientes opciones describe mejor la programación?",
+        questionText: "¿Cuál de las siguientes describe mejor la programación?",
         options: [
           "Escribir instrucciones para que las computadoras realicen tareas",
-          "Crear componentes físicos para las computadoras",
+          "Crear componentes físicos para computadoras",
           "Diseñar interfaces de usuario",
           "Gestionar bases de datos",
         ],
@@ -1984,23 +2742,23 @@ export const steps = {
     },
     {
       group: "tutorial",
-      title: "Secuencia de Ejecución del Programa",
-      description: "Aprende el orden correcto de ejecución de un programa.",
+      title: "Secuencia de Ejecución de Programas",
+      description: "Aprende el orden correcto de la ejecución de programas.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar y ordena cómo se ejecutan los programas.",
+          "Organiza los pasos arrastrando y soltando el orden en que se ejecutan los programas.",
         options: [
-          "Compilación de código",
-          "Escribir código",
-          "Ejecutar el programa",
-          "Depurar",
+          "Compilación del Código",
+          "Escritura del Código",
+          "Ejecución del Programa",
+          "Depuración",
         ],
         answer: [
-          "Escribir código",
-          "Compilación de código",
-          "Depurar",
-          "Ejecutar el programa",
+          "Escritura del Código",
+          "Compilación del Código",
+          "Depuración",
+          "Ejecución del Programa",
         ],
       },
     },
@@ -2014,18 +2772,37 @@ export const steps = {
         questionText:
           "Selecciona todos los pasos involucrados en declarar correctamente una variable en JavaScript:",
         options: [
-          "Usa la palabra clave var/let/const",
-          "Elige un nombre descriptivo para la variable",
-          "Asigna un valor usando el signo de igual simple (=)",
-          "Inicializa la variable dentro de llaves {}",
-          "Declara la variable después de asignar un valor",
-          "Capitaliza la primera letra del nombre de la variable",
+          "Usar la palabra clave var/let/const",
+          "Elegir un nombre descriptivo para la variable",
+          "Asignar un valor usando el signo igual (=)",
+          "Inicializar la variable dentro de llaves {}",
+          "Declarar la variable después de asignar un valor",
+          "Capitalizar la primera letra del nombre de la variable",
         ],
         answer: [
-          "Usa la palabra clave var/let/const",
-          "Elige un nombre descriptivo para la variable",
-          "Asigna un valor usando el signo de igual simple (=)",
+          "Usar la palabra clave var/let/const",
+          "Elegir un nombre descriptivo para la variable",
+          "Asignar un valor usando el signo igual (=)",
         ],
+      },
+    },
+    {
+      group: "tutorial",
+      title: "Entendiendo la Declaración de Variables para Listas",
+      description:
+        "Completa el código seleccionando la manera correcta de declarar un arreglo de elementos (array) en JavaScript.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "¿Qué bloque de código declara correctamente una lista de elementos?",
+        options: [
+          `const frutas = ['manzana', 'plátano', 'cereza'];`,
+          `const frutas = function() { return 'manzana, plátano, cereza'; };`,
+          `const frutas = 'manzana, plátano, cereza';`,
+          `const frutas = { fruta1: 'manzana', fruta2: 'plátano', fruta3: 'cereza' };`,
+          `class Frutas { constructor() { this.fruta1 = 'manzana'; this.fruta2 = 'plátano'; this.fruta3 = 'cereza'; } } const frutas = new Frutas();`,
+        ],
+        answer: `const frutas = ['manzana', 'plátano', 'cereza'];`,
       },
     },
     {
@@ -2041,9 +2818,22 @@ export const steps = {
     },
     {
       group: "tutorial",
+      title: "Entendiendo los Tipos de Datos",
+      description:
+        "Aprende los conceptos básicos de los tipos de datos en JavaScript.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "¿Qué palabra clave se usa para declarar una constante en JavaScript?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "const",
+      },
+    },
+    {
+      group: "tutorial",
       title: "Propósito de las Variables",
       description:
-        "Entiende por qué se utilizan las variables en la programación.",
+        "Comprende por qué se utilizan las variables en la programación.",
       isText: true,
       question: {
         questionText:
@@ -2058,7 +2848,7 @@ export const steps = {
       isTerminal: true,
       question: {
         questionText:
-          "Introduce el comando para cambiar al directorio new_folder usando un terminal bash.",
+          "Ingresa el comando para cambiar al directorio new_folder usando un terminal bash.",
       },
     },
     {
@@ -2067,32 +2857,49 @@ export const steps = {
       isConversationReview: true,
       description: "Revisa los temas que has respondido.",
       question: {
-        questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [1, 5],
+        range: [1, 8],
       },
     },
     {
       group: "1",
       title: "Tipos de Datos en Programación",
       description:
-        "Identifica los diferentes tipos de datos utilizados en programación.",
-      isMultipleChoice: true,
+        "Identifica los diferentes tipos de datos primitivos utilizados en JavaScript.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "¿Cuál de los siguientes NO es un tipo de dato primitivo en JavaScript?",
-        options: ["String", "Number", "Boolean", "Object"],
-        answer: "Object",
+          "¿Cuáles de los siguientes son tipos de datos primitivos en JavaScript?",
+        options: [
+          "Cadena (String)",
+          "Función (Function)",
+          "Número (Number)",
+          "Objeto (Object)",
+          "Booleano (Boolean)",
+          "Nulo (Null)",
+          "Arreglo (Array)",
+          "BigInt",
+          "Indefinido (Undefined)",
+          "Símbolo (Symbol)",
+        ],
+        answer: [
+          "Cadena (String)",
+          "Número (Number)",
+          "Booleano (Boolean)",
+          "Nulo (Null)",
+          "Indefinido (Undefined)",
+          "Símbolo (Symbol)",
+          "BigInt",
+        ],
       },
     },
     {
       group: "1",
       title: "Pasos para Crear una Función",
-      description: "Entiende la secuencia para crear una función.",
+      description: "Comprende la secuencia para crear una función.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para crear y usar una función.",
+          "Organiza los pasos arrastrando y soltando para crear y usar una función.",
         options: [
           "Definir la función",
           "Llamar a la función",
@@ -2109,13 +2916,13 @@ export const steps = {
     },
     {
       group: "1",
-      title: "Escribiendo una Función Simple",
-      description: "Practica escribir funciones en JavaScript.",
+      title: "Escribir una Función Simple",
+      description: "Practica escribiendo funciones en JavaScript.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Escribe una función llamada `saludar` que tome un nombre como parámetro y muestre un saludo con el nombre.",
+          "Escribe una función llamada `saludo` que tome un nombre como parámetro y registre un saludo con ese nombre.",
       },
     },
     {
@@ -2134,95 +2941,90 @@ export const steps = {
       description: "Identifica el propósito de las sentencias condicionales.",
       isMultipleChoice: true,
       question: {
-        questionText: "¿Cuál es el propósito principal de una sentencia `if`?",
+        questionText:
+          "¿Cuál es el propósito principal de una declaración `if`?",
         options: [
           "Repetir un bloque de código varias veces",
           "Ejecutar un bloque de código basado en una condición",
           "Definir una variable",
-          "Importar librerías externas",
+          "Importar bibliotecas externas",
         ],
         answer: "Ejecutar un bloque de código basado en una condición",
       },
     },
     {
       group: "1",
-      title: "Orden de Comprobación de Condiciones",
-      description: "Aprende la secuencia de evaluación de condiciones.",
-      isSelectOrder: true,
+      title: "Orden de las Verificaciones Condicionales",
+      description: "Completa el código que evalúa una sentencia `if-else`.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para evaluar una sentencia `if-else`.",
+          "Completa el siguiente código para implementar correctamente una declaración `if-else` que verifique si una variable `x` es mayor que 10, igual a 10 o menor que 10.",
         options: [
-          "Evaluar la condición `if`",
-          "Ejecutar el bloque `if` si la condición es verdadera",
-          "Evaluar la condición `else if`",
-          "Ejecutar el bloque `else if` si la condición es verdadera",
-          "Evaluar la condición `else`",
-          "Ejecutar el bloque `else` si la condición es falsa",
+          "if (x > 10) { \n  console.log('x es mayor que 10'); \n} else if (x === 10) { \n  console.log('x es igual a 10'); \n} else { \n  console.log('x es menor que 10'); \n}",
+          "if (x == 10) { \n  console.log('x es igual a 10'); \n} else if (x > 10) { \n  console.log('x es mayor que 10'); \n}",
+          "if (x > 10) { \n  console.log('x es mayor que 10'); \n} else { \n  console.log('x no es mayor que 10'); \n}",
+          "if (x >= 10) { \n  console.log('x es mayor o igual a 10'); \n} else { \n  console.log('x es menor que 10'); \n}",
+          "if (x > 10) { \n  console.log('x es mayor que 10'); \n  if (x === 10) { \n    console.log('x es igual a 10'); \n  } \n} else { \n  console.log('x es menor que 10'); \n}",
         ],
-        answer: [
-          "Evaluar la condición `if`",
-          "Ejecutar el bloque `if` si la condición es verdadera",
-          "Evaluar la condición `else if`",
-          "Ejecutar el bloque `else if` si la condición es verdadera",
-          "Evaluar la condición `else`",
-          "Ejecutar el bloque `else` si la condición es falsa",
-        ],
+        answer:
+          "if (x > 10) { \n  console.log('x es mayor que 10'); \n} else if (x === 10) { \n  console.log('x es igual a 10'); \n} else { \n  console.log('x es menor que 10'); \n}",
       },
     },
     {
       group: "1",
       title: "Implementando Lógica Condicional",
-      description: "Aplica la lógica condicional en el código.",
+      description: "Aplica lógica condicional en código.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Escribe una sentencia `if-else` que verifique si un número `num` es positivo, negativo o cero, y muestra un mensaje adecuado.",
+          "Escribe una declaración `if-else` que verifique si un número `num` es positivo, negativo o cero, y registre un mensaje apropiado.",
       },
     },
     {
       group: "1",
-      title: "Entendiendo la Lógica en Programación",
+      title: "Entendiendo la Lógica Condicional en Programación",
       description:
-        "En este paso, aprenderás sobre la lógica en el contexto de la programación.",
+        "Aprende cómo los operadores lógicos como AND (&&) y OR (||) controlan condiciones en programación.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "¿Qué operador lógico se usa para verificar si ambas condiciones en una declaración condicional son verdaderas?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "&&",
+      },
+    },
+    {
+      group: "1",
+      title: "Uso de Condicionales en el Mundo Real",
+      description: "Reflexiona sobre cómo se utilizan los condicionales.",
       isText: true,
       question: {
         questionText:
-          "Explica en tus propias palabras cómo se aplica la lógica en la programación para controlar el flujo de un programa.",
+          "Proporciona un ejemplo de cómo se utilizan las declaraciones condicionales en aplicaciones del mundo real.",
       },
     },
     {
       group: "1",
-      title: "Uso Real de Condicionales",
-      description:
-        "Reflexiona sobre cómo se utilizan las sentencias condicionales.",
-      isText: true,
-      question: {
-        questionText:
-          "Proporciona un ejemplo de cómo se utilizan las sentencias condicionales en aplicaciones del mundo real.",
-      },
-    },
-    {
-      group: "1",
-      title: "Práctica del Terminal: Comando de Ayuda",
+      title: "Práctica de Terminal: Comando de Ayuda",
       description:
         "Escribe el comando de ayuda para observar los comandos básicos.",
       isCode: true,
       isTerminal: true,
       question: {
         questionText:
-          "En un entorno de terminal Bash, introduce el comando de ayuda para descubrir los comandos básicos.",
+          "En un entorno de terminal Bash, ingresa el comando de ayuda para descubrir los comandos básicos.",
       },
     },
     {
       group: "1",
       title: "Bucles en Programación",
-      description: "Entiende el propósito de los bucles.",
+      description: "Comprende el propósito de los bucles.",
       isMultipleChoice: true,
       question: {
         questionText:
-          "¿Qué bucle continuará ejecutándose mientras su condición siga siendo verdadera?",
+          "¿Qué bucle continuará ejecutándose mientras su condición sea verdadera?",
         options: [
           "bucle for",
           "bucle while",
@@ -2234,22 +3036,22 @@ export const steps = {
     },
     {
       group: "1",
-      title: "Secuencia de Ejecución de un Bucle",
-      description: "Comprende el orden en el que se ejecutan los bucles.",
+      title: "Secuencia de Ejecución de Bucles",
+      description: "Comprende el orden en que se ejecutan los bucles.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos de la ejecución de un bucle `for` con arrastrar y soltar.",
+          "Organiza los pasos de la ejecución de un bucle `for` arrastrando y soltando.",
         options: [
           "Inicialización",
-          "Verificación de la condición",
-          "Ejecución del bloque de código",
+          "Verificación de Condición",
+          "Ejecución del Bloque de Código",
           "Incremento/Decremento",
         ],
         answer: [
           "Inicialización",
-          "Verificación de la condición",
-          "Ejecución del bloque de código",
+          "Verificación de Condición",
+          "Ejecución del Bloque de Código",
           "Incremento/Decremento",
         ],
       },
@@ -2257,7 +3059,7 @@ export const steps = {
     {
       group: "1",
       title: "Creando un Bucle",
-      description: "Practica escribir bucles.",
+      description: "Practica escribiendo bucles.",
       isCode: true,
       isTerminal: false,
       question: {
@@ -2267,97 +3069,117 @@ export const steps = {
     },
     {
       group: "1",
-      title: "Aplicaciones de Bucles",
+      title: "Aplicaciones de los Bucles",
       description: "Discute dónde son útiles los bucles.",
       isText: true,
       question: {
         questionText:
-          "Describe un escenario en desarrollo de software donde los bucles sean esenciales.",
+          "Describe un escenario en el desarrollo de software donde los bucles son esenciales.",
       },
     },
     {
       group: "1",
       title: "Arreglos en JavaScript",
-      description: "Identifica las características de los tipos de arreglos.",
-      isMultipleChoice: true,
+      description:
+        "Identifica métodos utilizados para manipular arreglos en JavaScript.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "¿Cuál de los siguientes métodos añade un elemento al final de un arreglo en JavaScript?",
-        options: ["push()", "pop()", "shift()", "unshift()"],
-        answer: "push()",
+          "¿Cuáles de los siguientes métodos son válidos para manipular arreglos en JavaScript?",
+        options: [
+          ".includes()",
+          ".push()",
+          ".pop()",
+          ".forEach()",
+          ".length()",
+          ".map()",
+          ".filter()",
+          ".join()",
+        ],
+        answer: [".push()", ".pop()", ".map()", ".filter()", ".join()"],
       },
     },
     {
       group: "1",
-      title: "Orden de Operaciones en Arreglos",
-      description: "Entiende cómo se realizan las operaciones en los arreglos.",
-      isSelectOrder: true,
+      title: "Orden de las Operaciones en Arreglos",
+      description: "Comprende cómo se realizan las operaciones en arreglos.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para añadir y eliminar elementos de un arreglo.",
+          "Completa el código para declarar un arreglo, agregar un elemento, eliminar el último elemento y luego acceder a un elemento.",
         options: [
-          "Declarar un arreglo",
-          "Usar push() para añadir un elemento",
-          "Usar pop() para eliminar el último elemento",
-          "Acceder a los elementos del arreglo",
+          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop(); \nconsole.log(frutas[0]);",
+          "let frutas = ['manzana', 'plátano']; \nfrutas.pop(); \nfrutas.push('naranja'); \nconsole.log(frutas[0]);",
+          "var frutas = 'manzana', 'plátano'; \nfrutas.push('naranja'); \nfrutas.pop(); \nconsole.log(frutas[0]);",
+          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop();",
+          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop('plátano'); \nconsole.log(frutas[0]);",
         ],
-        answer: [
-          "Declarar un arreglo",
-          "Usar push() para añadir un elemento",
-          "Usar pop() para eliminar el último elemento",
-          "Acceder a los elementos del arreglo",
-        ],
+        answer:
+          "let frutas = ['manzana', 'plátano']; \nfrutas.push('naranja'); \nfrutas.pop(); \nconsole.log(frutas[0]);",
       },
     },
     {
       group: "1",
       title: "Manipulando Arreglos",
-      description: "Aplica métodos de arreglo en el código.",
+      description: "Aplica métodos de arreglos en código.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Crea un arreglo `frutas` con 'manzana' y 'banana'. Añade 'naranja' al final y elimina 'manzana' del principio.",
+          "Crea un arreglo `frutas` con 'manzana' y 'plátano'. Agrega 'naranja' al final y elimina 'manzana' del principio.",
       },
     },
     {
       group: "1",
-      title: "Casos de Uso de Arreglos",
-      description:
-        "Explora escenarios donde se utilizan los tipos de arreglos.",
+      title: "Casos de Uso para Arreglos",
+      description: "Explora escenarios donde se utilizan los tipos de arreglo.",
       isText: true,
       question: {
         questionText:
-          "Proporciona un ejemplo de cómo se puede utilizar un arreglo para gestionar datos en una aplicación web.",
+          "Proporciona un ejemplo de cómo se puede usar un arreglo para gestionar datos en una aplicación web.",
       },
     },
     {
       group: "1",
-      title: "Práctica del Terminal: Crear Directorios",
-      description: "Comando para crear directorios en un terminal Bash",
+      title: "Práctica de Terminal: Crear Directorios",
+      description: "Comando para crear directorios en un terminal bash.",
       isCode: true,
       isTerminal: true,
       question: {
         questionText:
-          "En un entorno de terminal Bash, crea un directorio llamado app usando el comando make directory.",
+          "En un entorno de terminal bash, crea un directorio llamado app usando el comando para crear directorios.",
       },
     },
     {
       group: "1",
-      title: "Entendiendo el Objetivo de la Programación",
+      title: "Resultado Avanzado de Codificación",
       description:
-        "En este paso, aprenderás sobre el objetivo principal de la programación o codificación.",
-      isMultipleChoice: true,
+        "Predice el resultado del siguiente código con arreglos, condicionales, operadores lógicos y funciones de arreglos.",
+      isSingleLineText: true,
       question: {
-        questionText:
-          "¿Cuál de las siguientes opciones describe mejor el objetivo principal de la codificación o programación?",
-        options: [
-          "Resolver problemas creando soluciones eficientes y efectivas",
-          "Aprender diferentes lenguajes de programación",
-          "Escribir tanto código como sea posible",
-          "Memorizar la sintaxis y funciones",
-        ],
-        answer: "Resolver problemas creando soluciones eficientes y efectivas",
+        questionText: (
+          <div>
+            ¿Cuál será el resultado del siguiente código?
+            <br />
+            <pre>
+              {`
+let arr = [1, 2, 3, 4];
+let x = 10;
+let y = 5;
+
+if (x > y && arr.length > 3) {
+  arr.push(x);  
+  arr = arr.filter(n => n % 2 === 0);
+}
+
+console.log(arr);
+    
+               `}{" "}
+            </pre>
+          </div>
+        ),
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "[2, 4, 10]",
       },
     },
     {
@@ -2368,28 +3190,90 @@ export const steps = {
       question: {
         questionText:
           "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [6, 20],
+        range: [10, 29],
       },
     },
     {
       group: "2",
       title: "Introducción a los Objetos",
-      description: "En este paso, aprenderás qué es un objeto en programación.",
-      isText: true,
+      description:
+        "En este paso, aprenderás qué es un objeto en la programación.",
+      isSingleLineText: true,
       question: {
-        questionText: "¿Qué es un objeto en programación?",
+        questionText:
+          "En programación, ¿qué palabra clave se usa para crear un objeto en JavaScript?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "new",
       },
     },
     {
       group: "2",
-      title: "Creando una Clase Simple",
+      title: "Entendiendo el Método Constructor",
       description:
-        "En este paso, escribirás una definición de clase simple en JavaScript.",
-      isCode: true,
-      isTerminal: false,
+        "En este paso, aprenderás sobre el propósito del método `constructor` en una clase.",
+      isCodeCompletion: true,
       question: {
-        questionText:
-          "Escribe una definición de clase simple en JavaScript para un objeto `Coche` con propiedades para `marca` y `modelo`, y un método para mostrar los detalles del coche.",
+        questionText: `¿Cuál de los siguientes bloques de código define correctamente el método constructor y usa la palabra clave "new" para instanciar una clase?`,
+        options: [
+          `class Coche {
+      constructor(marca) {
+        this.marca = marca;
+      }
+    
+      conducir() {
+        console.log('El coche está conduciendo');
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');`,
+
+          `class Coche {
+      constructor() {
+        this.marca = 'Toyota';
+      }
+    
+      conducir() {
+        console.log('El coche está conduciendo');
+      }
+    }
+    
+    const miCoche = new Coche();`,
+
+          `class Coche {
+      constructor = (marca) => {
+        this.marca = marca;
+      }
+    
+      conducir() {
+        console.log('El coche está conduciendo');
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');`,
+
+          `class Coche {
+      Coche(marca) {
+        this.marca = marca;
+      }
+    
+      conducir() {
+        console.log('El coche está conduciendo');
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');`,
+        ],
+        answer: `class Coche {
+      constructor(marca) {
+        this.marca = marca;
+      }
+    
+      conducir() {
+        console.log('El coche está conduciendo');
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');`,
       },
     },
     {
@@ -2408,29 +3292,25 @@ export const steps = {
       title: "Creando una Instancia de una Clase",
       description:
         "En este paso, aprenderás cómo crear una instancia de una clase en JavaScript.",
-      isSelectOrder: true,
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar en el orden correcto para crear una instancia de una clase en JavaScript.",
+          "Selecciona todos los pasos correctos necesarios para crear una instancia de una clase en JavaScript:",
         options: [
-          "Definir la clase",
-          "Definir el método constructor dentro de la clase",
-          "Declarar la variable para almacenar la instancia",
-          "Usar la palabra clave 'new'",
-          "Llamar al nombre de la clase",
-          "Pasar los argumentos requeridos",
-          "Asignar la instancia a la variable",
-          "Usar la instancia para acceder a propiedades o métodos",
+          "Definir una clase usando la palabra clave `class`",
+          "Definir la clase con la palabra clave `function`",
+          "Usar la palabra clave `new` para crear una instancia",
+          "Declarar la instancia de la clase con `const instanciaClase = Coche()`",
+          "Pasar los argumentos requeridos por el constructor al llamar a la clase",
+          "Almacenar la nueva instancia en una variable",
+          "Llamar a la clase directamente sin la palabra clave `new`",
+          "Instanciar la clase antes de definirla",
         ],
         answer: [
-          "Definir la clase",
-          "Definir el método constructor dentro de la clase",
-          "Declarar la variable para almacenar la instancia",
-          "Usar la palabra clave 'new'",
-          "Llamar al nombre de la clase",
-          "Pasar los argumentos requeridos",
-          "Asignar la instancia a la variable",
-          "Usar la instancia para acceder a propiedades o métodos",
+          "Definir una clase usando la palabra clave `class`",
+          "Usar la palabra clave `new` para crear una instancia",
+          "Pasar los argumentos requeridos por el constructor al llamar a la clase",
+          "Almacenar la nueva instancia en una variable",
         ],
       },
     },
@@ -2450,18 +3330,76 @@ export const steps = {
       group: "2",
       title: "Usando la Palabra Clave `this`",
       description:
-        "En este paso, entenderás la palabra clave `this` en el contexto de una clase.",
-      isMultipleChoice: true,
+        "Completa el código seleccionando la forma correcta de usar la palabra clave `this` en un método de clase.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "¿Qué representa la palabra clave `this` en un método de clase?",
+          "¿Cuál bloque de código usa correctamente la palabra clave `this` para referirse a la propiedad del objeto?",
         options: [
-          "El objeto global",
-          "El objeto que llama al método",
-          "El propio método",
-          "La definición de la clase",
+          `class Coche {
+      constructor(marca) {
+        this.marca = marca;
+      }
+    
+      mostrarMarca() {
+        console.log(this.marca);
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');
+    miCoche.mostrarMarca();`,
+
+          `class Coche {
+      constructor(marca) {
+        this.marca = marca;
+      }
+    
+      mostrarMarca() {
+        console.log(marca);
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');
+    miCoche.mostrarMarca();`,
+
+          `class Coche {
+      constructor(marca) {
+        marca = this.marca;
+      }
+    
+      mostrarMarca() {
+        console.log(marca);
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');
+    miCoche.mostrarMarca();`,
+
+          `class Coche {
+      constructor(marca) {
+        marca = this.marca;
+      }
+    
+      mostrarMarca() {
+        console.log(this.marca);
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');
+    miCoche.mostrarMarca();`,
         ],
-        answer: "El objeto que llama al método",
+        answer: `class Coche {
+      constructor(marca) {
+        this.marca = marca;
+      }
+    
+      mostrarMarca() {
+        console.log(this.marca);
+      }
+    }
+    
+    const miCoche = new Coche('Toyota');
+    miCoche.mostrarMarca();`,
       },
     },
     {
@@ -2477,34 +3415,34 @@ export const steps = {
     },
     {
       group: "2",
-      title: "Accediendo a las Propiedades de un Objeto",
+      title: "Accediendo y Modificando Propiedades de un Objeto",
       description:
-        "En este paso, aprenderás cómo acceder a las propiedades de un objeto en JavaScript.",
-      isSelectOrder: true,
+        "En este paso, aprenderás cómo obtener o modificar propiedades de un objeto en JavaScript, ya sea accediendo directamente a las propiedades o usando funciones getter y setter.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para acceder correctamente a una propiedad en un objeto.",
+          "¿Cuáles de las siguientes son formas válidas de obtener o modificar propiedades en un objeto de JavaScript?",
         options: [
-          "Identificar el objeto",
-          "Determinar la propiedad a la que se accederá",
-          "Usar notación de punto o corchetes",
-          "Especificar el nombre de la propiedad",
-          "Almacenar el valor en una variable o usarlo directamente",
+          "Usar una llamada a función para eliminar una propiedad (por ejemplo, obj.deleteProperty())",
+          "Usar notación de corchetes para acceder a una propiedad (por ejemplo, obj['propiedad'])",
+          "Usar una función setter para actualizar el valor de una propiedad",
+          "Usar notación de puntos para acceder a una propiedad (por ejemplo, obj.propiedad)",
+          "Usar una función getter para devolver el valor de una propiedad",
+          "Llamar directamente a obj.propiedad() para acceder a una propiedad",
         ],
         answer: [
-          "Identificar el objeto",
-          "Determinar la propiedad a la que se accederá",
-          "Usar notación de punto o corchetes",
-          "Especificar el nombre de la propiedad",
-          "Almacenar el valor en una variable o usarlo directamente",
+          "Usar notación de puntos para acceder a una propiedad (por ejemplo, obj.propiedad)",
+          "Usar notación de corchetes para acceder a una propiedad (por ejemplo, obj['propiedad'])",
+          "Usar una función getter para devolver el valor de una propiedad",
+          "Usar una función setter para actualizar el valor de una propiedad",
         ],
       },
     },
     {
       group: "2",
-      title: "Modificando las Propiedades de un Objeto",
+      title: "Modificando Propiedades de un Objeto",
       description:
-        "En este paso, aprenderás cómo modificar las propiedades de un objeto en JavaScript.",
+        "En este paso, aprenderás cómo modificar propiedades de un objeto en JavaScript.",
       isCode: true,
       isTerminal: false,
       question: {
@@ -2537,18 +3475,18 @@ export const steps = {
     },
     {
       group: "2",
-      title: "Sobreescribiendo Métodos",
+      title: "Sobrescribiendo Métodos",
       description:
-        "En este paso, aprenderás cómo sobreescribir métodos en una subclase.",
+        "En este paso, aprenderás cómo sobrescribir métodos en una subclase.",
       isMultipleChoice: true,
       question: {
-        questionText: "¿Qué significa sobreescribir un método en una subclase?",
+        questionText: "¿Qué significa sobrescribir un método en una subclase?",
         options: [
           "Eliminar el método de la clase",
           "Reemplazar un método heredado de la superclase",
           "Heredar un método sin cambios",
-          "Llamar a un método desde otra clase",
-          "Ampliar la funcionalidad de un método en la subclase",
+          "Llamar a un método de otra clase",
+          "Extender la funcionalidad de un método en la subclase",
         ],
         answer: "Reemplazar un método heredado de la superclase",
       },
@@ -2578,37 +3516,15 @@ export const steps = {
     },
     {
       group: "2",
-      title: "Creando y Usando un Arreglo de Objetos",
+      title: "Entendiendo la Encapsulación",
       description:
-        "En este paso, crearás y usarás un arreglo de objetos en JavaScript.",
-      isSelectOrder: true,
+        "En este paso, definirás el concepto de encapsulación en la programación orientada a objetos con una sola palabra.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para iterar correctamente sobre un arreglo de objetos.",
-        options: [
-          "Definir la estructura del objeto",
-          "Crear objetos individuales",
-          "Inicializar un arreglo vacío",
-          "Añadir objetos al arreglo",
-          "Verificar la estructura del arreglo",
-          "Elegir un tipo de bucle (por ejemplo, for, while, forEach)",
-          "Usar un bucle para iterar a través del arreglo",
-          "Acceder a las propiedades de cada objeto dentro del bucle",
-          "Realizar acciones con las propiedades accedidas",
-          "Almacenar o mostrar los resultados",
-        ],
-        answer: [
-          "Definir la estructura del objeto",
-          "Crear objetos individuales",
-          "Inicializar un arreglo vacío",
-          "Añadir objetos al arreglo",
-          "Verificar la estructura del arreglo",
-          "Elegir un tipo de bucle (por ejemplo, for, while, forEach)",
-          "Usar un bucle para iterar a través del arreglo",
-          "Acceder a las propiedades de cada objeto dentro del bucle",
-          "Realizar acciones con las propiedades accedidas",
-          "Almacenar o mostrar los resultados",
-        ],
+          "¿Qué concepto principal asegura la encapsulación en la programación orientada a objetos?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "Privacidad",
       },
     },
     {
@@ -2625,78 +3541,202 @@ export const steps = {
     },
     {
       group: "2",
-      title: "Imprimiendo en el Terminal",
-      description: "En este paso, imprimirás un mensaje usando el terminal.",
+      title: "Imprimiendo en la Terminal",
+      description: "En este paso, imprimirás un mensaje usando la terminal.",
       isCode: true,
       isTerminal: true,
       question: {
         questionText:
-          "Escribe un comando para imprimir el mensaje: '¡Estoy hablando con el interior de una computadora!'",
+          "Escribe un comando para imprimir el mensaje: '¡Estoy hablando dentro de una computadora!'",
       },
     },
     {
       groupReference: "2",
       title: "Revisión con Conversación AI",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Revisa los temas que has respondido",
       question: {
         questionText:
           "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [6, 22],
+        range: [31, 47],
       },
     },
     {
       group: "3",
       title: "Introducción a los Componentes de React",
       description:
-        "En este paso, aprenderás sobre los componentes de React y su importancia en la creación de interfaces de usuario.",
+        "En este paso, aprenderás sobre los componentes de React, su papel en la creación de elementos de interfaz de usuario reutilizables y cómo ayudan a gestionar la interfaz de usuario de manera eficiente.",
       isMultipleChoice: true,
       question: {
         questionText:
           "¿Cuál de las siguientes opciones describe mejor un componente de React?",
         options: [
-          "Una función que devuelve HTML",
-          "Una herramienta para renderizado del lado del servidor",
-          "Un método para manejar eventos",
+          "Un método para manejar eventos en JavaScript",
+          "Una característica exclusiva del renderizado del lado del servidor en React",
+          "Un elemento reutilizable de la interfaz de usuario definido como una función o clase que devuelve JSX",
+          "Un elemento HTML incorporado en React",
         ],
-        answer: "Una función que devuelve HTML",
+        answer:
+          "Un elemento reutilizable de la interfaz de usuario definido como una función o clase que devuelve JSX",
       },
     },
     {
       group: "3",
-      title: "Entendiendo los React Hooks",
+      title: "Conceptos Clave en React",
       description:
-        "En este paso, aprenderás sobre los React hooks y cómo se utilizan para gestionar el estado y los efectos secundarios en componentes funcionales.",
-      isSelectOrder: true,
+        "En este paso, aprenderás sobre los conceptos fundamentales de React, incluidas las propiedades (props), el estado, los eventos y los estilos.",
+      isMultipleAnswerChoice: true,
       question: {
-        questionText:
-          "Organiza los pasos con arrastrar y soltar para usar correctamente el hook useState.",
+        questionText: "¿Cuáles de los siguientes son conceptos clave en React?",
         options: [
-          "Importar useState desde React",
-          "Declarar la variable de estado",
-          "Proporcionar un valor inicial para el estado",
-          "Actualizar el estado usando la función setter",
-          "Usar la variable de estado en el componente",
+          "Gestionar propiedades para pasar datos entre componentes",
+          "Manipular directamente el DOM para mejorar el rendimiento",
+          "Usar el estado para gestionar datos dentro de un componente",
+          "Manejar eventos como clics con controladores de eventos",
+          "Aplicar estilos en línea o clases CSS a los componentes",
         ],
         answer: [
-          "Importar useState desde React",
-          "Declarar la variable de estado",
-          "Proporcionar un valor inicial para el estado",
-          "Usar la variable de estado en el componente",
-          "Actualizar el estado usando la función setter",
+          "Gestionar propiedades para pasar datos entre componentes",
+          "Usar el estado para gestionar datos dentro de un componente",
+          "Manejar eventos como clics con controladores de eventos",
+          "Aplicar estilos en línea o clases CSS a los componentes",
         ],
+      },
+    },
+    {
+      group: "3",
+      title: "Efecto de los Cambios en el Estado de un Componente",
+      description:
+        "En este paso, explicarás qué sucede con un componente de React cuando su estado cambia.",
+      isText: true,
+      question: {
+        questionText:
+          "¿Qué sucede con un componente de React cuando su estado cambia?",
       },
     },
     {
       group: "3",
       title: "Creando un Componente Simple de React",
       description:
-        "En este paso, crearás un componente simple de React que muestre un Tweet.",
-      isCode: true,
-      isTerminal: false,
+        "En este paso, definirás un componente básico de React que devuelve un simple JSX.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Escribe un componente simple de React que muestre un Tweet con el nombre del usuario, su handle y el texto.",
+          "¿Cuál de los siguientes bloques de código define correctamente un componente simple de React que devuelve un encabezado y un párrafo?",
+        options: [
+          `function MiComponente() {
+      return (
+        <div>
+          <h1>¡Hola, Mundo!</h1>
+        </div>
+      );
+    }`,
+          `function MiComponente() {
+      <div>
+        <h1>¡Hola, Mundo!</h1>
+      </div>;
+    }`,
+          `class MiComponente {
+      render() {
+        return (
+          <div>
+            <h1>¡Hola, Mundo!</h1>
+          </div>
+        );
+      }
+    }`,
+          `function MiComponente() {
+      return (
+        <div>Hola</div>
+        <div>Mundo</div>
+      );
+    }`,
+        ],
+        answer: `function MiComponente() {
+      return (
+        <div>
+          <h1>¡Hola, Mundo!</h1>
+        </div>
+      );
+    }`,
+      },
+    },
+    {
+      group: "3",
+      title: "Manejo de Eventos en React",
+      description:
+        "En este paso, definirás un componente básico de React que maneja un evento de clic en un botón usando el atributo `onClick`.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "¿Cuál de los siguientes bloques de código define correctamente un componente de React que maneja un evento de clic en un botón?",
+        options: [
+          `function MiComponente() {
+      return (
+        <div>
+          <button 
+            onClick={
+              alert('¡Botón clicado!')
+            }
+          >
+            Haz clic
+          </button>
+        </div>
+      );
+    }`,
+          `function MiComponente() {
+    return (
+      <div>
+        <button 
+          onClick={() => {
+            alert('¡Botón clicado!')
+          }}
+        >
+          Haz clic
+        </button>
+      </div>
+    );
+    }`,
+          `function MiComponente() {
+      const manejarClick = () => {
+        alert('¡Botón clicado!');
+      };
+        
+      return (
+        <div>
+          <button 
+            onClick={manejarClick}
+          >
+            Haz clic
+          </button>
+        </div>
+      );
+    }`,
+          `function MiComponente() {
+    return (
+      <div>
+        <button>
+          Haz clic
+        </button>
+      </div>
+    );
+        }`,
+        ],
+        answer: `function MiComponente() {
+      const manejarClick = () => {
+        alert('¡Botón clicado!');
+      };
+    
+      return (
+        <div>
+          <button 
+            onClick={manejarClick}
+          >
+            Haz clic
+          </button>
+        </div>
+      );
+    }`,
       },
     },
     {
@@ -2708,109 +3748,74 @@ export const steps = {
       isTerminal: false,
       question: {
         questionText:
-          "Modifica el componente Tweet para incluir un botón de me gusta que cambie el estado de like usando el hook useState.",
+          "Modifica el componente Tweet para incluir un botón de 'me gusta' que cambie el estado usando el hook useState.",
       },
     },
     {
       group: "3",
-      title: "Manejo de Eventos en React",
+      title: "Propiedades del Componente",
       description:
-        "En este paso, aprenderás cómo manejar eventos en React, como clics.",
-      isMultipleChoice: true,
+        "En este paso, aprenderás cómo pasar propiedades a los componentes en React.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "¿Cuál es la mejor manera de manejar un evento de clic de botón en React?",
-        options: [
-          "Adjuntar un listener de evento directamente al botón en HTML",
-          "Usar el atributo onClick en el JSX del componente",
-          "Escribir un controlador de eventos personalizado en JavaScript plano",
-          "Vincular el controlador de eventos al elemento DOM usando querySelector",
-        ],
-        answer: "Usar el atributo onClick en el JSX del componente",
+          "¿Cuál es el término utilizado para pasar datos a un componente de React?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "props",
       },
     },
     {
       group: "3",
-      title: "Propiedades de los Componentes",
+      title: "Pasando y Usando Props",
       description:
-        "En este paso, aprenderás sobre cómo pasar propiedades a los componentes en React.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué son las propiedades en un componente de React y cómo se utilizan?",
-      },
-    },
-    {
-      group: "3",
-      title: "Actualización del Estado del Componente",
-      description:
-        "En este paso, aprenderás cómo actualizar el estado de un componente basado en las interacciones del usuario.",
+        "En este paso, aprenderás cómo pasar y usar props en un componente de React.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Actualiza el componente Tweet para incrementar el recuento de me gusta cada vez que se haga clic en el botón de me gusta.",
+          "Actualiza el componente Tweet para aceptar y mostrar el nombre de usuario, el handle y el contenido del tweet como props.",
       },
     },
     {
       group: "3",
-      title: "Creando un Nuevo Proyecto de React",
+      title: "Trabajando con Props y Estado Juntos",
       description:
-        "En este paso, crearás un nuevo proyecto de React usando Vite.",
-      isSelectOrder: true,
+        "En este paso, aprenderás cómo trabajar con tanto props como estado en un componente de React.",
+      isMultipleChoice: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para crear correctamente un nuevo proyecto de React usando Vite.",
+          "¿Cuál es la principal diferencia entre props y estado en React?",
         options: [
-          "Asegúrate de tener Node.js instalado",
-          "Ejecuta el comando para crear un nuevo proyecto con Vite",
-          "Elige la plantilla de React",
-          "Navega al directorio del proyecto",
-          "Instala las dependencias",
-          "Inicia el servidor de desarrollo",
+          "Las props son inmutables mientras que el estado es mutable",
+          "Las props son gestionadas por el propio componente mientras que el estado se pasa desde componentes padres",
+          "El estado se usa para estilos mientras que las props se usan para la lógica",
+          "No hay diferencia; son lo mismo",
         ],
-        answer: [
-          "Asegúrate de tener Node.js instalado",
-          "Ejecuta el comando para crear un nuevo proyecto con Vite",
-          "Elige la plantilla de React",
-          "Navega al directorio del proyecto",
-          "Instala las dependencias",
-          "Inicia el servidor de desarrollo",
-        ],
+        answer: "Las props son inmutables mientras que el estado es mutable",
       },
     },
     {
       group: "3",
-      title: "Práctica del Terminal: Listar Archivos",
+      title: "Práctica en la Terminal: Listando Archivos",
       description:
-        "En este paso, aprenderás cómo listar archivos en un terminal Bash.",
+        "En este paso, aprenderás cómo listar archivos en una terminal bash.",
       isCode: true,
       isTerminal: true,
       question: {
         questionText:
-          "Usa el terminal para listar todos los archivos usando el comando list.",
-      },
-    },
-    {
-      group: "3",
-      title: "Entendiendo JSX",
-      description:
-        "En este paso, aprenderás sobre JSX y cómo se utiliza para describir la interfaz de usuario en los componentes de React.",
-      isText: true,
-      question: {
-        questionText: "¿Qué es JSX y por qué se usa en React?",
+          "Usa la terminal para listar todos los archivos usando el comando list.",
       },
     },
     {
       group: "3",
       title: "Estilizando Componentes de React",
       description:
-        "En este paso, aprenderás cómo estilizar componentes de React usando CSS.",
+        "En este paso, aprenderás cómo aplicar estilos a los componentes de React usando CSS.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Añade estilos al componente Tweet para mejorar su apariencia.",
+          "Agrega estilos al componente Tweet para mejorar su apariencia.",
       },
     },
     {
@@ -2821,7 +3826,7 @@ export const steps = {
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza las siguientes propiedades CSS en el orden necesario para crear un diseño básico con Flexbox:",
+          "Ordena las siguientes propiedades de CSS en el orden necesario para centrar un diseño básico con estilos de flexbox:",
         options: [
           "display: flex;",
           "justify-content: center;",
@@ -2838,39 +3843,9 @@ export const steps = {
     },
     {
       group: "3",
-      title: "Añadiendo Más Estado con useState",
-      description:
-        "En este paso, aprenderás cómo gestionar múltiples piezas de estado en un componente usando el hook useState.",
-      isCode: true,
-      isTerminal: false,
-      question: {
-        questionText:
-          "Añade un botón de retweet al componente Tweet que rastree el número de retweets.",
-      },
-    },
-    {
-      group: "3",
-      title: "Trabajando con Props y Estado Juntos",
-      description:
-        "En este paso, aprenderás cómo trabajar tanto con props como con el estado en un componente de React.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál es la principal diferencia entre props y estado en React?",
-        options: [
-          "Las props son inmutables mientras que el estado es mutable",
-          "Las props son gestionadas por el propio componente mientras que el estado se pasa desde componentes padre",
-          "El estado se usa para el estilo mientras que las props se usan para la lógica",
-          "No hay diferencia; son lo mismo",
-        ],
-        answer: "Las props son inmutables mientras que el estado es mutable",
-      },
-    },
-    {
-      group: "3",
       title: "Elevando el Estado",
       description:
-        "En este paso, aprenderás cómo elevar el estado a un componente ancestro común para compartir el estado entre componentes.",
+        "En este paso, aprenderás cómo elevar el estado a un componente ancestro común para compartir estado entre componentes.",
       isCode: true,
       isTerminal: false,
       question: {
@@ -2880,13 +3855,25 @@ export const steps = {
     },
     {
       group: "3",
-      title: "Entendiendo el Ciclo de Vida de los Componentes",
+      title: "Usando useEffect para Efectos Secundarios",
+      description:
+        "En este paso, aprenderás cómo usar el hook useEffect para manejar efectos secundarios en un componente de React.",
+      isCode: true,
+      isTerminal: false,
+      question: {
+        questionText:
+          "Modifica el componente Tweet para usar el hook useEffect y registrar un mensaje en la consola cada vez que cambie el número de retweets.",
+      },
+    },
+    {
+      group: "3",
+      title: "Comprendiendo el Ciclo de Vida del Componente",
       description:
         "En este paso, aprenderás sobre el ciclo de vida de los componentes de React y cómo usar el hook useEffect para gestionar efectos secundarios.",
       isText: true,
       question: {
         questionText:
-          "¿Qué es el ciclo de vida de los componentes en React y cuál es el propósito del hook useEffect?",
+          "¿Qué es el ciclo de vida del componente en React y cuál es el propósito del hook useEffect?",
       },
     },
     {
@@ -2897,126 +3884,161 @@ export const steps = {
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para obtener correctamente datos usando useEffect.",
+          "Ordena los pasos con arrastrar y soltar para obtener datos correctamente usando useEffect.",
         options: [
-          "Importar React y useState",
-          "Importar useEffect desde React",
-          "Crear un componente",
-          "Definir el hook useEffect",
-          "Hacer la llamada a la API dentro de useEffect",
-          "Usar async/await o .then() para manejar la respuesta de la API",
-          "Actualizar el estado del componente con los datos obtenidos",
-          "Manejar errores en la llamada a la API",
-          "Mostrar los datos en el componente",
+          "Importa React y useState",
+          "Importa useEffect de React",
+          "Crea un componente",
+          "Define el hook useEffect",
+          "Haz la llamada a la API dentro de useEffect",
+          "Usa async/await o .then() para manejar la respuesta de la API",
+          "Actualiza el estado del componente con los datos obtenidos",
+          "Maneja los errores en la llamada a la API",
+          "Renderiza los datos en el componente",
         ],
         answer: [
-          "Importar React y useState",
-          "Importar useEffect desde React",
-          "Crear un componente",
-          "Definir el hook useEffect",
-          "Hacer la llamada a la API dentro de useEffect",
-          "Usar async/await o .then() para manejar la respuesta de la API",
-          "Actualizar el estado del componente con los datos obtenidos",
-          "Manejar errores en la llamada a la API",
-          "Mostrar los datos en el componente",
+          "Importa React y useState",
+          "Importa useEffect de React",
+          "Crea un componente",
+          "Define el hook useEffect",
+          "Haz la llamada a la API dentro de useEffect",
+          "Usa async/await o .then() para manejar la respuesta de la API",
+          "Actualiza el estado del componente con los datos obtenidos",
+          "Maneja los errores en la llamada a la API",
+          "Renderiza los datos en el componente",
         ],
       },
     },
     {
       group: "3",
-      title: "Construyendo una Aplicación Completa de Tweet",
+      title: "Construyendo una App Completa de Tweets",
       description:
-        "En este paso, combinarás todo lo que has aprendido para construir una aplicación completa de Tweet.",
+        "En este paso, combinarás todo lo que has aprendido para construir una app completa de tweets.",
       isCode: true,
       isTerminal: false,
       question: {
         questionText:
-          "Construye una aplicación completa de Tweet que obtenga tweets de una API, los muestre usando el componente Tweet y permita a los usuarios dar me gusta y retweet.",
+          "Construye una app completa de tweets que obtenga tweets de una API, los muestre usando el componente Tweet y permita a los usuarios dar 'me gusta' y retweetear.",
       },
     },
     {
       group: "3",
-      title: "Práctica del Terminal: Configurando una Aplicación React",
+      title: "Práctica en la Terminal: Configurando una App de React",
       description:
         "En este paso, aprenderás cómo configurar un proyecto de React.",
       isText: true,
       question: {
         questionText:
-          "Introduce el comando para instalar la versión más reciente de un proyecto React con Vite.",
+          "Escribe el comando para instalar la versión más reciente de un proyecto de React con Vite.",
+      },
+    },
+    {
+      group: "3",
+      title: "Creando un Nuevo Proyecto de React con Vite",
+      description:
+        "En este paso, aprenderás cómo crear un nuevo proyecto de React usando Vite siguiendo los pasos correctos y ejecutando comandos de línea de comandos.",
+      isSelectOrder: true,
+      question: {
+        questionText:
+          "Ordena los pasos con arrastrar y soltar para crear correctamente un nuevo proyecto de React usando Vite, incluidos los comandos de línea.",
+        options: [
+          "Asegúrate de que Node.js esté instalado ejecutando `node -v`",
+          "Ejecuta `npm create vite@latest` para crear un nuevo proyecto de Vite",
+          "Selecciona la plantilla de React cuando se te solicite",
+          "Navega al directorio del proyecto usando `cd nombre-del-proyecto`",
+          "Ejecuta `npm install` para instalar las dependencias",
+          "Inicia el servidor de desarrollo con `npm run dev`",
+        ],
+        answer: [
+          "Asegúrate de que Node.js esté instalado ejecutando `node -v`",
+          "Ejecuta `npm create vite@latest` para crear un nuevo proyecto de Vite",
+          "Selecciona la plantilla de React cuando se te solicite",
+          "Navega al directorio del proyecto usando `cd nombre-del-proyecto`",
+          "Ejecuta `npm install` para instalar las dependencias",
+          "Inicia el servidor de desarrollo con `npm run dev`",
+        ],
       },
     },
     {
       groupReference: "3",
       title: "Revisión con Conversación AI",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Revisa los temas que has respondido",
       question: {
         questionText:
           "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [24, 42],
+        range: [49, 67],
       },
     },
     {
       group: "4",
       title: "Introducción a la Ingeniería de Backend",
       description:
-        "En este paso, aprenderás qué es la ingeniería de software de backend y por qué es importante.",
+        "En este paso, aprenderás qué es la ingeniería de software backend y por qué es importante.",
       isText: true,
       question: {
         questionText:
-          "¿Qué es la ingeniería de software de backend y por qué es importante en la creación de aplicaciones?",
+          "¿Qué es la ingeniería de software backend y por qué es importante en la construcción de aplicaciones?",
       },
     },
     {
       group: "4",
       title: "Descripción General de las Lecciones Principales",
       description:
-        "En este paso, identificarás las lecciones principales cubiertas en el curso de ingeniería de backend.",
+        "En este paso, identificarás una responsabilidad clave de la ingeniería de backend cubierta en el curso.",
       isMultipleChoice: true,
       question: {
         questionText:
-          "¿Cuál de los siguientes es un aspecto clave de la ingeniería de backend?",
+          "¿Cuál de las siguientes es una responsabilidad clave en la ingeniería de backend?",
         options: [
-          "Diseño de interfaces de usuario",
-          "Gestión de bases de datos",
-          "Creación de elementos gráficos",
-          "Escritura de HTML y CSS frontend",
+          "Gestionar la concurrencia y garantizar la seguridad de los hilos en aplicaciones multiusuario",
+          "Implementar la autenticación de usuarios directamente en la experiencia del usuario",
+          "Manejar la asignación de memoria y la recolección de basura en entornos de servidor",
+          "Diseñar componentes de interfaz de usuario escalables para compatibilidad entre navegadores",
+          "Optimizar consultas a la base de datos y garantizar la consistencia de los datos",
         ],
-        answer: "Gestión de bases de datos",
+        answer:
+          "Optimizar consultas a la base de datos y garantizar la consistencia de los datos",
       },
     },
     {
       group: "4",
-      title: "Relacionando el Backend con el Mundo Real",
+      title: "Responsabilidades Clave de la Ingeniería de Backend",
       description:
-        "En este paso, relacionarás las operaciones de una cocina en un restaurante con la ingeniería de backend.",
-      isSelectOrder: true,
+        "En este paso, aprenderás sobre las diversas responsabilidades involucradas en la ingeniería de backend.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Organiza las siguientes tareas en una cocina de restaurante para corresponder con las operaciones de backend:",
+          "¿Cuáles de las siguientes son responsabilidades clave de la ingeniería de backend?",
         options: [
-          "Preparación de ingredientes",
-          "Cocinar la comida",
-          "Servir el plato",
-          "Limpiar",
+          "Gestionar y optimizar bases de datos para almacenar y recuperar datos de manera eficiente",
+          "Diseñar e implementar APIs para facilitar la comunicación entre sistemas",
+          "Garantizar la seguridad mediante mecanismos de autenticación y autorización de usuarios",
+          "Manejar la lógica del lado del servidor, incluidas las operaciones comerciales y cálculos",
+          "Mantener la confiabilidad y el rendimiento del servidor bajo alto tráfico",
+          "Gestionar la integridad y consistencia de los datos en sistemas distribuidos",
+          "Implementar registro y monitoreo para asegurar la salud del sistema y depurar problemas",
         ],
         answer: [
-          "Preparación de ingredientes",
-          "Cocinar la comida",
-          "Servir el plato",
-          "Limpiar",
+          "Gestionar y optimizar bases de datos para almacenar y recuperar datos de manera eficiente",
+          "Diseñar e implementar APIs para facilitar la comunicación entre sistemas",
+          "Garantizar la seguridad mediante mecanismos de autenticación y autorización de usuarios",
+          "Manejar la lógica del lado del servidor, incluidas las operaciones comerciales y cálculos",
+          "Mantener la confiabilidad y el rendimiento del servidor bajo alto tráfico",
+          "Gestionar la integridad y consistencia de los datos en sistemas distribuidos",
+          "Implementar registro y monitoreo para asegurar la salud del sistema y depurar problemas",
         ],
       },
     },
     {
       group: "4",
-      title: "Entendiendo los Sistemas Operativos",
+      title: "Interactuando con la Terminal",
       description:
-        "En este paso, aprenderás por qué es importante entender los sistemas operativos en la ingeniería de backend.",
+        "En este paso, aprenderás sobre la importancia de la terminal en la ingeniería de backend y cómo interactuar con ella para diversas tareas.",
       isText: true,
       question: {
         questionText:
-          "¿Por qué es importante entender el sistema operativo cuando se estudia ingeniería de backend?",
+          "¿Por qué es importante aprender a usar la terminal para los sistemas operativos y qué tipo de tareas se pueden realizar con ella?",
       },
     },
     {
@@ -3026,41 +4048,36 @@ export const steps = {
       isText: true,
       question: {
         questionText:
-          "Usa el terminal para instalar el gestor de paquetes de node (npm) globalmente en tu computadora.",
+          "Escribe el comando para instalar globalmente el gestor de paquetes de Node (npm) en tu computadora.",
       },
     },
     {
       group: "4",
-      title: "Instalando un Paquete NPM",
+      title: "Instalación de un Paquete NPM",
       description:
-        "En este paso, usarás el terminal para instalar un paquete con npm.",
+        "En este paso, utilizarás la terminal para instalar un paquete con npm.",
       isText: true,
       question: {
         questionText:
-          "Escribe un comando para instalar la librería de componentes react de Chakra para elementos de la interfaz de usuario.",
+          "Escribe un comando para instalar la biblioteca de componentes de Chakra para interfaces de usuario en React.",
       },
     },
     {
       group: "4",
-      title: "Creando Usuarios: Concepto",
+      title: "Creación de Usuarios y Autenticación",
       description:
-        "En este paso, comprenderás el concepto de crear usuarios en sistemas de backend.",
-      isMultipleChoice: true,
+        "En este paso, entenderás el concepto clave relacionado con la creación de usuarios en sistemas backend.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "¿Cuál de los siguientes es un aspecto clave de la creación de usuarios en sistemas de backend?",
-        options: [
-          "Generar IDs de usuario únicos",
-          "Diseñar avatares de usuario",
-          "Seleccionar temas de color",
-          "Crear perfiles de redes sociales",
-        ],
-        answer: "Generar IDs de usuario únicos",
+          "¿Cómo se llama el proceso que verifica la identidad de un usuario durante la creación de una cuenta?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "autenticación",
       },
     },
     {
       group: "4",
-      title: "Fundamentos de las Bases de Datos",
+      title: "Fundamentos de Bases de Datos",
       description:
         "En este paso, aprenderás sobre los fundamentos de las bases de datos en la ingeniería de backend.",
       isText: true,
@@ -3082,198 +4099,355 @@ export const steps = {
     },
     {
       group: "4",
-      title: "Iniciando un Proyecto Firebase",
+      title: "Iniciar un Proyecto de Firebase",
       description:
-        "En este paso, comprenderás cómo iniciar un proyecto Firebase con la línea de comandos.",
+        "En este paso, entenderás cómo iniciar un proyecto de Firebase desde la línea de comandos.",
       isText: true,
       question: {
-        questionText: "Escribe el comando para iniciar un proyecto Firebase.",
+        questionText:
+          "Escribe el comando para iniciar un proyecto de Firebase.",
       },
     },
     {
       group: "4",
-      title: "Almacenando Datos de Forma Responsable",
+      title: "Prácticas Avanzadas de Almacenamiento de Datos",
       description:
-        "En este paso, aprenderás sobre las prácticas responsables de almacenamiento de datos.",
-      isText: true,
+        "En este paso, aprenderás prácticas avanzadas para almacenar datos de manera responsable en sistemas backend.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "¿Cuáles son algunas de las mejores prácticas para almacenar datos de manera responsable en un sistema backend?",
-      },
-    },
-    {
-      group: "4",
-      title: "Trabajando con Colecciones y Documentos",
-      description:
-        "En este paso, aprenderás sobre el proceso de configurar colecciones y documentos en bases de datos no relacionales como Firebase o MongoDB.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos en el orden correcto para configurar una colección y agregar un documento en una base de datos no relacional.",
+          "¿Cuáles de las siguientes son mejores prácticas para garantizar el almacenamiento responsable de datos en un sistema backend?",
         options: [
-          "Crear una nueva colección",
-          "Definir la estructura del documento",
-          "Asignar un ID único al documento",
-          "Añadir un nuevo documento a la colección",
-          "Guardar el documento",
-          "Consultar la colección para buscar documentos",
+          "Almacenar en caché los datos en memoria para reducir el tiempo de acceso a la base de datos",
+          "Cifrar datos sensibles tanto en reposo como en tránsito para garantizar la seguridad",
+          "Implementar replicación de bases de datos a través de múltiples centros de datos para mejorar la tolerancia a fallos",
         ],
         answer: [
-          "Crear una nueva colección",
-          "Definir la estructura del documento",
-          "Asignar un ID único al documento",
-          "Añadir un nuevo documento a la colección",
-          "Guardar el documento",
-          "Consultar la colección para buscar documentos",
+          "Almacenar en caché los datos en memoria para reducir el tiempo de acceso a la base de datos",
+          "Cifrar datos sensibles tanto en reposo como en tránsito para garantizar la seguridad",
+          "Implementar replicación de bases de datos a través de múltiples centros de datos para mejorar la tolerancia a fallos",
         ],
       },
     },
     {
       group: "4",
-      title: "Manejo de Datos de Usuario",
+      title: "Inicializando Firebase y Trabajando con Firestore v9",
       description:
-        "En este paso, aprenderás cómo manejar los datos de los usuarios en sistemas de backend.",
+        "En este paso, aprenderás cómo inicializar Firebase y configurar colecciones y documentos en Firestore v9.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "Completa el código para inicializar Firebase con la configuración proporcionada y agregar un documento único a una colección en Firestore.",
+        options: [
+          // Opción 1: Código correcto para inicializar Firebase y agregar un documento
+
+          // Opción 2: Incorrecto - falta la inicialización de Firestore
+          `import { 
+      initializeApp 
+    } from 'firebase/app';
+    
+    import { 
+      collection, 
+      setDoc 
+    } from 'firebase/firestore';
+    
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: "progr-ai.firebaseapp.com",
+      projectId: "progr-ai",
+      storageBucket: "progr-ai.appspot.com",
+      messagingSenderId: "32042075426",
+      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+      measurementId: "G-0E37NCB4KB",
+    };
+    
+    initializeApp(firebaseConfig);
+    await setDoc(collection(db, 'usuarios'), {
+      name: 'John Doe',
+      email: 'john@example.com'
+    });`,
+
+          // Opción 3: Incorrecto - falta el ID del documento en Firestore
+          `import { 
+      initializeApp 
+    } from 'firebase/app';
+    
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc 
+    } from 'firebase/firestore';
+    
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: "progr-ai.firebaseapp.com",
+      projectId: "progr-ai",
+      storageBucket: "progr-ai.appspot.com",
+      messagingSenderId: "32042075426",
+      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+      measurementId: "G-0E37NCB4KB",
+    };
+    
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Agregar documento
+    await setDoc(doc(db, 'usuarios'), {
+      name: 'John Doe',
+      email: 'john@example.com'
+    });`,
+          `import { 
+      initializeApp 
+    } from 'firebase/app';
+    
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc
+    } from 'firebase/firestore';
+    
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: "progr-ai.firebaseapp.com",
+      projectId: "progr-ai",
+      storageBucket: "progr-ai.appspot.com",
+      messagingSenderId: "32042075426",
+      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+      measurementId: "G-0E37NCB4KB",
+    };
+    
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Agregar documento
+    await addDoc(doc(db, 'usuarios'), {
+      name: 'John Doe',
+      email: 'john@example.com'
+    });`,
+
+          // Opción 4: Incorrecto - falta importar los métodos de Firestore
+          `import { 
+      initializeApp 
+    } from 'firebase/app';
+        
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: "progr-ai.firebaseapp.com",
+      projectId: "progr-ai",
+      storageBucket: "progr-ai.appspot.com",
+      messagingSenderId: "32042075426",
+      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+      measurementId: "G-0E37NCB4KB",
+    };
+    
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    
+    // Agregar documento
+    await addDoc(doc(db, 'usuarios', 'user123'), {
+      name: 'John Doe',
+      email: 'john@example.com'
+    });`,
+        ],
+        answer: `import { 
+      initializeApp 
+    } from 'firebase/app';
+    
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc 
+    } from 'firebase/firestore';
+    
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: "progr-ai.firebaseapp.com",
+      projectId: "progr-ai",
+      storageBucket: "progr-ai.appspot.com",
+      messagingSenderId: "32042075426",
+      appId: "1:320420758826:web:68dfeffe8aa7b6421e8a53",
+      measurementId: "G-0E37NCB4KB",
+    };
+    
+    // Inicializar Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // Agregar documento
+    await setDoc(doc(db, 'usuarios'), {
+      name: 'John Doe',
+      email: 'john@example.com'
+    });`,
+      },
+    },
+    {
+      group: "4",
+      title: "Manejo de Datos de Usuarios",
+      description:
+        "En este paso, aprenderás cómo manejar los datos de los usuarios en sistemas backend.",
       isCode: true,
       question: {
         questionText:
-          "Escribe un fragmento de código para obtener un objeto de usuario con propiedades para nombre de usuario y correo electrónico usando Firebase Auth.",
+          "Escribe un fragmento de código para obtener un objeto de usuario con las propiedades de nombre de usuario y correo electrónico usando Firebase Auth.",
       },
     },
     {
       group: "4",
-      title: "Creando un Nuevo Usuario",
+      title: "Recuperar un Documento de Usuario Después de la Autenticación",
       description:
-        "En este paso, crearás un nuevo usuario en un sistema de backend.",
-      isText: true,
+        "En este paso, aprenderás cómo recuperar un documento de usuario desde Firestore usando los datos de autenticación.",
+      isCode: true,
+      isTerminal: false,
       question: {
         questionText:
-          "Usa el terminal para agregar un nuevo usuario a la colección `Users` en tu base de datos Firestore.",
+          "Escribe un código para recuperar un documento de usuario de la colección `users` en Firestore usando el ID de usuario autenticado.",
       },
     },
     {
       group: "4",
-      title: "Entendiendo la Autenticación",
+      title: "Comprendiendo el Flujo de Autenticación",
       description:
-        "En este paso, aprenderás sobre los procesos de autenticación en sistemas de backend.",
-      isText: true,
-      question: {
-        questionText:
-          "¿Qué es la autenticación y por qué es importante en los sistemas de backend?",
-      },
-    },
-    {
-      group: "4",
-      title: "Servidores de Autorización",
-      description:
-        "En este paso, aprenderás sobre el papel de los servidores de autorización.",
+        "En este paso, aprenderás sobre el flujo típico de autenticación en sistemas backend.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para autorizar correctamente a un usuario.",
+          "Organiza los siguientes pasos en el orden correcto para un flujo típico de autenticación en un sistema backend.",
         options: [
-          "El usuario envía credenciales",
-          "El servidor verifica las credenciales",
-          "Se genera un token de autorización",
-          "El usuario recibe acceso a los recursos",
+          "El usuario ingresa credenciales (correo electrónico y contraseña) en el formulario de inicio de sesión",
+          "El backend verifica las credenciales con el servicio de autenticación",
+          "Se crean tokens de identidad o sesiones para el usuario autenticado",
+          "El sistema recupera datos del usuario de la base de datos utilizando los tokens",
+          "El usuario obtiene acceso a los recursos protegidos",
         ],
         answer: [
-          "El usuario envía credenciales",
-          "El servidor verifica las credenciales",
-          "Se genera un token de autorización",
-          "El usuario recibe acceso a los recursos",
+          "El usuario ingresa credenciales (correo electrónico y contraseña) en el formulario de inicio de sesión",
+          "El backend verifica las credenciales con el servicio de autenticación",
+          "Se crean tokens de identidad o sesiones para el usuario autenticado",
+          "El sistema recupera datos del usuario de la base de datos utilizando los tokens",
+          "El usuario obtiene acceso a los recursos protegidos",
         ],
       },
     },
     {
       group: "4",
-      title: "Usando Variables de Entorno",
+      title: "Autenticación OAuth",
       description:
-        "En este paso, aprenderás sobre el uso de variables de entorno en el desarrollo de backend.",
+        "En este paso, aprenderás sobre los sistemas de autenticación estilo OAuth.",
+      isSingleLineText: true,
+      question: {
+        questionText:
+          "¿Cuál es el protocolo ampliamente utilizado para la autorización que permite a servicios de terceros acceder a datos de usuario sin exponer credenciales?",
+        placeholder: "Escribe tu respuesta aquí...",
+        answer: "OAuth",
+      },
+    },
+    {
+      group: "4",
+      title: "Uso de Variables de Entorno",
+      description:
+        "En este paso, aprenderás sobre el uso de variables de entorno en el desarrollo backend.",
       isText: true,
       question: {
         questionText:
-          "¿Qué papel juegan las variables de entorno en un código base?",
+          "¿Qué papel juegan las variables de entorno en una base de código?",
       },
     },
     {
       group: "4",
       title: "Relaciones en Bases de Datos",
       description:
-        "En este paso, aprenderás sobre las relaciones en bases de datos.",
+        "En este paso, aprenderás sobre las relaciones en las bases de datos.",
       isCode: true,
       question: {
         questionText:
-          "Escribe un fragmento de código para definir una relación de uno a muchos entre usuarios y publicaciones en una base de datos.",
+          "Escribe un fragmento de código para definir una relación uno a muchos entre usuarios y publicaciones en una base de datos.",
       },
     },
     {
       group: "4",
-      title: "Creación de Endpoints de API",
+      title: "Interfaz con una API",
       description:
-        "En este paso, aprenderás cómo crear endpoints de API para una aplicación backend.",
-      isMultipleChoice: true,
+        "En este paso, aprenderás los métodos HTTP comunes utilizados para interactuar con una API y algunos métodos menos comunes.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "¿Qué método HTTP se utiliza comúnmente para crear un nuevo recurso a través de una API?",
-        options: ["GET", "POST", "PUT", "DELETE"],
-        answer: "POST",
+          "¿Cuáles de los siguientes métodos HTTP son comúnmente utilizados para interactuar con una API y qué hacen?",
+        options: [
+          "GET (Recupera datos del servidor)",
+          "POST (Crea un nuevo recurso en el servidor)",
+          "SEND (Envía datos al servidor para su procesamiento)",
+          "FETCH (Se utiliza para recuperar datos de un recurso)",
+          "PATCH (Actualiza parcialmente un recurso en el servidor)",
+          "REMOVE (Elimina datos de un servidor)",
+          "PUT (Actualiza un recurso existente en el servidor)",
+          "DELETE (Elimina un recurso del servidor)",
+        ],
+        answer: [
+          "GET (Recupera datos del servidor)",
+          "POST (Crea un nuevo recurso en el servidor)",
+          "PUT (Actualiza un recurso existente en el servidor)",
+          "DELETE (Elimina un recurso del servidor)",
+          "PATCH (Actualiza parcialmente un recurso en el servidor)",
+        ],
       },
     },
     {
       group: "4",
-      title: "Creando un Sistema de Autenticación de Usuarios",
+      title: "Creación de un Sistema de Autenticación de Usuarios",
       description:
-        "En este paso, crearás un sistema simple de autenticación de usuarios.",
+        "En este paso, crearás un sistema de autenticación de usuarios simple.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para implementar autenticación de usuarios usando JWT.",
+          "Organiza los pasos para implementar la autenticación de usuarios usando JSON Web Tokens.",
         options: [
           "Instalar la biblioteca JWT",
           "Configurar un modelo de usuario en la base de datos",
           "Crear una ruta de registro para nuevos usuarios",
-          "Hashear la contraseña del usuario antes de almacenarla",
+          "Cifrar la contraseña del usuario antes de almacenarla",
           "Crear una ruta de inicio de sesión",
           "Verificar las credenciales del usuario",
           "Generar un token JWT",
           "Enviar el token JWT de vuelta al cliente",
           "Crear una ruta protegida que requiera autenticación",
-          "Verificar el token JWT en las rutas protegidas",
+          "Verificar el token JWT en rutas protegidas",
         ],
         answer: [
           "Instalar la biblioteca JWT",
           "Configurar un modelo de usuario en la base de datos",
           "Crear una ruta de registro para nuevos usuarios",
-          "Hashear la contraseña del usuario antes de almacenarla",
+          "Cifrar la contraseña del usuario antes de almacenarla",
           "Crear una ruta de inicio de sesión",
           "Verificar las credenciales del usuario",
           "Generar un token JWT",
           "Enviar el token JWT de vuelta al cliente",
           "Crear una ruta protegida que requiera autenticación",
-          "Verificar el token JWT en las rutas protegidas",
+          "Verificar el token JWT en rutas protegidas",
         ],
       },
     },
     {
       group: "4",
-      title: "Desplegando una Aplicación Firebase",
+      title: "Desplegar una Aplicación de Firebase",
       description:
-        "En este paso, aprenderás cómo desplegar una aplicación Firebase backend en un servicio en la nube.",
+        "En este paso, aprenderás cómo desplegar una aplicación backend de Firebase en un servicio en la nube.",
       isText: true,
       question: {
         questionText:
-          "Escribe el comando para desplegar una aplicación Firebase en la línea de comandos.",
+          "Escribe un comando para desplegar una aplicación de Firebase en la línea de comandos.",
       },
     },
     {
       groupReference: "4",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación de IA",
       isConversationReview: true,
       description: "Revisa los temas que has respondido.",
       question: {
         questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [44, 66],
+          "Hablemos de las preguntas en las que hemos trabajado hasta ahora.",
+        range: [69, 89],
       },
     },
     {
@@ -3617,7 +4791,7 @@ export const steps = {
       question: {
         questionText:
           "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [68, 92],
+        range: [91, 111],
       },
     },
     {
@@ -3934,7 +5108,7 @@ export const steps = {
       question: {
         questionText:
           "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [94, 114],
+        range: [112, 132],
       },
     },
   ],
