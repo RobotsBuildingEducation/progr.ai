@@ -2522,121 +2522,121 @@ list.add('reels');`,
 
           // Option 2: Incorrect - Missing the base case check for null nodes
           `class TreeNode {
-  constructor(value) {
-    this.value = value;
-    this.left = null;
-    this.right = null;
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
   }
-}
 
-function dfs(node) {
-  console.log(node.value);
-  dfs(node.left);
-  dfs(node.right);
-}
+  function dfs(node) {
+    console.log(node.value);
+    dfs(node.left);
+    dfs(node.right);
+  }
 
-const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.left = new TreeNode(4);
-root.left.right = new TreeNode(5);
-dfs(root);`,
+  const root = new TreeNode(1);
+  root.left = new TreeNode(2);
+  root.right = new TreeNode(3);
+  root.left.left = new TreeNode(4);
+  root.left.right = new TreeNode(5);
+  dfs(root);`,
 
           // Option 3: Incorrect - Swapped traversal order (in-order instead of pre-order)
           `class TreeNode {
-  constructor(value) {
-    this.value = value;
-    this.left = null;
-    this.right = null;
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
   }
-}
 
-function dfs(node) {
-  if (node === null) {
-    return;
+  function dfs(node) {
+    if (node === null) {
+      return;
+    }
+    dfs(node.left);
+    console.log(node.value);
+    dfs(node.right);
   }
-  dfs(node.left);
-  console.log(node.value);
-  dfs(node.right);
-}
 
-const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.left = new TreeNode(4);
-root.left.right = new TreeNode(5);
-dfs(root);`,
+  const root = new TreeNode(1);
+  root.left = new TreeNode(2);
+  root.right = new TreeNode(3);
+  root.left.left = new TreeNode(4);
+  root.left.right = new TreeNode(5);
+  dfs(root);`,
 
           // Option 4: Incorrect - Infinite loop due to incorrect recursive call
           `class TreeNode {
-  constructor(value) {
-    this.value = value;
-    this.left = null;
-    this.right = null;
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
   }
-}
 
-function dfs(node) {
-  if (node === null) {
-    return;
+  function dfs(node) {
+    if (node === null) {
+      return;
+    }
+    console.log(node.value);
+    dfs(node);
   }
-  console.log(node.value);
-  dfs(node);
-}
 
-const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.left = new TreeNode(4);
-root.left.right = new TreeNode(5);
-dfs(root);`,
+  const root = new TreeNode(1);
+  root.left = new TreeNode(2);
+  root.right = new TreeNode(3);
+  root.left.left = new TreeNode(4);
+  root.left.right = new TreeNode(5);
+  dfs(root);`,
           `class TreeNode {
-  constructor(value) {
-    this.value = value;
-    this.left = null;
-    this.right = null;
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
   }
-}
 
-function dfs(node) {
-  if (node === null) {
-    return;
+  function dfs(node) {
+    if (node === null) {
+      return;
+    }
+    console.log(node.value);
+    dfs(node.left);
+    dfs(node.right);
   }
-  console.log(node.value);
-  dfs(node.left);
-  dfs(node.right);
-}
 
-const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.left = new TreeNode(4);
-root.left.right = new TreeNode(5);
-dfs(root);`,
+  const root = new TreeNode(1);
+  root.left = new TreeNode(2);
+  root.right = new TreeNode(3);
+  root.left.left = new TreeNode(4);
+  root.left.right = new TreeNode(5);
+  dfs(root);`,
         ],
         answer: `class TreeNode {
-  constructor(value) {
-    this.value = value;
-    this.left = null;
-    this.right = null;
+    constructor(value) {
+      this.value = value;
+      this.left = null;
+      this.right = null;
+    }
   }
-}
 
-function dfs(node) {
-  if (node === null) {
-    return;
+  function dfs(node) {
+    if (node === null) {
+      return;
+    }
+    console.log(node.value);
+    dfs(node.left);
+    dfs(node.right);
   }
-  console.log(node.value);
-  dfs(node.left);
-  dfs(node.right);
-}
 
-const root = new TreeNode(1);
-root.left = new TreeNode(2);
-root.right = new TreeNode(3);
-root.left.left = new TreeNode(4);
-root.left.right = new TreeNode(5);
-dfs(root);`,
+  const root = new TreeNode(1);
+  root.left = new TreeNode(2);
+  root.right = new TreeNode(3);
+  root.left.left = new TreeNode(4);
+  root.left.right = new TreeNode(5);
+  dfs(root);`,
       },
     },
 
@@ -4452,67 +4452,46 @@ console.log(arr);
     },
     {
       group: "5",
-      title: "Introducción al Desarrollo Completo de Aplicaciones",
+      title: "Beneficios de las Plataformas en la Nube Sin Servidor",
       description:
-        "Aprende cómo reunir todo lo que has aprendido para construir una aplicación completa.",
+        "En este paso, explorarás las ventajas de usar plataformas en la nube sin servidor como Firebase o Vercel en el desarrollo de software.",
       isText: true,
       question: {
         questionText:
-          "¿Qué herramientas y recursos puedes usar si te encuentras con algo que deseas aprender más mientras construyes una aplicación?",
+          "¿Cuáles son los principales beneficios de usar plataformas en la nube sin servidor como Firebase o Vercel en el desarrollo de software, y en qué se diferencian de los modelos tradicionales basados en servidores?",
       },
     },
     {
       group: "5",
-      title: "Instalando VSCode",
+      title: "Comprender VSCode",
       description:
-        "Instala Visual Studio Code (VSCode), el editor de código para escribir tu código.",
+        "En este paso, explorarás qué es Visual Studio Code (VSCode) y por qué es un editor de código popular.",
       isText: true,
       question: {
         questionText:
-          "Escribe el comando de terminal para instalar VSCode en tu sistema operativo.",
+          "¿Qué es Visual Studio Code (VSCode) y por qué es uno de los editores de código más populares entre los desarrolladores?",
       },
     },
     {
       group: "5",
-      title: "Instalando Node.js",
+      title: "Instalar Node.js y NPM",
       description:
-        "Instala Node.js, que te permite construir aplicaciones JavaScript.",
+        "Instala Node.js, lo que te permitirá crear aplicaciones en JavaScript.",
       isText: true,
       question: {
         questionText:
-          "¿Cuál es el propósito de Node.js en el desarrollo de JavaScript?",
+          "¿Cuál es el propósito de Node.js y npm en el desarrollo de JavaScript en términos simples?",
       },
     },
     {
       group: "5",
-      title: "Instalando los Paquetes de 'package.json'.",
-      description: "Instalando los archivos encontrados en package.json.",
-      isText: true,
+      title: "Instalar Paquetes de 'package.json'.",
+      description: "Instalar los archivos encontrados en package.json.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Introduce el comando para instalar los paquetes encontrados en un proyecto react usando npm.",
-      },
-    },
-    {
-      group: "5",
-      title: "Creando una Carpeta de Proyecto",
-      description: "Crea una nueva carpeta para tu proyecto.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los siguientes comandos para crear y navegar a una nueva carpeta de proyecto:",
-        options: [
-          "mkdir miProyecto",
-          "cd miProyecto",
-          "Crea la carpeta",
-          "Navega a la carpeta",
-        ],
-        answer: [
-          "mkdir miProyecto",
-          "Crea la carpeta",
-          "cd miProyecto",
-          "Navega a la carpeta",
-        ],
+          "Introduce el comando para instalar los paquetes en un proyecto de React usando npm.",
+        answer: "npm install",
       },
     },
     {
@@ -4520,42 +4499,62 @@ console.log(arr);
       title: "Instalar Herramientas de Firebase Globalmente",
       description:
         "Instala las herramientas de Firebase globalmente usando la línea de comandos.",
-      isText: true,
+      isSingleLineText: true,
       question: {
         questionText:
           "Usa el terminal para instalar firebase-tools globalmente. ¿Qué comando utilizas?",
+        answer: "npm install -g firebase-tools",
       },
     },
     {
       group: "5",
-      title: "Ejecutando la Aplicación React",
-      description: "Ejecuta tu aplicación React en modo de desarrollo.",
+      title: "Configurar un Proyecto de React y Firebase con VSCode",
+      description:
+        "En este paso, organizarás los pasos necesarios para configurar un proyecto de React usando Vite, conectar los servicios de Firebase e instalar las herramientas necesarias utilizando Visual Studio Code (VSCode).",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para ejecutar correctamente tu aplicación React.",
+          "Organiza los siguientes pasos en el orden correcto para configurar un proyecto de React usando Vite, instalar Node.js y npm, y conectar los servicios de Firebase usando VSCode.",
         options: [
-          "Abrir el terminal",
-          "Navegar a la carpeta del proyecto",
-          "Ejecutar el script de inicio",
-          "Ver la aplicación en el navegador",
+          "Instalar Node.js y npm en tu máquina",
+          "Instalar Visual Studio Code (VSCode)",
+          "Abrir VSCode y navegar al terminal",
+          "Ejecutar `npm create vite@latest` para crear un nuevo proyecto de React",
+          "Navegar a la carpeta del proyecto usando `cd nombre-del-proyecto`",
+          "Ejecutar `npm install` para instalar dependencias",
+          "Instalar Firebase CLI usando `npm install -g firebase-tools`",
+          "Iniciar sesión en Firebase usando `firebase login`",
+          "Inicializar Firebase en el proyecto usando `firebase init`",
+          "Habilitar servicios de Firebase como Firestore o Authentication",
+          "Conectar Firebase a tu proyecto de React agregando la configuración de Firebase",
+          "Iniciar el servidor de desarrollo usando `npm run dev`",
         ],
         answer: [
-          "Abrir el terminal",
-          "Navegar a la carpeta del proyecto",
-          "Ejecutar el script de inicio",
-          "Ver la aplicación en el navegador",
+          "Instalar Node.js y npm en tu máquina",
+          "Instalar Visual Studio Code (VSCode)",
+          "Abrir VSCode y navegar al terminal",
+          "Ejecutar `npm create vite@latest` para crear un nuevo proyecto de React",
+          "Navegar a la carpeta del proyecto usando `cd nombre-del-proyecto`",
+          "Ejecutar `npm install` para instalar dependencias",
+          "Instalar Firebase CLI usando `npm install -g firebase-tools`",
+          "Iniciar sesión en Firebase usando `firebase login`",
+          "Inicializar Firebase en el proyecto usando `firebase init`",
+          "Habilitar servicios de Firebase como Firestore o Authentication",
+          "Conectar Firebase a tu proyecto de React agregando la configuración de Firebase",
+          "Iniciar el servidor de desarrollo usando `npm run dev`",
         ],
       },
     },
     {
       group: "5",
-      title: "Configurando Firebase",
-      description: "Configura Firebase para tu proyecto.",
-      isText: true,
+      title: "Configurar Firebase",
+      description:
+        "En este paso, configurarás Firebase para tu proyecto, incluyendo Authentication, Firestore y Analytics.",
+      isCode: true,
+      isTerminal: false,
       question: {
         questionText:
-          "¿Cuáles son los pasos para configurar Firebase para tu proyecto?",
+          "Escribe el código en JavaScript para inicializar Firebase en tu proyecto, y conectar los servicios de Authentication, Firestore y Analytics.",
       },
     },
     {
@@ -4565,93 +4564,94 @@ console.log(arr);
         "Aprende sobre el uso de GitHub para colaborar con otros desarrolladores.",
       isMultipleChoice: true,
       question: {
-        questionText: "¿Para qué se utiliza principalmente GitHub?",
+        questionText: "¿Para qué se usa principalmente GitHub?",
         options: [
-          "Alojamiento de sitios web",
-          "Gestión de repositorios de código",
-          "Creación de bases de datos",
-          "Diseño de interfaces de usuario",
+          "Alojar sitios web",
+          "Gestionar repositorios de código",
+          "Descentralizar software",
+          "Recopilar datos",
         ],
-        answer: "Gestión de repositorios de código",
+        answer: "Gestionar repositorios de código",
       },
     },
     {
       group: "5",
-      title: "Clonando Proyectos de Github",
-      description: "Clonando proyectos de Github en la línea de comandos.",
-      isText: true,
+      title: "Clonar Proyectos de Github",
+      description: "Clonar proyectos de Github en la línea de comandos.",
+      isCode: true,
+      isTerminal: true,
       question: {
         questionText:
-          "Usa el terminal para clonar un proyecto de RobotsBuildingEducation llamado programAI usando comandos git.",
+          "Usa el terminal para clonar un proyecto de progr.ai de Github por Robots Building Education utilizando comandos de git.",
+        answer:
+          "git clone https://github.com/RobotsBuildingEducation/progr.ai.git",
       },
     },
     {
       group: "5",
-      title: "Inicializando Firebase",
-      description: "Inicializa Firebase en tu proyecto y autentica tu cuenta.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos con arrastrar y soltar para inicializar correctamente Firebase en tu proyecto.",
-        options: [
-          "Instalar la CLI de Firebase",
-          "Iniciar sesión en Firebase",
-          "Inicializar Firebase en el proyecto",
-          "Elegir la configuración del proyecto",
-          "Instalar el SDK de Firebase",
-          "Añadir la configuración de Firebase a tu código",
-          "Habilitar servicios de Firebase (por ejemplo, Firestore, Autenticación)",
-          "Configurar las reglas de seguridad para tus servicios",
-          "Desplegar tu aplicación usando Firebase Hosting (opcional)",
-          "Probar la integración de Firebase",
-        ],
-        answer: [
-          "Instalar la CLI de Firebase",
-          "Iniciar sesión en Firebase",
-          "Inicializar Firebase en el proyecto",
-          "Elegir la configuración del proyecto",
-          "Instalar el SDK de Firebase",
-          "Añadir la configuración de Firebase a tu código",
-          "Habilitar servicios de Firebase (por ejemplo, Firestore, Autenticación)",
-          "Configurar las reglas de seguridad para tus servicios",
-          "Desplegar tu aplicación usando Firebase Hosting (opcional)",
-          "Probar la integración de Firebase",
-        ],
-      },
-    },
-    {
-      group: "5",
-      title: "Entendiendo las Funcionalidades Principales de Firebase",
+      title: "Alternativas Populares a Firebase",
       description:
-        "Identifica la funcionalidad principal de los servicios de Firebase como Firestore, Autenticación, Almacenamiento, Hosting y Funciones en la Nube.",
-      isSelectOrder: true,
+        "En este paso, explorarás algunas alternativas populares a Firebase para varios servicios backend como la gestión de bases de datos, autenticación y hosting.",
+      isMultipleAnswerChoice: true,
       question: {
         questionText:
-          "Organiza los servicios de Firebase con sus funciones principales.",
+          "¿Cuáles de las siguientes son alternativas populares a Firebase para construir aplicaciones full-stack?",
+        options: [
+          "Supabase",
+          "AWS Amplify",
+          "MongoDB Realm",
+          "HerokuDB",
+          "AngularJS",
+          "Vercel",
+          "Cloudflare",
+        ],
+        answer: ["Supabase", "AWS Amplify", "MongoDB Realm", "Cloudflare"],
+      },
+    },
+    {
+      group: "5",
+      title: "Productos Más Comunes de Firebase",
+      description:
+        "En este paso, identificarás los productos centrales de Firebase comúnmente utilizados en el desarrollo de aplicaciones web y móviles.",
+      isMultipleAnswerChoice: true,
+      question: {
+        questionText:
+          "¿Cuáles de los siguientes son productos comúnmente utilizados de Firebase?",
         options: [
           "Firestore: Base de datos NoSQL en la nube para almacenar y sincronizar datos",
-          "Autenticación: Inicio de sesión de usuarios y gestión de identidad",
-          "Almacenamiento: Almacenamiento de archivos para contenido generado por usuarios",
-          "Hosting: Alojamiento web para desplegar contenido estático",
-          "Funciones en la Nube: Backend sin servidor para ejecutar código en respuesta a eventos",
+          "Firebase Ads: Plataforma para integrar publicidad",
+          "Authentication: Gestión de inicio de sesión e identidad de usuario",
+          "Firebase Functions: Backend sin servidor para ejecutar código",
+          "Firebase Storage: Almacenamiento de archivos para contenido generado por usuarios",
+          "Firebase Machine Learning: Herramientas de ML para características de la app",
+          "Firebase Builder: Herramienta para crear servicios de Firebase",
+          "Firebase Hosting: Alojamiento web para desplegar contenido estático",
+          "Firebase Cache: Servicio de caché para almacenamiento de alto rendimiento",
+          "Firebase Realtime Database: Base de datos de sincronización en tiempo real",
+          "Firebase Firestore: Base de datos de documentos y colecciones",
+          "Firebase Analytics: Rastrea el compromiso de usuarios y eventos en tu app",
         ],
         answer: [
           "Firestore: Base de datos NoSQL en la nube para almacenar y sincronizar datos",
-          "Autenticación: Inicio de sesión de usuarios y gestión de identidad",
-          "Almacenamiento: Almacenamiento de archivos para contenido generado por usuarios",
-          "Hosting: Alojamiento web para desplegar contenido estático",
-          "Funciones en la Nube: Backend sin servidor para ejecutar código en respuesta a eventos",
+          "Authentication: Gestión de inicio de sesión e identidad de usuario",
+          "Firebase Realtime Database: Base de datos de sincronización en tiempo real",
+          "Firebase Hosting: Alojamiento web para desplegar contenido estático",
+          "Firebase Functions: Backend sin servidor para ejecutar código",
+          "Firebase Storage: Almacenamiento de archivos para contenido generado por usuarios",
+          "Firebase Analytics: Rastrea el compromiso de usuarios y eventos en tu app",
+          "Firebase Firestore: Base de datos de documentos y colecciones",
+          "Firebase Machine Learning: Herramientas de ML para características de la app",
         ],
       },
     },
     {
       group: "5",
-      title: "Extrayendo Actualizaciones con Github",
-      description: "Actualiza tu versión del código extrayendo con Github.",
-      isText: true,
+      title: "Actualizar un Proyecto con Github",
+      description: "Actualiza tu versión de código haciendo pull con Github.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Usa el terminal para actualizar tu proyecto local de Github con la versión más reciente disponible en Github.",
+          "Usa el terminal para actualizar tu proyecto local de Github con la última versión disponible en Github.",
       },
     },
     {
@@ -4662,12 +4662,12 @@ console.log(arr);
       isMultipleChoice: true,
       question: {
         questionText:
-          "¿Qué paquete utilizas para gestionar la autenticación de usuarios en Firebase?",
+          "¿Qué paquete utilizas para gestionar la experiencia del usuario para la autenticación con Firebase?",
         options: [
           "firebase",
-          "react-firebaseui",
           "firebase-auth",
           "firebase-hooks",
+          "react-firebaseui",
           "firebase-admin",
           "firebase-functions",
           "firebase-storage",
@@ -4678,7 +4678,7 @@ console.log(arr);
     },
     {
       group: "5",
-      title: "Habilitando el Inicio de Sesión con Google",
+      title: "Habilitar Inicio de Sesión con Google",
       description:
         "Habilita el método de inicio de sesión con Google en la configuración de autenticación de Firebase.",
       isText: true,
@@ -4689,75 +4689,60 @@ console.log(arr);
     },
     {
       group: "5",
-      title: "Conectando Firebase a tu Código",
+      title: "Conectar Firebase a Tu Código",
       description:
         "Recupera las claves de configuración de Firebase y conéctalas a tu código.",
       isCode: true,
       question: {
         questionText:
-          "Escribe el código para inicializar Firebase en tu proyecto usando las claves de configuración.",
+          "Escribe el código para inicializar Firebase en tu proyecto utilizando las claves de configuración.",
       },
     },
     {
       group: "5",
-      title: "Renderizando un Botón de Inicio de Sesión",
+      title:
+        "Renderizando Botón de Inicio de Sesión en React con Firebase y react-firebaseui",
       description:
-        "Renderiza un botón de inicio de sesión en tu aplicación React usando Firebase y react-firebaseui.",
-      isSelectOrder: true,
-      question: {
-        questionText:
-          "Organiza los pasos con arrastrar y soltar para renderizar correctamente un botón de inicio de sesión usando Firebase y react-firebaseui.",
-        options: [
-          "Instalar los paquetes de Firebase y react-firebaseui",
-          "Importar los módulos necesarios de Firebase",
-          "Inicializar Firebase con tu configuración",
-          "Configurar la Autenticación de Firebase en la Consola de Firebase",
-          "Crear y configurar las opciones de inicio de sesión",
-          "Renderizar el componente de UI de Firebase en tu componente de React",
-          "Probar el flujo de inicio de sesión en tu aplicación",
-        ],
-        answer: [
-          "Instalar los paquetes de Firebase y react-firebaseui",
-          "Importar los módulos necesarios de Firebase",
-          "Inicializar Firebase con tu configuración",
-          "Configurar la Autenticación de Firebase en la Consola de Firebase",
-          "Crear y configurar las opciones de inicio de sesión",
-          "Renderizar el componente de UI de Firebase en tu componente de React",
-          "Probar el flujo de inicio de sesión en tu aplicación",
-        ],
-      },
-    },
-    {
-      group: "5",
-      title: "Mostrando los Datos del Usuario",
-      description:
-        "Usa useEffect para mostrar los datos del usuario cuando inicie sesión.",
+        "En este paso, renderizarás un botón de inicio de sesión en tu aplicación de React usando Firebase Authentication y la biblioteca react-firebaseui.",
       isCode: true,
       question: {
         questionText:
-          "Escribe el código para mostrar los datos del usuario usando el hook useEffect cuando inicie sesión con Firebase.",
+          "Escribe el código para renderizar un botón de inicio de sesión de Firebase en un componente de React utilizando Firebase Authentication y react-firebaseui.",
       },
     },
     {
       group: "5",
-      title: "Actualizando el Perfil del Usuario",
+      title: "Mostrando Datos de Usuario",
       description:
-        "Actualiza la información del perfil del usuario en tu base de datos Firebase.",
+        "Utiliza useEffect para mostrar los datos de usuario cuando inician sesión.",
       isCode: true,
       question: {
         questionText:
-          "Escribe el código para actualizar la información del perfil del usuario en Firebase Firestore.",
+          "Escribe el código para mostrar los datos del usuario utilizando el hook useEffect cuando inician sesión con Firebase.",
+      },
+    },
+    {
+      group: "5",
+      title: "Actualizando el Perfil de Usuario",
+      description:
+        "Actualiza la información del perfil de usuario en tu base de datos de Firebase después de que hayan iniciado sesión.",
+      isCode: true,
+      question: {
+        questionText:
+          "Escribe el código para actualizar la información del perfil de usuario en Firebase Firestore.",
       },
     },
     {
       group: "5",
       title: "Actualizando un Proyecto de Github",
       description:
-        "Encadenando comandos git para actualizar un proyecto de Github.",
-      isText: true,
+        "Encadenando comandos de git para actualizar un proyecto en Github.",
+      isSingleLineText: true,
       question: {
         questionText:
-          "Introduce la combinación de comandos de github para escribir y actualizar un código con un mensaje.",
+          "Introduce la combinación de comandos de github para escribir y actualizar una base de código con un mensaje.",
+        answer:
+          'git add . && git commit -m "your_message" && git push origin main',
       },
     },
     {
@@ -4768,18 +4753,22 @@ console.log(arr);
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los siguientes comandos de Git en el orden correcto para crear un nuevo repositorio:",
+          "Organiza los siguientes comandos de Git en el orden correcto para programáticamente crear un nuevo repositorio y hacer push a tu cuenta de GitHub:",
         options: [
           "git init",
           "git add .",
           "git commit -m 'Initial commit'",
-          "git push origin main",
+          "git remote add origin <repository-url>",
+          "git branch -M main",
+          "git push -u origin main",
         ],
         answer: [
           "git init",
           "git add .",
           "git commit -m 'Initial commit'",
-          "git push origin main",
+          "git remote add origin <repository-url>",
+          "git branch -M main",
+          "git push -u origin main",
         ],
       },
     },
@@ -4787,40 +4776,40 @@ console.log(arr);
       groupReference: "5",
       title: "Revisión con Conversación AI",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Revisa los temas que has respondido",
       question: {
         questionText:
-          "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",
-        range: [91, 111],
+          "Vamos a conversar sobre las preguntas que hemos trabajado hasta ahora.",
+        range: [91, 110],
       },
     },
     {
       group: "6",
-      title: "Introducción a las Estructuras de Datos y Algoritmos",
+      title: "Introducción a Estructuras de Datos y Algoritmos",
       description:
-        "Entiende la importancia y los desafíos de aprender estructuras de datos y algoritmos.",
+        "Comprende la importancia y los desafíos de aprender estructuras de datos y algoritmos.",
       isText: true,
       question: {
         questionText:
-          "¿Por qué las estructuras de datos y algoritmos a menudo alejan a las personas de la informática?",
+          "¿Por qué las estructuras de datos y los algoritmos suelen alejar a las personas de la informática?",
       },
     },
     {
       group: "6",
       title: "Lenguajes de Programación y Tecnología de Autocorrección",
       description:
-        "Explora cómo funcionan los lenguajes de programación y cómo los ordenadores entienden el código.",
+        "Explora cómo funcionan los lenguajes de programación y cómo las computadoras entienden el código.",
       isCode: true,
       question: {
         questionText:
-          "Escribe un programa simple en cualquier lenguaje para demostrar cómo la tecnología de autocorrección podría identificar y corregir una palabra mal escrita.",
+          "Escribe un programa simple, sin usar bibliotecas, que demuestre cómo la tecnología de autocorrección puede identificar y corregir una palabra mal escrita.",
       },
     },
     {
       group: "6",
       title: "Tokens en el Código",
       description:
-        "Descompón el código en tokens para entender cómo los ordenadores interpretan la información.",
+        "Descompón el código en tokens para entender cómo las computadoras interpretan la información.",
       isMultipleChoice: true,
       question: {
         questionText:
@@ -4840,61 +4829,68 @@ console.log(arr);
       group: "6",
       title: "Descomponiendo Cadenas en Caracteres",
       description:
-        "Entiende cómo las cadenas se descomponen en caracteres y luego en código de máquina.",
+        "Comprende cómo se descomponen las cadenas en caracteres y luego en código máquina.",
       isCode: true,
       question: {
         questionText:
-          "Escribe el código para descomponer la cadena 'Drake' en un arreglo de caracteres.",
+          "Escribe el código para descomponer la cadena 'Kendrick' en un array y luego en un mapeo de objetos.",
       },
     },
     {
       group: "6",
-      title: "Entendiendo las Estructuras de Datos",
-      description: "Convierte una cadena en un arreglo de objetos clave-valor.",
+      title: "Comprendiendo las Estructuras de Datos",
+      description:
+        "Convierte una cadena en un array de objetos clave-valor que asignen caracteres a sus códigos ASCII.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Convierte la cadena 'Drake' en un arreglo donde cada carácter sea una clave y su índice sea el valor. Representa cada carácter como un objeto con el carácter como clave y el índice como valor.",
+          "Convierte la cadena 'Kendrick' en un array de objetos clave-valor donde cada carácter se asigne a su código ASCII.",
         options: [
-          "{ 'D': 0 }",
-          "{ 'r': 1 }",
-          "{ 'a': 2 }",
-          "{ 'k': 3 }",
-          "{ 'e': 4 }",
+          "{ 'K': 75 }",
+          "{ 'e': 101 }",
+          "{ 'n': 110 }",
+          "{ 'd': 100 }",
+          "{ 'r': 114 }",
+          "{ 'i': 105 }",
+          "{ 'c': 99 }",
+          "{ 'k': 107 }",
         ],
         answer: [
-          "{ 'D': 0 }",
-          "{ 'r': 1 }",
-          "{ 'a': 2 }",
-          "{ 'k': 3 }",
-          "{ 'e': 4 }",
+          "{ 'K': 75 }",
+          "{ 'e': 101 }",
+          "{ 'n': 110 }",
+          "{ 'd': 100 }",
+          "{ 'r': 114 }",
+          "{ 'i': 105 }",
+          "{ 'c': 99 }",
+          "{ 'k': 107 }",
         ],
       },
     },
     {
       group: "6",
       title: "Conversión Binaria",
-      description: "Convierte caracteres en su representación binaria.",
+      description: "Convierte caracteres a su representación binaria.",
       isCode: true,
       question: {
         questionText:
-          "Escribe la representación binaria para cada carácter en la cadena 'Drake'.",
+          "Convierte el mapeo de los códigos ASCII que representan 'Kendrick' en un mapeo de código binario.",
       },
     },
     {
       group: "6",
-      title: "Entendiendo las Estructuras de Datos",
+      title: "Comprendiendo las Estructuras de Datos",
       description:
-        "Aprende cómo las estructuras de datos almacenan y hacen referencia a la información.",
+        "Aprende cómo las estructuras de datos almacenan y referencian información.",
       isText: true,
       question: {
         questionText:
-          "¿Por qué es importante entender cómo los ordenadores reservan espacio y crean direcciones para referenciar información?",
+          "¿Por qué es importante entender cómo las computadoras reservan espacio y crean direcciones para referenciar información? ¿Cuáles son algunos ejemplos en el mundo real de esto a gran escala?",
       },
     },
     {
       group: "6",
-      title: "Introducción a las Listas Enlazadas",
+      title: "Introducción a Listas Enlazadas",
       description:
         "Aprende sobre los conceptos básicos de las listas enlazadas.",
       isMultipleChoice: true,
@@ -4904,7 +4900,7 @@ console.log(arr);
         options: [
           "Arreglos de tamaño fijo",
           "Asignación dinámica de memoria",
-          "Acceso constante a los elementos",
+          "Acceso en tiempo constante a los elementos",
           "Los datos se almacenan en memoria contigua",
         ],
         answer: "Asignación dinámica de memoria",
@@ -4913,11 +4909,120 @@ console.log(arr);
     {
       group: "6",
       title: "Construyendo una Lista Enlazada",
-      description: "Construye una lista enlazada simple en JavaScript.",
+      description:
+        "Construye una lista enlazada simple en JavaScript con los valores 'meta', 'instagram', 'reels'.",
+      isCodeCompletion: true,
+      question: {
+        questionText:
+          "¿Cuál de los siguientes fragmentos de código crea correctamente una lista enlazada con los valores 'meta', 'instagram' y 'reels' en JavaScript?",
+        options: [
+          // Opción 1: Implementación correcta de lista enlazada
+          `class Node {
+            constructor(value) {
+              this.value = value;
+              this.next = null;
+            }
+          }
+          
+          class LinkedList {
+            constructor() {
+              this.head = null;
+            }
+    
+            add(value) {
+              const newNode = new Node(value);
+              if (!this.head) {
+                this.head = newNode;
+              } else {
+                let current = this.head;
+                while (current.next) {
+                  current = current.next;
+                }
+                current.next = newNode;
+              }
+            }
+          }
+    
+          const list = new LinkedList();
+          list.add('meta');
+          list.add('instagram');
+          list.add('reels');`,
+        ],
+        answer: `class Node {
+          constructor(value) {
+            this.value = value;
+            this.next = null;
+          }
+        }
+    
+        class LinkedList {
+          constructor() {
+            this.head = null;
+          }
+    
+          add(value) {
+            const newNode = new Node(value);
+            if (!this.head) {
+              this.head = newNode;
+            } else {
+              let current = this.head;
+              while (current.next) {
+                current = current.next;
+              }
+              current.next = newNode;
+            }
+          }
+        }
+    
+        const list = new LinkedList();
+        list.add('meta');
+        list.add('instagram');
+        list.add('reels');`,
+      },
+    },
+    {
+      group: "6",
+      title: "Aplicación Práctica de una Lista Enlazada",
+      description: "Aplica la clase LinkedList a un escenario del mundo real.",
       isCode: true,
       question: {
         questionText:
-          "Escribe el código JavaScript para crear una lista enlazada con los siguientes valores: 'meta', 'instagram', 'reels'.",
+          "Escribe el código para crear una lista enlazada con los departamentos de la empresa Google y recórrela.",
+      },
+    },
+    {
+      group: "6",
+      title: "Recorriendo una Lista Enlazada",
+      description:
+        "Implementa un método para recorrer una lista enlazada y devolver el último elemento.",
+      isCode: true,
+      question: {
+        questionText:
+          "Escribe un método en la clase LinkedList que recorra la lista y devuelva el último elemento.",
+      },
+    },
+    {
+      group: "6",
+      title: "Implementación de la Clase Lista Enlazada",
+      description: "Implementa las clases LinkedList y ListItem en JavaScript.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "¿Qué método usarías para agregar un nuevo elemento al final de una lista enlazada?",
+        options: ["addAtIndex()", "append()", "insert()", "push()", "create()"],
+        answer: "append()",
+      },
+    },
+    {
+      group: "6",
+      title: "Invertir una Lista Enlazada",
+      description: "Invierte la dirección de una lista enlazada.",
+      isMultipleChoice: true,
+      question: {
+        questionText:
+          "¿Cuál es la complejidad temporal de invertir una lista enlazada?",
+        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)", "O(n log n)", "O(2^n)"],
+        answer: "O(n)",
       },
     },
     {
@@ -4928,22 +5033,22 @@ console.log(arr);
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para implementar correctamente un algoritmo de búsqueda en profundidad usando recursión.",
+          "Ordena los pasos arrastrando y soltando para implementar correctamente un algoritmo de búsqueda en profundidad usando recursión.",
         options: [
-          "Comenzar en el nodo raíz",
-          "Marcar el nodo actual como visitado",
-          "Procesar el nodo (por ejemplo, imprimir o almacenar su valor)",
-          "Llamar recursivamente a la función DFS en cada vecino no visitado",
-          "Retroceder una vez que todos los vecinos hayan sido visitados",
-          "Repetir hasta que todos los nodos hayan sido visitados",
+          "Comienza en el nodo raíz",
+          "Marca el nodo actual como visitado",
+          "Procesa el nodo (por ejemplo, imprime o almacena su valor)",
+          "Llama recursivamente a la función DFS en cada vecino no visitado",
+          "Retrocede una vez que todos los vecinos hayan sido visitados",
+          "Repite hasta que todos los nodos hayan sido visitados",
         ],
         answer: [
-          "Comenzar en el nodo raíz",
-          "Marcar el nodo actual como visitado",
-          "Procesar el nodo (por ejemplo, imprimir o almacenar su valor)",
-          "Llamar recursivamente a la función DFS en cada vecino no visitado",
-          "Retroceder una vez que todos los vecinos hayan sido visitados",
-          "Repetir hasta que todos los nodos hayan sido visitados",
+          "Comienza en el nodo raíz",
+          "Marca el nodo actual como visitado",
+          "Procesa el nodo (por ejemplo, imprime o almacena su valor)",
+          "Llama recursivamente a la función DFS en cada vecino no visitado",
+          "Retrocede una vez que todos los vecinos hayan sido visitados",
+          "Repite hasta que todos los nodos hayan sido visitados",
         ],
       },
     },
@@ -4955,106 +5060,66 @@ console.log(arr);
       isCode: true,
       question: {
         questionText:
-          "Escribe el código JavaScript para crear la siguiente estructura de árbol con las organizaciones de Alphabet y Meta.",
+          "Escribe el código en JavaScript para crear la siguiente estructura de árbol con 3 niveles de profundidad, con las empresas Alphabet y Meta.",
       },
     },
     {
       group: "6",
-      title: "Recorriendo una Lista Enlazada",
+      title: "Entendiendo la Búsqueda en Profundidad y en Anchura",
       description:
-        "Implementa un método para recorrer una lista enlazada y devolver el último elemento.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe un método en la clase ListaEnlazada que recorra la lista y devuelva el último elemento.",
-      },
-    },
-    {
-      group: "6",
-      title: "Revirtiendo una Lista Enlazada",
-      description: "Revierte la dirección de una lista enlazada.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Cuál es la complejidad de tiempo de revertir una lista enlazada?",
-        options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"],
-        answer: "O(n)",
-      },
-    },
-    {
-      group: "6",
-      title: "Entendiendo la Búsqueda en Profundidad y la Búsqueda en Amplitud",
-      description:
-        "Aprende las diferencias entre los algoritmos de búsqueda en profundidad y búsqueda en amplitud.",
+        "Aprende las diferencias entre los algoritmos de búsqueda en profundidad y en anchura.",
       isText: true,
       question: {
         questionText:
-          "Explica la diferencia entre los algoritmos de búsqueda en profundidad y búsqueda en amplitud.",
+          "Explica la diferencia entre los algoritmos de búsqueda en profundidad y en anchura.",
       },
     },
     {
       group: "6",
-      title: "Aplicación de la Búsqueda en Profundidad",
-      description: "Aplica la búsqueda en profundidad a un ejemplo práctico.",
-      isSelectOrder: true,
+      title: "Implementando Búsqueda en Profundidad con Recursión",
+      description:
+        "Completa la implementación de una búsqueda en profundidad (DFS) usando recursión para recorrer un árbol binario.",
+      isCodeCompletion: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para implementar la búsqueda en profundidad en un árbol binario.",
+          "¿Cuál de los siguientes fragmentos de código implementa correctamente DFS usando recursión en un árbol binario en JavaScript?",
         options: [
-          "Comenzar en el nodo raíz",
-          "Comprobar si el nodo actual es nulo",
-          "Llamar recursivamente a DFS en el hijo izquierdo",
-          "Procesar el nodo actual (por ejemplo, imprimir el valor)",
-          "Llamar recursivamente a DFS en el hijo derecho",
-          "Retroceder al nodo padre si es necesario",
-          "Procesar todos los nodos hasta que todos los hijos hayan sido visitados",
-          "Continuar hasta que todo el árbol haya sido recorrido",
+          // Opción correcta de DFS con recursión (recorrido preorden)
         ],
-        answer: [
-          "Comenzar en el nodo raíz",
-          "Comprobar si el nodo actual es nulo",
-          "Llamar recursivamente a DFS en el hijo izquierdo",
-          "Procesar el nodo actual (por ejemplo, imprimir el valor)",
-          "Llamar recursivamente a DFS en el hijo derecho",
-          "Retroceder al nodo padre si es necesario",
-          "Procesar todos los nodos hasta que todos los hijos hayan sido visitados",
-          "Continuar hasta que todo el árbol haya sido recorrido",
-        ],
+        answer: `class TreeNode {
+          constructor(value) {
+            this.value = value;
+            this.left = null;
+            this.right = null;
+          }
+        }
+    
+        function dfs(node) {
+          if (node === null) {
+            return;
+          }
+          console.log(node.value);
+          dfs(node.left);
+          dfs(node.right);
+        }
+    
+        const root = new TreeNode(1);
+        root.left = new TreeNode(2);
+        root.right = new TreeNode(3);
+        root.left.left = new TreeNode(4);
+        root.left.right = new TreeNode(5);
+        dfs(root);`,
       },
     },
     {
       group: "6",
       title: "Optimización de Algoritmos",
       description:
-        "Explora maneras de optimizar algoritmos para mejorar su rendimiento.",
+        "Explora formas de optimizar algoritmos para un mejor rendimiento.",
       isCode: true,
       question: {
         questionText:
-          "Escribe una versión optimizada del algoritmo de ordenamiento burbuja en JavaScript.",
-      },
-    },
-    {
-      group: "6",
-      title: "Implementación de la Clase Lista Enlazada",
-      description:
-        "Implementa las clases ListaEnlazada y ElementoLista en JavaScript.",
-      isMultipleChoice: true,
-      question: {
-        questionText:
-          "¿Qué método utilizarías para añadir un nuevo elemento al final de una lista enlazada?",
-        options: ["addAtIndex()", "append()", "insert()", "push()"],
-        answer: "append()",
-      },
-    },
-    {
-      group: "6",
-      title: "Aplicación Práctica de la Lista Enlazada",
-      description:
-        "Aplica la clase ListaEnlazada a un escenario del mundo real.",
-      isCode: true,
-      question: {
-        questionText:
-          "Escribe el código para crear una lista enlazada de departamentos de la empresa y recórrela.",
+          "Escribe una versión optimizada del algoritmo de ordenamiento de burbuja en JavaScript sin usar recursión.",
       },
     },
     {
@@ -5069,42 +5134,53 @@ console.log(arr);
     },
     {
       group: "6",
-      title: "Implementando Backtracking",
+      title: "Implementando Algoritmo de Retroceso",
       description:
-        "Implementa un algoritmo de backtracking para resolver un problema.",
+        "Implementa un algoritmo de retroceso para resolver un problema.",
       isSelectOrder: true,
       question: {
         questionText:
-          "Organiza los pasos con arrastrar y soltar para implementar backtracking para el problema de las N-Reinas.",
+          "Ordena los pasos arrastrando y soltando para implementar retroceso para un problema de N-Reinas en un tablero de 4x4.",
         options: [
-          "Comenzar con un tablero vacío",
-          "Colocar una reina en la fila actual",
-          "Comprobar si es seguro colocar la reina",
-          "Si es seguro, pasar a la siguiente fila",
-          "Si no es seguro, intentar la siguiente columna en la fila actual",
-          "Si todas las columnas son inseguras, retroceder a la fila anterior",
-          "Si el tablero está completamente lleno con colocaciones seguras, devolver la solución",
-          "Si la fila anterior no tiene columnas seguras, retroceder más",
-          "Continuar este proceso hasta encontrar todas las posibles soluciones",
+          "Comienza con un tablero vacío",
+          "Coloca una reina en la fila actual",
+          "Verifica si es seguro colocar la reina",
+          "Si es seguro, pasa a la siguiente fila",
+          "Si no es seguro, intenta la siguiente columna en la fila actual",
+          "Si todas las columnas son inseguras, retrocede a la fila anterior",
+          "Si la fila anterior no tiene columnas seguras, retrocede más",
+          "Si el tablero está lleno de colocaciones seguras, devuelve la solución",
+          "Continúa este proceso hasta encontrar todas las soluciones posibles",
         ],
         answer: [
-          "Comenzar con un tablero vacío",
-          "Colocar una reina en la fila actual",
-          "Comprobar si es seguro colocar la reina",
-          "Si es seguro, pasar a la siguiente fila",
-          "Si no es seguro, intentar la siguiente columna en la fila actual",
-          "Si todas las columnas son inseguras, retroceder a la fila anterior",
-          "Si la fila anterior no tiene columnas seguras, retroceder más",
-          "Si el tablero está completamente lleno con colocaciones seguras, devolver la solución",
-          "Continuar este proceso hasta encontrar todas las posibles soluciones",
+          "Comienza con un tablero vacío",
+          "Coloca una reina en la fila actual",
+          "Verifica si es seguro colocar la reina",
+          "Si es seguro, pasa a la siguiente fila",
+          "Si no es seguro, intenta la siguiente columna en la fila actual",
+          "Si todas las columnas son inseguras, retrocede a la fila anterior",
+          "Si la fila anterior no tiene columnas seguras, retrocede más",
+          "Si el tablero está lleno de colocaciones seguras, devuelve la solución",
+          "Continúa este proceso hasta encontrar todas las soluciones posibles",
         ],
       },
     },
     {
+      group: "6",
+      title: "Implementando Retroceso para N-Reinas de 4x4",
+      description:
+        "Implementa un algoritmo de retroceso para resolver el problema de N-Reinas en un tablero de 4x4.",
+      isCode: true,
+      question: {
+        questionText:
+          "Escribe el código para implementar retroceso para resolver el problema de N-Reinas de 4x4 en JavaScript.",
+      },
+    },
+    {
       groupReference: "6",
-      title: "Revisión con Conversación AI",
+      title: "Revisión con Conversación de IA",
       isConversationReview: true,
-      description: "Revisa los temas que has respondido.",
+      description: "Revisa los temas que has contestado.",
       question: {
         questionText:
           "Hablemos sobre las preguntas en las que hemos trabajado hasta ahora.",

@@ -64,6 +64,17 @@ export const incrementUserStep = async (npub) => {
   }
 };
 
+export const incrementToFinalAward = async (npub) => {
+  const userDoc = doc(database, "users", npub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (userSnapshot.exists()) {
+    await updateDoc(userDoc, {
+      step: "award",
+    });
+  }
+};
+
 export const getUserStep = async (npub) => {
   const userDoc = doc(database, "users", npub);
   const userSnapshot = await getDoc(userDoc);

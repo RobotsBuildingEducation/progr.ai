@@ -49,6 +49,7 @@ import {
   createUser,
   getUserData,
   getUserStep,
+  incrementToFinalAward,
   incrementUserStep,
   updateUserData,
 } from "./utility/nosql";
@@ -113,7 +114,7 @@ const applySymbolMappings = (text) => {
   return modifiedText;
 };
 
-const AwardScreen = () => {
+const AwardScreen = (userLanguage) => {
   const [documentIds, setDocumentIds] = useState([]); // State to store document IDs
 
   const navigate = useNavigate();
@@ -163,6 +164,9 @@ const AwardScreen = () => {
     saveCompletionData();
   }, []);
 
+  console.log("translation", translation);
+  console.log("language", userLanguage);
+  console.log("x", translation[userLanguage.userLanguage]["badBrowser.header"]);
   return (
     <Box
       textAlign="center"
@@ -196,26 +200,29 @@ const AwardScreen = () => {
         }}
       >
         <Text fontSize="2xl" fontWeight="bold">
-          Congratulations!
+          {translation[userLanguage.userLanguage]["congratulations"]}
         </Text>
         <Text fontSize="medium">
-          You have completed the quiz. You should be proud because most people
-          don't get this far. Well done!
+          {translation[userLanguage.userLanguage]["congrats.message"]}
         </Text>
         <br />
-        <Text fontSize={"sm"}>Connect with everyone that has finished</Text>
+        <Text fontSize={"sm"}>
+          {translation[userLanguage.userLanguage]["congrats.connect"]}
+        </Text>
         <br />
         <ul style={{ listStyleType: "none", padding: 0 }}>
           {documentIds.length > 0 ? (
             documentIds.map((id) => (
               <li key={id}>
-                <a href={`https://nostter.app/${id}`}>
-                  https://nostter.app/{id.substr(0, 8)}
+                <a href={`https://primal.net/p/${id}`} target="_blank">
+                  https://primal.net/p/{id.substr(0, 8)}
                 </a>
               </li>
             ))
           ) : (
-            <Text fontSize="sm">Loading...</Text>
+            <Text fontSize="sm">
+              {translation[userLanguage.userLanguage]["loading"]}
+            </Text>
           )}
         </ul>
       </div>
@@ -1298,6 +1305,8 @@ const Step = ({
   const handleNextClick = async () => {
     console.log("currentStep...", currentStep);
     if (currentStep >= steps[userLanguage].length - 1) {
+      const npub = localStorage.getItem("local_npub");
+      await incrementToFinalAward(npub);
       navigate("/award");
     } else {
       setIsPostingWithNostr(true);
@@ -1437,12 +1446,31 @@ const Step = ({
         />
       </VStack>
       <Text fontSize="xl">
-        {currentStep}. {step.title}
+        <b>
+          {currentStep}. {step.title}
+        </b>
       </Text>
       {step.question && (
         <Text
-          style={{ width: "100%", maxWidth: 400, width: "fit-content" }}
+          mt={"-2"}
+          style={{
+            width: "100%",
+            maxWidth: 400,
+            width: "fit-content",
+            color: "gray",
+          }}
           fontSize="sm"
+          mb={3}
+          // textAlign={"left"}
+        >
+          <span style={{ textDecoration: "none" }}>{step.description}</span>
+        </Text>
+      )}
+
+      {step.question && (
+        <Text
+          style={{ width: "100%", maxWidth: 400, width: "fit-content" }}
+          fontSize="medium"
           textAlign={"left"}
         >
           {step.question.questionText}
@@ -2107,6 +2135,8 @@ function App() {
         }
 
         if (location.pathname === "/about") {
+        } else if (step === "award") {
+          navigate("/award");
         } else {
           navigate(`/q/${step}`);
         }
@@ -2120,10 +2150,7 @@ function App() {
       setLoading(false);
     };
 
-    if (window.location.pathname === "/award") {
-    } else {
-      initializeApp();
-    }
+    initializeApp();
   }, [navigate]);
 
   if (loading) {
@@ -2205,7 +2232,10 @@ function App() {
               }
             />
           ))}
-        <Route path="/award" element={<AwardScreen />} />
+        <Route
+          path="/award"
+          element={<AwardScreen userLanguage={userLanguage} />}
+        />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route
           path="/about"

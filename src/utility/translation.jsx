@@ -448,6 +448,10 @@ export let translation = {
     noTranscriptFound: "No older transcripts awards were found.",
     chapter: "Chapter",
     tutorial: "Tutorial",
+    congratulations: "Congratulations!",
+    "congrats.message":
+      "You have completed the quiz. You should be proud because most people don't get this far. You are genuinely exceptional. Well done!",
+    "congrats.connect": "Connect with everyone that has finished",
   },
   es: {
     "nostrContent.answeredQuestion.1": "Acabo de completar la pregunta",
@@ -897,5 +901,9 @@ export let translation = {
     yourID: "Tu ID público: ",
     noTranscriptFound:
       "No se encontraron premios de transcripciones anteriores.",
+    congratulations: "¡Felicidades!",
+    "congrats.message":
+      "Has completado el cuestionario. Deberías estar orgulloso porque la mayoría de las personas no llegan tan lejos. Eres genuinamente excepcional. ¡Bien hecho!",
+    "congrats.connect": "Conéctate con todos los que han terminado",
   },
 };
