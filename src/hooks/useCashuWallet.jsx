@@ -22,10 +22,21 @@ export const useProofStorage = () => {
   }, []);
 
   useEffect(() => {
-    if (!proofs) return;
+    console.log("========================================================");
+    console.log("the proofs have changed", proofs);
+    if (!proofs) {
+      console.log("no proofs....");
+      console.log("========================================================");
+      return;
+    }
     localStorage.setItem("proofs", JSON.stringify(proofs));
     const newBalance = proofs.reduce((total, proof) => total + proof.amount, 0);
     localStorage.setItem("balance", newBalance);
+
+    console.log("new balance", newBalance);
+
+    console.log("========================================================");
+
     setBalance(newBalance);
   }, [proofs]);
 
@@ -42,9 +53,11 @@ export const useProofStorage = () => {
 
   const getProofsByAmount = (amount, keysetId = undefined) => {
     const result = [];
+    let proofSet = proofs || JSON.parse(localStorage.getItem("proofs"));
     let sum = 0;
 
-    for (const proof of proofs) {
+    console.log("PROOFS XYZ ====", proofSet);
+    for (const proof of proofSet) {
       if (sum >= amount) break;
       if (keysetId && proof.id !== keysetId) continue;
       result.push(proof);
@@ -160,6 +173,7 @@ export const useCashuWallet = (isUnactivated, isModalOpen = null) => {
 
   const handleSwapSend = async () => {
     const swapAmount = parseInt(formData.swapAmount);
+    console.log("SWAP AMOUNT...", swapAmount);
     const proofs = getProofsByAmount(swapAmount);
 
     if (proofs.length === 0) {

@@ -120,7 +120,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       setLoadingMessage("createAccount.isCreatingProfilePicture");
       //Creating profile picture... 3/4
-      await setProfilePicture(
+      setProfilePicture(
         "https://primal.b-cdn.net/media-cache?s=o&a=1&u=https%3A%2F%2Fm.primal.net%2FKBLq.png",
         publicKey,
         encodedNsec
@@ -133,7 +133,7 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       setLoadingMessage("createAccount.isCreatingIntroPost");
       //Creating introduction post... 4/4
-      await postNostrContent(introductionPost, 1, publicKey, encodedNsec);
+      postNostrContent(introductionPost, 1, publicKey, encodedNsec);
 
       // await followUserOnNostr(
       //   "npub14vskcp90k6gwp6sxjs2jwwqpcmahg6wz3h5vzq0yn6crrsq0utts52axlt",

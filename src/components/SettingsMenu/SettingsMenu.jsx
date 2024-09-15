@@ -196,7 +196,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.transcript"]}
               </Button>
-              <Button
+              {/* <Button
                 p={6}
                 colorScheme="purple"
                 style={{ width: "100%" }}
@@ -204,7 +204,7 @@ const SettingsMenu = ({
               >
                 {translation[userLanguage]["settings.button.feedback"] ||
                   "Feedback"}
-              </Button>
+              </Button> */}
               {/* <Button
                 p={6}
                 style={{ width: "100%" }}

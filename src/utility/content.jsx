@@ -12,7 +12,7 @@ export const steps = {
     },
     {
       group: "tutorial",
-      title: "Understanding Codin g",
+      title: "Understanding Coding",
       description: "Grasp the basic concept of coding.",
       isMultipleChoice: true,
       // isMultipleAnswerChoice: true,

@@ -64,40 +64,40 @@ const CardFace = styled.div`
           font-size: 0.8em;
         `
       : theme === "nostr"
-      ? css`
-          background: linear-gradient(135deg, #ff6f91, #d783ff, #c471ed);
-          background-size: 200% 200%;
-          animation: ${subtleSwirl} 6s ease infinite;
-          color: #fff;
-          font-family: "IBM Plex Mono";
-          font-size: 1.2em;
-        `
-      : theme === "cashu"
-      ? css`
-          background: linear-gradient(135deg, #004e92, #2ec6f0);
-          background-size: 200% 200%;
-          animation: ${subtleSwirl} 6s ease infinite;
-          color: #fff;
-          font-family: "IBM Plex Mono";
-          font-size: 1.2em;
-        `
-      : theme === "BTC"
-      ? css`
-          background: linear-gradient(135deg, #f0f0f0, #d0d0d0, #b0b0b0);
-          background-size: 200% 200%;
-          animation: ${subtleSwirl} 6s ease infinite;
-          color: #333;
-          font-family: "IBM Plex Mono";
-          font-size: 1.2em;
-        `
-      : css`
-          background: linear-gradient(135deg, #f9a825, #ff7043, #ffb300);
-          background-size: 200% 200%;
-          animation: ${subtleSwirl} 6s ease infinite;
-          color: #fff;
-          font-family: "IBM Plex Mono";
-          font-size: 1.2em;
-        `}
+        ? css`
+            background: linear-gradient(135deg, #ff6f91, #d783ff, #c471ed);
+            background-size: 200% 200%;
+            animation: ${subtleSwirl} 6s ease infinite;
+            color: #fff;
+            font-family: "IBM Plex Mono";
+            font-size: 1.2em;
+          `
+        : theme === "cashu"
+          ? css`
+              background: linear-gradient(135deg, #004e92, #2ec6f0);
+              background-size: 200% 200%;
+              animation: ${subtleSwirl} 6s ease infinite;
+              color: #fff;
+              font-family: "IBM Plex Mono";
+              font-size: 1.2em;
+            `
+          : theme === "BTC"
+            ? css`
+                background: linear-gradient(135deg, #f0f0f0, #d0d0d0, #b0b0b0);
+                background-size: 200% 200%;
+                animation: ${subtleSwirl} 6s ease infinite;
+                color: #333;
+                font-family: "IBM Plex Mono";
+                font-size: 1.2em;
+              `
+            : css`
+                background: linear-gradient(135deg, #f9a825, #ff7043, #ffb300);
+                background-size: 200% 200%;
+                animation: ${subtleSwirl} 6s ease infinite;
+                color: #fff;
+                font-family: "IBM Plex Mono";
+                font-size: 1.2em;
+              `}
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -142,14 +142,14 @@ const CopyButton = styled.button`
     copied
       ? "gold"
       : theme === "web5"
-      ? "cyan"
-      : theme === "nostr"
-      ? "#ff42b7"
-      : theme === "cashu"
-      ? "#00bfff"
-      : theme === "BTC"
-      ? "#333"
-      : "#ffb300"};
+        ? "cyan"
+        : theme === "nostr"
+          ? "#ff42b7"
+          : theme === "cashu"
+            ? "#00bfff"
+            : theme === "BTC"
+              ? "#333"
+              : "#ffb300"};
   cursor: pointer;
   font-family: "Bungee";
   animation: ${subtleSwirl} 6s ease infinite;
@@ -179,7 +179,7 @@ export const IdentityCard = ({
     let num = realValue || number;
     if (realValue && theme === "cashu") {
       window
-        .open(`https://boardwalkcash.com/wallet?token=${realValue}`, "_blank")
+        .open(`https://wallet.cashu.me/?token=${realValue}`, "_blank")
         .focus();
     } else {
       if (theme === "web5") num = localStorage.getItem("uniqueId");
@@ -299,14 +299,14 @@ export const IdentityCard = ({
                   copied
                     ? "gold"
                     : theme === "web5"
-                    ? "cyan"
-                    : theme === "nostr"
-                    ? "#ffdef3"
-                    : theme === "cashu"
-                    ? "#00bfff"
-                    : theme === "BTC"
-                    ? "#333"
-                    : "#ffb300"
+                      ? "cyan"
+                      : theme === "nostr"
+                        ? "#ffdef3"
+                        : theme === "cashu"
+                          ? "#00bfff"
+                          : theme === "BTC"
+                            ? "#333"
+                            : "#ffb300"
                 }
               />
             </CopyButton>
@@ -332,12 +332,12 @@ export const IdentityCard = ({
                     theme === "web5"
                       ? "black"
                       : theme === "nostr"
-                      ? "#ff42b7"
-                      : theme === "cashu"
-                      ? "#004e92"
-                      : theme === "BTC"
-                      ? "#d0d0d0"
-                      : "#ffb300",
+                        ? "#ff42b7"
+                        : theme === "cashu"
+                          ? "#004e92"
+                          : theme === "BTC"
+                            ? "#d0d0d0"
+                            : "#ffb300",
                   borderRadius: "5px",
                   display: "flex",
                   alignItems: "center",
@@ -360,10 +360,10 @@ export const IdentityCard = ({
             {theme === "web5"
               ? web5Content
               : theme === "BTC"
-              ? bitcoinContent
-              : theme === "cashu"
-              ? cashuContent
-              : nostrContent}
+                ? bitcoinContent
+                : theme === "cashu"
+                  ? cashuContent
+                  : nostrContent}
             <br />
             <button onMouseDown={() => setIsFlipped(false)}>Back</button>
             <br />

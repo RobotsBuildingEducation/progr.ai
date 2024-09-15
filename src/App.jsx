@@ -88,6 +88,7 @@ import { DataTags } from "./elements/DataTag";
 import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
+import useCashuStore from "./useCashuStore";
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -1004,7 +1005,7 @@ const Step = ({
   const [startTime, setStartTime] = useState(null);
   const [endTime, setEndTime] = useState(null);
   const [interval, setInterval] = useState(0);
-  const { cashTap } = useCashuWallet(true);
+  const { cashTap } = useCashuStore();
   const [grade, setGrade] = useState("");
 
   const { resetMessages, messages, submitPrompt } = useChatCompletion({
@@ -1066,6 +1067,8 @@ const Step = ({
 
   useEffect(() => {
     if (isCorrect) {
+      cashTap();
+
       postNostrContent(
         `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://program-ai.app \n\n${step.question?.questionText} #LearnWithNostr https://m.primal.net/KBLq.png`
       );
@@ -1136,9 +1139,9 @@ const Step = ({
           content: `The user is answering the following question "${
             step.question.questionText
           }". The answer to the question is an array [${step.question.answer}]
-        and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction.  Your feedback will include a grade ranging from 0-100 based on the quality of the answer -  however if the answer is correct just reward a 100. The user is speaking ${
-          userLanguage === "es" ? "spanish" : "english"
-        }.`,
+          and the user provided the following answer array [${answer}]. Is this answer correct?Determine by comparing the two arrays rather than observing your opinion over the correctness of an answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string  }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction.  Your feedback will include a grade ranging from 0-100 based on the quality of the answer -  however if the answer is correct just reward a 100. The user is speaking ${
+            userLanguage === "es" ? "spanish" : "english"
+          }.`,
           role: "user",
         },
       ]);
@@ -1217,7 +1220,6 @@ const Step = ({
         },
       ]);
     }
-    cashTap();
 
     if (isCorrect) {
       setInputValue("");
@@ -1880,7 +1882,7 @@ const Home = ({
             </VStack>
 
             {/* 
-            <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div> */}
+              <div>{isCreatingAccount ? <SunsetCanvas /> : null}</div> */}
             <Text fontSize="sm" maxWidth={"600px"}>
               {" "}
               <b>{translation[userLanguage]["createAccount.instructions"]} </b>
@@ -1970,8 +1972,8 @@ const Home = ({
             </Button>
 
             {/* <Button onMouseDown={authWithSigner} colorScheme="purple">
-              signin with extension
-            </Button> */}
+                signin with extension
+              </Button> */}
           </HStack>
         </VStack>
       )}

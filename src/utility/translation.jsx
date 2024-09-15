@@ -151,13 +151,25 @@ export let translation = {
       "That's it! You don't need to download the app through an app store because we're using open-source standards for Progressive Web Apps.",
     "about.about": (
       <div>
-        Going to keep things simple on the first version. The point of AI is to
-        save you time and energy. At the same time, real education is about
-        challenging yourself so that you can create real knowledge. There are
-        many things beyond coding taught on RO.B.E, ranging from the psychology
-        of self-esteem, to the development of startups distributed globally. You
-        are encouraged to imagine, think big and work hard in order to find
-        success here.
+        The point of AI is to save you time and energy. At the same time, real
+        education is about challenging yourself so that you can create real
+        knowledge. In short, you'll work through 100+ questions and it will
+        introduce you to building your ideas with software, learning computer
+        science and creating opportunities for yourself with good technology.
+        <br />
+        <br />
+        I also want to teach you quickly, effectively and in a similar fashion
+        to you having to pick up the skills on the job. At the end of the day, a
+        software entrepeneur needs to learn about business, engineering,
+        investing, marketing, sales, design and a number of other well-rounded
+        skills in order to be successful, which is what we try to prepare you
+        here with.
+        <br />
+        <br />
+        There are many things beyond coding taught on RO.B.E, ranging from the
+        psychology of self-esteem, to the development of startups distributed
+        globally. You are encouraged to imagine, think big and work hard in
+        order to find success here.
         <br />
         <br /> Program AI App is a service created by Robots Building Education,
         a platform founded on researching technology the following three
@@ -179,15 +191,17 @@ export let translation = {
         <br />
         The following are all the features and benefits you'll find across the
         platform which are typically free. As of now I just ask folks to
-        optionally sign up for $1 to stay connected, support the work and to
-        lock in benefits and features at a very low price.
+        optionally sign up for $20 to access more content around
+        entrepreneurship, finance, and engineering to the work and to create a
+        stronger network.
         <br />
         <br />
-        Why so low? Because I love education technology and I want to work on
-        this platform until you feel it's worth supporting. I also believe that
-        social media helps me reach so many people that keeping it low price is
-        only fair. Eventually the price will have to raise for new customers,
-        but not right now. So sign up and help me grow this well!
+        Why so low for so much? I love education technology and I want to work
+        on this platform until you feel it's worth supporting. I also believe
+        that social media helps me reach so many people that keeping it low
+        price is only fair. I would eventually like to explore teaching folks so
+        we can create a pipeline to access more capital from folks eager to
+        invest in diverse technology businesses.
         <br />
         <br />
         <a
@@ -599,41 +613,64 @@ export let translation = {
       "¡Eso es todo! No necesitas descargar la aplicación a través de una tienda de aplicaciones porque estamos utilizando estándares de código abierto para aplicaciones web progresivas.",
     "about.about": (
       <div>
-        Program AI App es un servicio creado por Robots Building Education, una
-        plataforma fundada en la investigación de tecnología con las siguientes
-        tres prioridades:
-        <br /> <br />
-        1. Cada estudiante debería tener acceso a muchos buenos profesores.
+        El propósito de la IA es ahorrarte tiempo y energía. Al mismo tiempo, la
+        educación real consiste en desafiarte a ti mismo para que puedas crear
+        conocimiento verdadero. En resumen, trabajarás a través de más de 100
+        preguntas y te introducirán a la construcción de tus ideas con software,
+        aprendiendo ciencias de la computación y creando oportunidades para ti
+        mismo con buena tecnología.
+        <br />
+        <br />
+        También quiero enseñarte de manera rápida, efectiva y similar a cómo
+        tendrías que adquirir habilidades en el trabajo. Al final del día, un
+        emprendedor de software necesita aprender sobre negocios, ingeniería,
+        inversión, marketing, ventas, diseño y una serie de otras habilidades
+        completas para tener éxito, que es lo que intentamos prepararte aquí.
+        <br />
+        <br />
+        En RO.B.E. se enseñan muchas cosas más allá de la codificación, que van
+        desde la psicología de la autoestima hasta el desarrollo de startups
+        distribuidas globalmente. Se te anima a imaginar, pensar en grande y
+        trabajar duro para encontrar el éxito aquí.
+        <br />
+        <br />
+        El Programa AI App es un servicio creado por Robots Building Education,
+        una plataforma fundada en la investigación de tecnología con las
+        siguientes tres prioridades:
+        <br />
+        <br />
+        1. Todo estudiante debería tener acceso a muchos buenos maestros.
         <br />
         2. La educación en línea debería ser la mejor educación.
         <br />
-        3. El aprendizaje crea becas.
+        3. Aprender crea becas.
         <br />
         <br />
-        Esto se logra a través de la disciplina de interacción
-        humano-computadora, que investiga cómo hacer que la tecnología sea más
-        útil y significativa. Yo personalmente reviso todo lo hecho con IA para
-        agregar un toque humano y no ofrecer material generado de manera barata,
+        Esto se logra con la disciplina de la interacción humano-computadora,
+        que investiga cómo hacer que la tecnología sea más útil y significativa.
+        Yo personalmente reviso cualquier cosa hecha con IA para añadirle un
+        toque humano, de modo que no ofrezca material generado de manera barata,
         sino una entrega genuina de educación de buena calidad.
         <br />
         <br />
-        Las siguientes son todas las características y beneficios que
-        encontrarás en la plataforma, los cuales generalmente son gratuitos.
-        Hasta ahora, solo pido a la gente que se suscriba opcionalmente por $1
-        para mantenerse conectados, apoyar el trabajo y asegurar beneficios y
-        características a un precio muy bajo.
+        A continuación se encuentran todas las características y beneficios que
+        encontrarás en la plataforma, que típicamente son gratuitos. Por ahora,
+        solo pido a las personas que opcionalmente se inscriban por $20 para
+        acceder a más contenido relacionado con el emprendimiento, finanzas e
+        ingeniería, y para crear una red más fuerte.
         <br />
         <br />
-        ¿Por qué tan bajo? Porque amo la tecnología educativa y quiero trabajar
-        en esta plataforma hasta que sientas que vale la pena apoyarla. También
-        creo que las redes sociales me ayudan a llegar a tantas personas que
-        mantener un precio bajo es solo justo. Eventualmente el precio tendrá
-        que subir para los nuevos clientes, pero no ahora. Así que regístrate y
-        ayúdame a crecer esto bien.
+        ¿Por qué tan bajo precio por tanto? Me encanta la tecnología educativa y
+        quiero trabajar en esta plataforma hasta que sientas que vale la pena
+        apoyarla. También creo que las redes sociales me ayudan a llegar a
+        muchas personas, por lo que mantener el precio bajo es lo justo.
+        Eventualmente me gustaría explorar la enseñanza para que podamos crear
+        un canal de acceso a más capital de personas deseosas de invertir en
+        negocios tecnológicos diversos.
         <br />
         <br />
         <a
-          style={{ textDecoration: "underline" }}
+          style="text-decoration: underline;"
           href="https://patreon.com/robotsbuildingeducation"
           target="_blank"
         >

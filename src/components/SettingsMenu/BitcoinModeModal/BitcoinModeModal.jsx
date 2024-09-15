@@ -18,13 +18,25 @@ import { useCashuWallet } from "../../../hooks/useCashuWallet";
 import { IdentityCard } from "../../../elements/IdentityCard";
 import { translation } from "../../../utility/translation";
 import { SunsetCanvas } from "../../../elements/SunsetCanvas";
+import useCashuStore from "../../../useCashuStore";
 
 const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
   const [isModalActive, setisModalActive] = useState(false);
   const [isRecharging, setIsRecharging] = useState(false);
   const toast = useToast();
-  const { balance, handleSwapSend, recharge, handleMint, lightningAddress } =
-    useCashuWallet(false, isModalActive);
+  const {
+    formData,
+    setFormData,
+    wallet,
+    balance,
+    setMint,
+    mintTokens,
+    handleSwapSend,
+    recharge,
+    cashTap,
+    lightningAddress,
+    loadWallet,
+  } = useCashuStore();
 
   useEffect(() => {
     setisModalActive(isOpen);
@@ -36,7 +48,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
 
   useEffect(() => {
     setisModalActive(true);
-    handleMint();
+    loadWallet(); // Load the wallet from localStorage on component mount
   }, []);
 
   useEffect(() => {
@@ -49,7 +61,7 @@ const BitcoinModeModal = ({ isOpen, onClose, userLanguage }) => {
     console.log("address has changed", localStorage.getItem("address"));
   }, [localStorage.getItem("address")]);
 
-  const cashTap = () => {
+  const cashTapx = () => {
     /**
       returns a cashu token, which you process based on your needs
         cashuToken = await handleSwapSend();
