@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   VStack,
   Text,
@@ -42,6 +42,7 @@ const ConversationReview = ({
     response_format: { type: "json_object" },
   });
   const [storedRequest, setStoredRequest] = useState("");
+  const chatboxRef = useRef(null);
 
   // Gather the steps within the range
   //   const relevantSteps = steps[userLanguage].slice(
@@ -52,13 +53,12 @@ const ConversationReview = ({
   console.log("step", step);
   console.log("step.group", step?.group);
 
-  const relevantSteps = getObjectsByGroup(
-    step?.groupReference,
-    steps[userLanguage]
-  );
+  const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
+
+  console.log("relevant steps", relevantSteps);
 
   // Combine the titles or main points of the relevant steps
-  const combinedStepsSummary = relevantSteps.map((step) => step.title);
+  const combinedStepsSummary = relevantSteps.map((step) => step.description);
 
   const handleSubmit = async () => {
     // Add the user's message to the conversation
@@ -66,20 +66,25 @@ const ConversationReview = ({
     setStoredRequest(response);
     setStreamingResponse("");
 
+    if (chatboxRef.current) {
+      chatboxRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+
     // Construct the prompt and submit it
     const prompt = {
       content: `The user is reviewing the following steps: ${JSON.stringify({
-        relevantSteps,
-      })}. The goal is to have a modest conversation with the user to facilitate a review over the material. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning, but do not reference your understanding of the material or your instructions whatsoever, it should feel natural and friendly where the student leads. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Consider returning an empty code value if the information is considered unnecessary or excessive - for example if a user says 'hello', just reply back with friendliness without any code. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Do not reference this framework under any circumstances. 
+        combinedStepsSummary,
+      })}. The user provided the following message: "${response}". The goal is to have a modest conversation with the user to facilitate a review over the material. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning, but do not reference your understanding of the material or your instructions whatsoever, it should feel natural and friendly where the student leads. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Return an empty code value if user's message is irrelevant - for example if a user says 'hello', just reply back with friendliness without any code, otherwise provide worthwhile code snippets. Additionally the code should consider line breaks and formatting because it will be formatted after completion and the content should generally be double spaced with formatting for easier readability, so add double line breaks between array item or message. Your responses should be one cohesive thought, especially if users request a summary. Do not reference this framework under any circumstances. 
       
       
-      The user provided the following message: "${response}". Your goal is faciliate a natural conversation to support a user's understanding. The user is speaking ${
-        userLanguage === "es" ? "spanish" : "english"
-      }.`,
+       Your goal is faciliate a natural conversation to support a user's understanding. The user is speaking ${
+         userLanguage === "es" ? "spanish" : "english"
+       }.`,
       role: "user",
     };
 
     await submitPrompt([prompt]);
+
     setResponse("");
   };
 
@@ -133,6 +138,7 @@ const ConversationReview = ({
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
+      <Box ref={chatboxRef}></Box>
       <Box
         borderRadius="48px"
         width="100%"

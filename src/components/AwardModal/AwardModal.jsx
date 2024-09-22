@@ -101,16 +101,16 @@ const AwardModal = ({ isOpen, onClose, step, userLanguage, isCorrect }) => {
           {translation[userLanguage]["modal.decentralizedTranscript.youEarned"]}
           <br />
           <Text fontSize={"large"} fontWeight={"bold"} mb={2}>
-            {translation[userLanguage][transcript[step.groupReference]?.name]}
+            {translation[userLanguage][transcript[step.group]?.name]}
           </Text>
           <a
             target="_blank"
             href={`https://badges.page/a/${
-              transcript[step.groupReference]?.["address"] || ""
+              transcript[step.group]?.["address"] || ""
             }`}
           >
             <img
-              src={transcript[step.groupReference]?.["imgSrc"]}
+              src={transcript[step.group]?.["imgSrc"]}
               width={150}
               style={{
                 borderRadius: "33%",

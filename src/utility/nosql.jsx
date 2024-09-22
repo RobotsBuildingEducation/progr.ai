@@ -45,6 +45,7 @@ export const createUser = async (npub, userName, language) => {
       name: userName,
       npub: npub,
       step: 0, // Initialize step count to 0
+      previousStep: 0,
       language: language,
     },
     { merge: true }
@@ -59,7 +60,20 @@ export const incrementUserStep = async (npub) => {
   if (userSnapshot.exists()) {
     const currentStep = userSnapshot.data().step || 1;
     await updateDoc(userDoc, {
+      previousStep: currentStep + 1,
       step: currentStep + 1,
+    });
+  }
+};
+
+export const incrementToSubscription = async (npub, previousStep) => {
+  const userDoc = doc(database, "users", npub);
+  const userSnapshot = await getDoc(userDoc);
+
+  if (userSnapshot.exists()) {
+    await updateDoc(userDoc, {
+      previousStep: previousStep,
+      step: "subscription",
     });
   }
 };
@@ -71,6 +85,7 @@ export const incrementToFinalAward = async (npub) => {
   if (userSnapshot.exists()) {
     await updateDoc(userDoc, {
       step: "award",
+      previousStep: "award",
     });
   }
 };

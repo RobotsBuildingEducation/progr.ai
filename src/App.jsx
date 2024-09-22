@@ -25,6 +25,11 @@ import {
   Icon,
   IconButton,
   Fade,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import MonacoEditor from "@monaco-editor/react";
 import ReactBash from "react-bash";
@@ -41,7 +46,7 @@ import {
 } from "react-router-dom";
 
 import { useChatCompletion } from "./hooks/useChatCompletion";
-import { SunsetCanvas } from "./elements/SunsetCanvas";
+import { SunsetCanvas, BigSunset } from "./elements/SunsetCanvas";
 import EducationalModal from "./components/LearnModal/EducationalModal";
 import SettingsMenu from "./components/SettingsMenu/SettingsMenu";
 import { useSharedNostr } from "./hooks/useNOSTR";
@@ -50,6 +55,7 @@ import {
   getUserData,
   getUserStep,
   incrementToFinalAward,
+  incrementToSubscription,
   incrementUserStep,
   updateUserData,
 } from "./utility/nosql";
@@ -62,8 +68,10 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
-import { database } from "./database/firebaseResources";
+import { database, analytics } from "./database/firebaseResources";
+import { logEvent } from "firebase/analytics";
 import { translation } from "./utility/translation";
 import { useCashuWallet } from "./hooks/useCashuWallet";
 import { Dashboard } from "./components/Dashboard/Dashboard";
@@ -89,6 +97,10 @@ import { transcript } from "./utility/transcript";
 import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
 import useCashuStore from "./useCashuStore";
+
+// logEvent(analytics, "page_view", {
+//   page_location: "https://program-ai.app/",
+// });
 
 const phraseToSymbolMap = {
   equals: "=",
@@ -388,18 +400,38 @@ export const VoiceInput = ({
     setGenerateResponse(true); // Set flag to generate response
   };
 
+  console.log("STEPxxx", step);
+  console.log("steps", steps);
   const handleGenerateResponse = async () => {
     try {
-      await submitPrompt([
-        {
-          content:
-            aiTranscript +
-            ` The JSON format should be { input: "${aiTranscript}", output: "your_answer" }. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
-              userLanguage === "en" ? "english" : "spanish"
-            }`,
-          role: "user",
-        },
-      ]);
+      if (step.isConversationReview) {
+        const relevantSteps = getObjectsByGroup(
+          step?.group,
+          steps[userLanguage]
+        );
+        console.log("relevant steps", relevantSteps);
+        await submitPrompt([
+          {
+            content:
+              aiTranscript +
+              `The JSON format should be { input: "${aiTranscript}", output: "your_answer" }. The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)}. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
+                userLanguage === "en" ? "english" : "spanish"
+              }`,
+            role: "user",
+          },
+        ]);
+      } else {
+        await submitPrompt([
+          {
+            content:
+              aiTranscript +
+              ` The JSON format should be { input: "${aiTranscript}", output: "your_answer" }. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
+                userLanguage === "en" ? "english" : "spanish"
+              }`,
+            role: "user",
+          },
+        ]);
+      }
     } catch (error) {
       console.error("Error fetching answer:", error);
     }
@@ -450,10 +482,7 @@ export const VoiceInput = ({
         },
       ]);
     } else {
-      const relevantSteps = getObjectsByGroup(
-        step?.groupReference,
-        steps[userLanguage]
-      );
+      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
       await submitEducationalPrompt([
         {
@@ -638,7 +667,9 @@ export const VoiceInput = ({
             onChange={(value) => onChange(value, resetMessages)}
             options={{
               fontSize: "10px",
-              wordWrap: "off",
+              wordWrap: "on", // Enables word wrap
+              // wordWrapColumn: 80, // Adjust the column for wrapping
+              wordWrapMinified: true, // Word wrap also for minified code
               scrollBeyondLastLine: false,
               automaticLayout: true,
               minimap: {
@@ -1073,7 +1104,7 @@ const Step = ({
         `${translation[userLanguage]["nostrContent.answeredQuestion.1"]} ${currentStep} ${translation[userLanguage]["nostrContent.answeredQuestion.2"]} ${grade}% ${translation[userLanguage]["nostrContent.answeredQuestion.3"]} https://program-ai.app \n\n${step.question?.questionText} #LearnWithNostr https://m.primal.net/KBLq.png`
       );
       if (step.isConversationReview) {
-        assignExistingBadgeToNpub(transcript[step.groupReference]["address"]);
+        assignExistingBadgeToNpub(transcript[step.group]["address"]);
 
         onAwardModalOpen();
       }
@@ -1116,10 +1147,7 @@ const Step = ({
     }
 
     if (step.isConversationReview) {
-      const relevantSteps = getObjectsByGroup(
-        step?.groupReference,
-        steps[userLanguage]
-      );
+      const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
       await submitPrompt([
         {
@@ -1180,7 +1208,7 @@ const Step = ({
             step.question.answer
           )} and the user submitted the following answer array ${JSON.stringify(
             answer
-          )}. Is this answer correct? Determine by comparing the defined answer and the submitted answer. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
+          )}. Is this answer correct? Determine by strictly comparing the defined answer and the submitted answer, they must be equivalent in array size and values under every circumstance. Do not allow for any leeway. Return the response using a json interface like { isCorrect: boolean, feedback: string, grade: string }. Do not include the answer or solution in your feedback but suggest or direct the user in the right direction. Your feedback will include a grade ranging from 0-100 based on the quality of the answer  -  however if isCorrect is true just reward a 100. The user is speaking ${
             userLanguage === "es" ? "spanish" : "english"
           }.`,
           role: "user",
@@ -1306,7 +1334,12 @@ const Step = ({
   // Navigate to the next step
   const handleNextClick = async () => {
     console.log("currentStep...", currentStep);
-    if (currentStep >= steps[userLanguage].length - 1) {
+    if (currentStep === 9) {
+      const npub = localStorage.getItem("local_npub");
+
+      await incrementToSubscription(npub, currentStep);
+      navigate("/subscription");
+    } else if (currentStep >= steps[userLanguage].length - 1) {
       const npub = localStorage.getItem("local_npub");
       await incrementToFinalAward(npub);
       navigate("/award");
@@ -1759,7 +1792,14 @@ const Home = ({
       currentTime, // Start time
       endTime // End time, 48 hours from start time
     );
+    console.log("run analytics");
+    // logEvent(analytics, "select_content", {
+    //   content_type: "button",
+    //   item_id: "account_created",
+    // });
+    console.log("end analytics");
     setIsSignedIn(true);
+
     setView("created");
     setIsCreatingAccount(false);
   };
@@ -1811,7 +1851,8 @@ const Home = ({
     if (view === "buttons" || view === "createAccount") {
       setIsSignedIn(false);
       const translateValue = localStorage.getItem("userLanguage");
-      localStorage.clear();
+      localStorage.removeItem("local_npub");
+      localStorage.removeItem("local_nsec");
       if (translateValue) {
         localStorage.setItem("userLanguage", translateValue);
       }
@@ -2024,6 +2065,21 @@ const Home = ({
                 )}
                 .
               </Text>
+              <Accordion allowToggle>
+                <AccordionItem>
+                  <AccordionButton p={4}>
+                    <Box flex="1" textAlign="left">
+                      {translation[userLanguage]["advice"]}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel pb={4}>
+                    <Text fontSize="sm" textAlign="left" maxWidth="600px" p={8}>
+                      {translation[userLanguage]["advice.content"]}
+                    </Text>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
             </Text>
           </PanRightComponent>
           <div
@@ -2081,6 +2137,98 @@ const Home = ({
   );
 };
 
+const PasscodePage = ({ isOldAccount, userLanguage }) => {
+  const [input, setInput] = useState("");
+  const [isValid, setIsValid] = useState(null);
+  const navigate = useNavigate();
+
+  const correctPasscode = import.meta.env.VITE_PATREON_PASSCODE;
+
+  const checkPasscode = async () => {
+    if (input === correctPasscode) {
+      console.log("we did it");
+      localStorage.setItem("passcode", input);
+
+      // Assuming you have the user's unique identifier stored in local storage
+      const userId = localStorage.getItem("local_npub"); // Replace with actual user ID if needed
+      const userDocRef = doc(database, "users", userId);
+      const userSnapshot = await getDoc(userDocRef);
+
+      if (userSnapshot.exists()) {
+        console.log("User document exists");
+        const userData = userSnapshot.data();
+        const userStep = isOldAccount ? userData.step : userData.previousStep; // Default to 0 if no previousStep
+
+        console.log("User step:", userStep);
+
+        // Navigate to the next step
+
+        // Update Firestore document with previousStep + 1
+        await updateDoc(userDocRef, {
+          step: isOldAccount ? userStep : userStep + 1,
+        });
+
+        navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
+        console.log("Updated user step to:", userStep + 1);
+      } else {
+        console.log("User document not found");
+      }
+    } else {
+      setIsValid(false);
+    }
+  };
+
+  useEffect(() => {
+    localStorage.setItem("passcode", input);
+    if (localStorage.getItem("passcode") === correctPasscode) {
+      checkPasscode(); // Auto-check if passcode is already stored
+    }
+  }, [input]);
+
+  return (
+    <Box
+      minHeight="90vh"
+      display="flex"
+      flexDirection={"column"}
+      alignItems={"center"}
+      justifyContent={"center"}
+    >
+      <div
+        style={{
+          marginLeft: "120px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <BigSunset />
+      </div>{" "}
+      <div style={{ marginTop: "-32px" }}>
+        <RandomCharacter />
+      </div>
+      <br />
+      <Text maxWidth="600px">
+        <div style={{ textAlign: "left" }}>
+          {translation[userLanguage]["passcode.instructions"]}
+
+          <br />
+
+          <Text fontSize={"smaller"}>
+            {" "}
+            {translation[userLanguage]["passcode.label"]}
+          </Text>
+          <input
+            style={{ border: "1px solid #cecece" }}
+            type="password"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+        </div>
+      </Text>
+    </Box>
+  );
+};
+
 function App() {
   const [view, setView] = useState("buttons");
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -2124,6 +2272,7 @@ function App() {
         auth(localStorage.getItem("local_nsec"));
         setIsSignedIn(true);
         const step = await getUserStep(npub); // Fetch the current step
+
         setCurrentStep(step);
 
         // Fetch user language preference
@@ -2137,6 +2286,13 @@ function App() {
         }
 
         if (location.pathname === "/about") {
+        } else if (
+          step === "subscription" ||
+          (step > 9 &&
+            localStorage.getItem("passcode") !==
+              import.meta.env.VITE_PATREON_PASSCODE)
+        ) {
+          navigate("/subscription");
         } else if (step === "award") {
           navigate("/award");
         } else {
@@ -2213,6 +2369,19 @@ function App() {
               auth={auth}
               view={view}
               setView={setView}
+            />
+          }
+        />
+        <Route
+          path="/subscription"
+          element={
+            <PasscodePage
+              userLanguage={userLanguage}
+              isOldAccount={
+                currentStep > 9 &&
+                localStorage.getItem("passcode") !==
+                  import.meta.env.VITE_PATREON_PASSCODE
+              }
             />
           }
         />

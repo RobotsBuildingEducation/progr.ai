@@ -17,13 +17,14 @@ import {
   extendTheme,
   useStyleConfig,
 } from "@chakra-ui/react";
-import { SunsetCanvas } from "../../elements/SunsetCanvas";
+import { BigSunset, SunsetCanvas } from "../../elements/SunsetCanvas";
 import Editor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs/components/prism-core";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 import { translation } from "../../utility/translation";
+import RandomCharacter from "../../elements/RandomCharacter";
 
 const EducationalModal = ({
   isOpen,
@@ -59,7 +60,12 @@ const EducationalModal = ({
         >
           <HStack>
             <div style={{ width: "fit-content" }}>
-              <SunsetCanvas />
+              {educationalMessages.length > 0 &&
+              !educationalContent.length > 0 ? (
+                <BigSunset />
+              ) : (
+                <RandomCharacter />
+              )}
             </div>
             &nbsp;
             <div style={{ color: "white" }}>

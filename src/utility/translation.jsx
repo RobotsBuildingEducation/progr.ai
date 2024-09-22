@@ -191,7 +191,7 @@ export let translation = {
         <br />
         The following are all the features and benefits you'll find across the
         platform which are typically free. As of now I just ask folks to
-        optionally sign up for $20 to access more content around
+        optionally sign up for $10 to access more content around
         entrepreneurship, finance, and engineering to the work and to create a
         stronger network.
         <br />
@@ -466,8 +466,118 @@ export let translation = {
     "congrats.message":
       "You have completed the quiz. You should be proud because most people don't get this far. You are genuinely exceptional. Well done!",
     "congrats.connect": "Connect with everyone that has finished",
+    advice: "My Advice",
+    "advice.content": (
+      <div>
+        This platform will help you learn fast and effectively, but it is also
+        designed to challenge you. Real education can be uncomfortable and you
+        have to embrace failure, mistakes and the improvement process. This
+        platform isn't designed to be like Tiktok or Duolingo, where the
+        material is handed to you in a way to maximize engagement, it's meant
+        for you to learn and grow using the power of AI. In short, doing things
+        the gritty way is often more enjoyable and meaningful. If you come
+        across something confusing or tough, work through it! You'll be grateful
+        you did.
+        <br />
+        <br />
+        This platform comes with a tutor called Rox that will provide
+        introductory video lectures that are handcrafted and animated to arm you
+        with knowledge before or after practicing the questions involved in each
+        chapter. Each lecture starts by working backwards, so that you can get
+        used to appreciating challenge-oriented learning.
+      </div>
+    ),
+    "passcode.instructions": (
+      <div>
+        Hey! You'll need to subscribe to the Robots Building Education Patreon
+        in order to access the rest of the experience.
+        <br />
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          Don't worry, it's super affordable, packed with{" "}
+          <b>
+            <i>tons</i>
+          </b>{" "}
+          of value and refund friendly. Feel welcome to share the passcode with
+          your friends or family! I made sure that it's worth every and you'll
+          get a great return on investment for your time, energy and money.
+          penny. Subscribing helps us keep the lights on and generate
+          scholarships with learning.
+        </div>
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
+          target="_blank"
+        >
+          Subscribe &amp; get the passcode
+        </a>
+      </div>
+    ),
+    "passcode.label": "Enter passcode",
   },
   es: {
+    "passcode.label": "Ingresa el código de acceso",
+
+    "passcode.instructions": (
+      <div>
+        ¡Hola! Necesitarás suscribirte al Patreon de Robots Building Education
+        para acceder al resto de la experiencia.
+        <br />
+        <br />
+        <div style={{ fontSize: "0.95rem" }}>
+          No te preocupes, es súper asequible, está lleno de{" "}
+          <b>
+            <i>muchísimo</i>
+          </b>{" "}
+          valor y es amigable con los reembolsos. ¡Siéntete libre de compartir
+          el código de acceso con tus amigos o familiares! Me aseguré de que
+          valga cada centavo, y obtendrás un gran retorno de inversión por tu
+          tiempo, energía y dinero. Suscribirse nos ayuda a mantener las luces
+          encendidas y a generar becas a través del aprendizaje.
+        </div>
+        <br />
+        <a
+          style={{
+            fontSize: "0.95rem",
+            textDecoration: "underline",
+            color: "#63b3ed",
+            fontWeight: "bold",
+          }}
+          href="https://www.patreon.com/posts/syllabus-getting-86153437?utm_medium=clipboard_copy&utm_source=copyLink&utm_campaign=postshare_creator&utm_content=join_link"
+          target="_blank"
+        >
+          Suscríbete y obtén el código de acceso
+        </a>
+      </div>
+    ),
+
+    "advice.content": (
+      <div>
+        Esta plataforma te ayudará a aprender rápida y eficazmente, pero también
+        está diseñada para desafiarte. La verdadera educación puede ser
+        incómoda, y debes aceptar el fracaso, los errores y el proceso de
+        mejora. Esta plataforma no está diseñada para ser como Tiktok o
+        Duolingo, donde el material se te entrega de una manera que maximiza la
+        interacción, sino que está pensada para que aprendas y crezcas usando el
+        poder de la IA. En resumen, hacer las cosas de manera rigurosa a menudo
+        es más gratificante y significativo. Si te encuentras con algo confuso o
+        difícil, ¡trabájalo! Estarás agradecido de haberlo hecho.
+        <br />
+        <br />
+        Esta plataforma viene con una tutora llamada Rox que te proporcionará
+        videoconferencias introductorias, hechas a mano y animadas, para
+        equiparte con conocimientos antes o después de practicar las preguntas
+        de cada capítulo. Cada conferencia comienza trabajando hacia atrás, para
+        que te acostumbres a apreciar el aprendizaje orientado a los desafíos.
+      </div>
+    ),
+    advice: "Mi Consejo",
     "nostrContent.answeredQuestion.1": "Acabo de completar la pregunta",
     "nostrContent.answeredQuestion.2": "con una calificación de",
     "nostrContent.answeredQuestion.3": "en",
@@ -655,7 +765,7 @@ export let translation = {
         <br />
         A continuación se encuentran todas las características y beneficios que
         encontrarás en la plataforma, que típicamente son gratuitos. Por ahora,
-        solo pido a las personas que opcionalmente se inscriban por $20 para
+        solo pido a las personas que opcionalmente se inscriban por $10 para
         acceder a más contenido relacionado con el emprendimiento, finanzas e
         ingeniería, y para crear una red más fuerte.
         <br />
@@ -670,7 +780,7 @@ export let translation = {
         <br />
         <br />
         <a
-          style="text-decoration: underline;"
+          style={{ textDecoration: "underline" }}
           href="https://patreon.com/robotsbuildingeducation"
           target="_blank"
         >

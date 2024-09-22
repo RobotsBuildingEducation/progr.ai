@@ -258,7 +258,8 @@ const SettingsMenu = ({
                 style={{ width: "100%" }}
                 onMouseDown={() => {
                   const translateValue = localStorage.getItem("userLanguage");
-                  localStorage.clear();
+                  localStorage.removeItem("local_nsec");
+                  localStorage.removeItem("local_npub");
                   if (translateValue) {
                     localStorage.setItem("userLanguage", translateValue);
                   }
