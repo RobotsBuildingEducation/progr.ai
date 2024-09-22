@@ -499,9 +499,9 @@ export let translation = {
             <i>tons</i>
           </b>{" "}
           of value and refund friendly. Feel welcome to share the passcode with
-          your friends or family! I made sure that it's worth every and you'll
-          get a great return on investment for your time, energy and money.
-          penny. Subscribing helps us keep the lights on and generate
+          your friends or family! I made sure that it's worth every penny and
+          you'll get a great return on investment for your time, energy and
+          money. penny. Subscribing helps us keep the lights on and generate
           scholarships with learning.
         </div>
         <br />
