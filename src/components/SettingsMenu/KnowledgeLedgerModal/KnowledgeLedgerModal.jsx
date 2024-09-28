@@ -36,7 +36,10 @@ export const KnowledgeLedgerModal = ({
   useEffect(() => {
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
-      if (!lastMessage.meta.loading) {
+      const isLastMessage =
+        lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+
+      if (isLastMessage) {
         const jsonResponse = lastMessage.content;
         setSuggestion(jsonResponse);
         setIsLoading(false);
@@ -99,7 +102,26 @@ export const KnowledgeLedgerModal = ({
             <Box mt={4}>
               <Button
                 colorScheme="purple"
-                onMouseDown={handleSuggestNext}
+                onMouseDown={() => {
+                  if (
+                    localStorage.getItem("passcode") !==
+                    import.meta.env.VITE_PATREON_PASSCODE
+                  ) {
+                    let passcode = window.prompt(
+                      translation[userLanguage]["prompt.passcode"]
+                    );
+                    if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
+                      localStorage.setItem("passcode", passcode);
+                      handleSuggestNext(); // Replace with your function if needed
+                    } else {
+                      alert(
+                        translation[userLanguage]["prompt.invalid_passcode"]
+                      );
+                    }
+                  } else {
+                    handleSuggestNext();
+                  }
+                }}
                 isDisabled={isLoading}
                 variant={"outline"}
               >

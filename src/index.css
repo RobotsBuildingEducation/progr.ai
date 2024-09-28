@@ -1,9 +1,49 @@
 html {
   scrollbar-color: #7f5ad5 #e0e0e0;
+  /* font-family: */
+  /* system-ui, */
+  /* "Noto Serif Japanese",
+    Avenir,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif; */
 }
 body {
   overflow: auto;
   overscroll-behavior: none;
   scrollbar-gutter: stable both-edges;
   scrollbar-color: #7f5ad5 #e0e0e0;
+}
+p,
+button,
+header,
+div {
+  font-family:
+    Avenir,
+    -apple-system,
+    system-ui,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+input {
+  font-size: 16px !important;
+}
+
+button {
+  font-weight: 400 !important;
 }

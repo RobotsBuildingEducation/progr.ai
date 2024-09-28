@@ -28,11 +28,11 @@ export let translation = {
     "button.close": "Close",
     "createAccount.isLoading": "Creating...",
 
-    "createAccount.isCreating": "Creating account... 1/4",
-    "createAccount.isCreatingProfile": "Creating account... 2/4",
+    "createAccount.isCreating": "Creating account... 1/3",
+    "createAccount.isCreatingProfile": "Creating account... 2/3",
     "createAccount.isCreatingProfilePicture": "Creating profile picture...3/4",
     "createAccount.isCreatingIntroPost":
-      "Creating community #introductions post... 4/4",
+      "Creating community #introductions post... 3/3",
     "nostrContent.answeredQuestion.1": "I just completed question",
     "nostrContent.answeredQuestion.2": "with a grade of",
     "nostrContent.answeredQuestion.3": "on",
@@ -46,7 +46,7 @@ export let translation = {
       "Your account now works on a number of decentralized apps. Use your key to sign into apps like ",
     "createAccount.roxLink": "Rox the learning assistant",
     or: "or",
-    "createAccount.primalLink": "Primal the social wallet",
+    "createAccount.primalLink": "with Primal, the social wallet",
     "button.copyKey": "Copy Key",
     "createAccount.checkbox.disclaimer":
       "I understand that my key allows me to sign into different apps that may contain important and private data like Bitcoin. I have safely stored my keys.",
@@ -501,7 +501,7 @@ export let translation = {
           of value and refund friendly. Feel welcome to share the passcode with
           your friends or family! I made sure that it's worth every penny and
           you'll get a great return on investment for your time, energy and
-          money. penny. Subscribing helps us keep the lights on and generate
+          money. Subscribing helps us keep the lights on and generate
           scholarships with learning.
         </div>
         <br />
@@ -520,8 +520,21 @@ export let translation = {
       </div>
     ),
     "passcode.label": "Enter passcode",
+    "email.donotdelete": "Data about the question, do not delete pls 🙏🙏🙏",
+    "email.question": "Question",
+    thinking: "Thinking...",
+    "prompt.passcode":
+      "Enter the subscriber passcode in order to enable AI features. The subscription platform can be found in the settings menu.",
+    "prompt.invalid_passcode": "Invalid passcode!",
   },
   es: {
+    "prompt.invalid_passcode": "¡Código de acceso inválido!",
+    "prompt.passcode":
+      "Introduce el código de suscripción para habilitar las funciones de inteligencia artificial. La plataforma de suscripción se encuentra en el menú de configuración.",
+    thinking: "Pensando...",
+    "email.question": "Pregunta",
+    "email.donotdelete": "Datos sobre la pregunta, por favor no borrar 🙏🙏🙏",
+
     "passcode.label": "Ingresa el código de acceso",
 
     "passcode.instructions": (
@@ -585,11 +598,11 @@ export let translation = {
       "Un estudiante se unió con Robots Building Education",
     "nostrContent.introductionPost":
       "¡Buenos días, Nostr! Estoy aquí desde Tiktok, creando una cuenta a través de https://program-ai.app para aprender a programar con IA. ¡Espero conocer a personas de la comunidad cypherpunk! #introductions #LearnWithNostr",
-    "createAccount.isCreating": "Creando cuenta... 1/4",
-    "createAccount.isCreatingProfile": "Creando perfil... 2/4",
+    "createAccount.isCreating": "Creando cuenta... 1/3",
+    "createAccount.isCreatingProfile": "Creando perfil... 2/3",
     "createAccount.isCreatingProfilePicture": "Creando foto de perfil... 3/4",
     "createAccount.isCreatingIntroPost":
-      "Creando publicación de introducción en la comunidad #introductions... 4/4",
+      "Creando publicación de introducción en la comunidad #introductions... 3/3",
     chapter: "Capítulo",
     tutorial: "Tutorial",
     "tags.grade": "Calificación: ",

@@ -167,6 +167,7 @@ const items = new Items();`,
         range: [1, 8], // Indices of steps to review
       },
     },
+
     // Cycle 2 (No Terminal)
     {
       group: "1",
@@ -2725,7 +2726,7 @@ list.add('reels');`,
     },
     {
       group: "tutorial",
-      group: "Entendiendo la Programación",
+      title: "Entendiendo la Programación",
       description: "Comprende el concepto básico de la programación.",
       isMultipleChoice: true,
       question: {
@@ -5189,3 +5190,102 @@ console.log(arr);
     },
   ],
 };
+
+export const generatedSteps = [];
+
+export const tutorial_interface = [
+  {
+    group: "",
+    title: "",
+    description: "",
+    isMultipleChoice: true,
+    question: {
+      questionText: "",
+      options: ["", "", "", ""],
+      answer: "",
+    },
+  },
+  {
+    group: "",
+    title: "",
+    description: "",
+    isSelectOrder: true,
+    question: {
+      questionText: "",
+      options: ["", "", "", ""],
+      answer: ["", "", "", ""],
+    },
+  },
+  {
+    group: "",
+    title: "",
+    description: "",
+    isMultipleAnswerChoice: true,
+    question: {
+      questionText: "",
+      options: ["", "", "", "", "", ""],
+      answer: ["", "", ""],
+    },
+  },
+  {
+    group: "",
+    title: "",
+    description: "",
+    isCodeCompletion: true,
+    question: {
+      questionText: "",
+      options: [``, ``, ``, ``],
+      answer: ``,
+    },
+  },
+  {
+    group: "tutorial",
+    title: "",
+    description: "",
+    isCode: true,
+    isTerminal: false,
+    question: {
+      questionText: "",
+    },
+  },
+  {
+    group: "tutorial",
+    title: "",
+    description: "",
+    isSingleLineText: true,
+    question: {
+      questionText: "",
+      placeholder: "",
+      answer: "",
+    },
+  },
+  {
+    group: "tutorial",
+    title: "",
+    description: "",
+    isText: true,
+    question: {
+      questionText: "",
+    },
+  },
+  {
+    group: "tutorial",
+    title: "",
+    description: "",
+    isCode: true,
+    isTerminal: true,
+    question: {
+      questionText: "",
+    },
+  },
+  {
+    group: "tutorial",
+    title: "",
+    isConversationReview: true,
+    description: "",
+    question: {
+      questionText: "",
+      range: [1, 8],
+    },
+  },
+];

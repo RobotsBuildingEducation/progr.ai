@@ -19,7 +19,27 @@ const MultipleAnswerQuestion = ({
 
   return (
     <VStack spacing={4}>
-      <Button onMouseDown={onLearnClick} colorScheme="purple">
+      <Button
+        onMouseDown={() => {
+          if (
+            localStorage.getItem("passcode") !==
+            import.meta.env.VITE_PATREON_PASSCODE
+          ) {
+            let passcode = window.prompt(
+              translation[userLanguage]["prompt.passcode"]
+            );
+            if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
+              localStorage.setItem("passcode", passcode);
+              onLearnClick(); // Replace with your function if needed
+            } else {
+              alert(translation[userLanguage]["prompt.invalid_passcode"]);
+            }
+          } else {
+            onLearnClick();
+          }
+        }}
+        colorScheme="purple"
+      >
         {translation[userLanguage]["app.button.learn"]}
       </Button>
 

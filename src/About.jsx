@@ -65,7 +65,7 @@ export const About = ({ userLanguage, handleToggle }) => {
       </Accordion>
       <br />
       <br />
-      <Text fontFamily="sans-serif" as="h2">
+      <Text fontFamily="Avenir" as="h2">
         <b>{translation[userLanguage]["about.featuresHeader"] || "Features"}</b>
       </Text>
       <br />

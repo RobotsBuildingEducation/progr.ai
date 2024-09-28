@@ -37,7 +37,7 @@ const theme = extendTheme({
         background:
           "linear-gradient(270deg, #f0f0f0, #F8F5F0, #fcfcfc, #F8F5F0)", // Adding a soft beige-like color
         backgroundSize: "800% 800%",
-        animation: `${gradientAnimation} 60s ease infinite`,
+        animation: `${gradientAnimation} 20s ease infinite`,
       },
     },
   },

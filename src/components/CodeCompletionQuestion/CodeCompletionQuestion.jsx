@@ -40,7 +40,27 @@ const CodeCompletionQuestion = ({
       >
         {question.questionText}
       </Text> */}
-      <Button onMouseDown={onLearnClick} colorScheme="purple">
+      <Button
+        onMouseDown={() => {
+          if (
+            localStorage.getItem("passcode") !==
+            import.meta.env.VITE_PATREON_PASSCODE
+          ) {
+            let passcode = window.prompt(
+              translation[userLanguage]["prompt.passcode"]
+            );
+            if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
+              localStorage.setItem("passcode", passcode);
+              onLearnClick(); // Replace with your function if needed
+            } else {
+              alert(translation[userLanguage]["prompt.invalid_passcode"]);
+            }
+          } else {
+            onLearnClick();
+          }
+        }}
+        colorScheme="purple"
+      >
         {translation[userLanguage]["app.button.learn"]}
       </Button>
 
@@ -82,7 +102,7 @@ const CodeCompletionQuestion = ({
               width: "100%",
               color: textColor, // Ensure dark text for readability
               pointerEvents: "none", // Prevent editor from blocking clicks
-              zoom: step.zoom ? step.zoom : "1.0",
+              // zoom: step.zoom ? step.zoom : "1.0",
             }}
             disabled
           />

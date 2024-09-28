@@ -168,7 +168,11 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
 
       // Create a new NDK instance
       const ndkInstance = new NDK({
-        explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
+        explicitRelayUrls: [
+          "wss://relay.damus.io",
+          "wss://relay.primal.net",
+          "wss://ditto.pub/relay",
+        ],
       });
 
       console.log("connect...");
@@ -195,7 +199,11 @@ export const useSharedNostr = (initialNpub, initialNsec) => {
     const pubkey = getPublicKey(decoded.data);
 
     const ndk = new NDK({
-      explicitRelayUrls: ["wss://relay.damus.io", "wss://relay.primal.net"],
+      explicitRelayUrls: [
+        "wss://relay.damus.io",
+        "wss://relay.primal.net",
+        "wss://ditto.pub/relay",
+      ],
     });
 
     let user = ndk.getUser({ pubkey: pubkey });

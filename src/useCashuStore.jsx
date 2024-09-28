@@ -160,6 +160,8 @@ const useCashuStore = create((set, get) => ({
       return;
     }
 
+    console.log("wallet", wallet);
+    console.log("proofs", proofs);
     try {
       const { send, returnChange } = await wallet.send(swapAmount, proofs);
       const encodedToken = getEncodedToken({

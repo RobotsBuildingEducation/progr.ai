@@ -78,7 +78,7 @@ const CardFace = styled.div`
               background-size: 200% 200%;
               animation: ${subtleSwirl} 6s ease infinite;
               color: #fff;
-              font-family: "IBM Plex Mono";
+              font-family: "Avenir";
               font-size: 1.2em;
             `
           : theme === "BTC"
@@ -87,7 +87,7 @@ const CardFace = styled.div`
                 background-size: 200% 200%;
                 animation: ${subtleSwirl} 6s ease infinite;
                 color: #333;
-                font-family: "IBM Plex Mono";
+                font-family: "Avenir";
                 font-size: 1.2em;
               `
             : css`
@@ -128,7 +128,7 @@ const CardNumber = styled.div`
 
 const CardHolder = styled.div`
   font-size: 0.8em;
-  font-family: sans-serif;
+  font-family: Avenir;
 `;
 
 const CopyButton = styled.button`
@@ -343,7 +343,7 @@ export const IdentityCard = ({
                   alignItems: "center",
                   justifyContent: "center",
 
-                  fontFamily: "sans-serif",
+                  fontFamily: "Avenir",
                   color: theme === "web5" ? "cyan" : "black",
                   padding: 24,
                   cursor: "inherit",

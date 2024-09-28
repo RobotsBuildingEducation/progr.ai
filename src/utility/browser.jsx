@@ -6,13 +6,17 @@ export const isUnsupportedBrowser = () => {
   const isMusicalLy = /musical_ly/.test(userAgent) && "TIktok";
   const isInstagram = /Instagram/.test(userAgent) && "Instagram";
   const isPinterest = /Pinterest/.test(userAgent) && "Pinterest";
+  const isNotValid =
+    !(/Safari/.test(userAgent) || /Chrome/.test(userAgent)) &&
+    "Instagram or other invalid in-app browsers";
 
   const isInAppBrowser =
     isByteDanceWebview ||
     isByteLocale ||
     isMusicalLy ||
     isInstagram ||
-    isPinterest;
+    isPinterest ||
+    isNotValid;
 
   return isInAppBrowser;
 };

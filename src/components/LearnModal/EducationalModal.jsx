@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -33,6 +33,20 @@ const EducationalModal = ({
   educationalContent,
   userLanguage,
 }) => {
+  const bottomRef = useRef();
+  const topRef = useRef();
+  //          feedbackRef.current?.scrollIntoView({ behavior: "smooth" });
+  useEffect(() => {
+    if (educationalMessages.length > 0 && !educationalContent.length > 0) {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [educationalMessages]);
+
+  useEffect(() => {
+    if (educationalContent.length > 0) {
+      topRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [educationalContent]);
   return (
     <Modal
       isOpen={isOpen}
@@ -51,6 +65,7 @@ const EducationalModal = ({
 
         // style={{ fontFamily: "Roboto Serif, serif" }}
       >
+        <Box ref={topRef}></Box>
         <ModalHeader
           fontSize="3xl"
           fontWeight="bold"
@@ -92,14 +107,17 @@ const EducationalModal = ({
               </b>
               <br />
               <br />
-              {educationalMessages[educationalMessages.length - 1]?.content}
+              {
+                educationalMessages[educationalMessages.length - 1]?.content
+              }{" "}
+              <Box ref={bottomRef}></Box>
             </div>
           ) : null}
           <VStack spacing={6} alignItems="flex-start">
             {educationalContent.length > 0 &&
               educationalContent.map((content, index) => (
                 <Box
-                  fontFamily={"monospace"}
+                  fontFamily={"Avenir"}
                   key={index}
                   p={4}
                   bg="#170029"
@@ -123,6 +141,7 @@ const EducationalModal = ({
                       flexDirection: "column",
                       borderRadius: 30,
                       boxShadow: "4px 4px 5px 0px rgba(0,0,0,0.75)",
+                      zoom: "0.8",
                     }}
                   >
                     <pre style={{ whiteSpace: "pre-wrap" }}>
@@ -133,7 +152,6 @@ const EducationalModal = ({
                         style={{
                           fontFamily: '"Fira code", "Fira Mono", monospace',
                           fontSize: 14,
-
                           borderRadius: "8px",
                         }}
                         disabled

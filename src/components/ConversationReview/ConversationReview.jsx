@@ -50,12 +50,12 @@ const ConversationReview = ({
   //     question.range[1] + 1
   //   );
 
-  console.log("step", step);
-  console.log("step.group", step?.group);
+  // console.log("step", step);
+  // console.log("step.group", step?.group);
 
   const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
-  console.log("relevant steps", relevantSteps);
+  // console.log("relevant steps", relevantSteps);
 
   // Combine the titles or main points of the relevant steps
   const combinedStepsSummary = relevantSteps.map((step) => step.description);
@@ -83,7 +83,7 @@ const ConversationReview = ({
       role: "user",
     };
 
-    await submitPrompt([prompt]);
+    await submitPrompt([prompt], true);
 
     setResponse("");
   };
@@ -91,8 +91,17 @@ const ConversationReview = ({
   useEffect(() => {
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
-      if (!lastMessage.meta.loading) {
-        const jsonResponse = JSON.parse(lastMessage.content);
+      const isLastMessage =
+        lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+
+      if (isLastMessage) {
+        console.log("THE LAST MESSAGE", lastMessage);
+        let jsonResponse = {};
+        try {
+          jsonResponse = JSON.parse(lastMessage.content);
+        } catch (error) {
+          jsonResponse = lastMessage.content;
+        }
 
         let final = [];
         setConversation((prev) => {
@@ -258,7 +267,7 @@ const ConversationReview = ({
       />
 
       <Button
-        isDisabled={response.length < 1}
+        isDisabled={response?.length < 1}
         onMouseDown={handleSubmit}
         colorScheme="purple"
         mt={4}

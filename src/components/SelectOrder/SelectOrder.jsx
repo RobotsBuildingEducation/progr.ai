@@ -57,7 +57,27 @@ const SelectOrderQuestion = ({
 
   return (
     <VStack spacing={4}>
-      <Button onMouseDown={onLearnClick} colorScheme="purple">
+      <Button
+        onMouseDown={() => {
+          if (
+            localStorage.getItem("passcode") !==
+            import.meta.env.VITE_PATREON_PASSCODE
+          ) {
+            let passcode = window.prompt(
+              translation[userLanguage]["prompt.passcode"]
+            );
+            if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
+              localStorage.setItem("passcode", passcode);
+              onLearnClick(); // Replace with your function if needed
+            } else {
+              alert(translation[userLanguage]["prompt.invalid_passcode"]);
+            }
+          } else {
+            onLearnClick();
+          }
+        }}
+        colorScheme="purple"
+      >
         {translation[userLanguage]["app.button.learn"]}
       </Button>
       {/* <Text>Order the items correctly:</Text> */}
@@ -84,8 +104,8 @@ const SelectOrderQuestion = ({
                         boxShadow: borderSwitches[index]
                           ? "0 0px 0px 0px rgba(0,0,0,1)"
                           : index === 0
-                          ? "0 1px 1px 2px rgba(0,0,0,1)"
-                          : "0 0.5px 0.5px 1px rgba(0,0,0,1)",
+                            ? "0 1px 1px 2px rgba(0,0,0,1)"
+                            : "0 0.5px 0.5px 1px rgba(0,0,0,1)",
                         textAlign: "left",
                       }}
                     >
