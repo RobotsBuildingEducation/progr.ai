@@ -34,6 +34,20 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // Takes a set of fetch request options and calls the onIncomingChunk and onCloseStream functions
 // as chunks of a chat completion's data are returned to the client, in real-time.
+/**
+ * Handles streaming data from the OpenAI API, properly assembling and parsing JSON objects from incoming data chunks.
+ * @param {Object} requestOpts - The options for the fetch request.
+ * @param {Function} onIncomingChunk - Callback function to handle each parsed content chunk.
+ * @param {Function} onCloseStream - Callback function to handle the closing of the stream.
+ * @returns {Promise<{ content: string, role: string }>} - The assembled content and role from the stream.
+ */
+/**
+ * Handles streaming data from the OpenAI API, properly assembling and parsing JSON objects from incoming data chunks.
+ * @param {Object} requestOpts - The options for the fetch request.
+ * @param {Function} onIncomingChunk - Callback function to handle each parsed content chunk.
+ * @param {Function} onCloseStream - Callback function to handle the closing of the stream.
+ * @returns {Promise<{ content: string, role: string }>} - The assembled content and role from the stream.
+ */
 export const openAiStreamingDataHandler = async (
   requestOpts,
   onIncomingChunk,
@@ -54,81 +68,194 @@ export const openAiStreamingDataHandler = async (
 
   let content = "";
   let role = "";
+  let buffer = "";
 
   const reader = response.body.getReader();
-  const stream = new ReadableStream({
-    start(controller) {
-      return pump();
-      async function pump() {
-        return reader.read().then(({ done, value }) => {
-          if (done) {
-            controller.close();
-            return;
+  const decoder = new TextDecoder();
+
+  let done = false;
+
+  // Utility function to simulate a delay
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  while (!done) {
+    const { value, done: doneReading } = await reader.read();
+    done = doneReading;
+
+    if (value) {
+      const chunk = decoder.decode(value, { stream: true });
+      buffer += chunk;
+
+      // Process the buffer to extract complete data messages
+      let dataMessages = buffer.split("\n\n");
+      buffer = dataMessages.pop(); // Keep the incomplete part
+
+      for (let dataMessage of dataMessages) {
+        dataMessage = dataMessage.trim();
+
+        if (dataMessage === "") continue;
+
+        if (dataMessage.startsWith("data:")) {
+          const dataStr = dataMessage.slice("data:".length).trim();
+
+          if (dataStr === "[DONE]") {
+            // Indicate that the final chunk has been received
+            onIncomingChunk("", "", null, true);
+            onCloseStream(beforeTimestamp);
+            return { content, role };
+          } else {
+            try {
+              const parsed = JSON.parse(dataStr);
+
+              const contentChunk = parsed.choices?.[0]?.delta?.content ?? "";
+              const roleChunk = parsed.choices?.[0]?.delta?.role ?? "";
+              const finishReason = parsed.choices?.[0]?.finish_reason ?? null;
+
+              if (contentChunk || roleChunk) {
+                content += contentChunk;
+                role += roleChunk;
+
+                // Introduce a small delay to simulate streaming animation
+                await delay(5); // Adjust the delay as needed (in milliseconds)
+
+                // Call the callback with the new data
+                onIncomingChunk(contentChunk, roleChunk, parsed, false);
+              }
+
+              // Check if this is the final chunk based on finish_reason
+              if (finishReason) {
+                // Indicate that the final chunk has been received
+                onIncomingChunk("", "", null, true);
+              }
+            } catch (error) {
+              console.error("Error parsing JSON:", error, "Data:", dataStr);
+              // Handle parsing error, perhaps ignore this line
+            }
           }
-          controller.enqueue(value);
-          return pump();
-        });
-      }
-    },
-  });
-
-  // console.log("STREAM?", stream);
-  for await (const newData of stream) {
-    const decodedData = textDecoder.decode(newData);
-
-    console.log("DECODED DATA", decodedData);
-    const lines = decodedData.split(/(\n){2}/);
-
-    console.log("LINES", lines);
-
-    let chunks = lines
-      .map((line) => line.replace(/(\n)?^data:\s*/, "").trim())
-      .filter((line) => line !== "" && line !== "[DONE]")
-      .map((line) => {
-        console.log("LINE", line);
-        try {
-          return line !== "[ERROR] Invalid message format."
-            ? JSON.parse(line)
-            : JSON.parse('{"content":""}');
-        } catch (error) {
-          console.error("Error parsing JSON line:", line, error);
-          return null;
         }
-      })
-      .filter((chunk) => chunk !== null);
-
-    chunks[chunks.length - 1] = {
-      ...chunks[chunks.length - 1],
-      final: true,
-    };
-
-    console.log("CHUNKS", chunks);
-
-    for (const chunk of chunks) {
-      const contentChunk = (chunk.choices?.[0].delta?.content ?? "").replace(
-        /^`\s*/,
-        "`"
-      );
-      const roleChunk = chunk.choices?.[0].delta.role ?? "";
-
-      content = `${content}${contentChunk}`;
-      role = `${role}${roleChunk}`;
-
-      // Simulate streaming by adding a small delay between each chunk (e.g., 50ms per chunk)
-      await delay(0.5); // Adjust the delay to suit the streaming experience
-
-      onIncomingChunk(contentChunk, roleChunk, chunk);
+      }
     }
   }
 
-  // console.log("contents", content);
+  // Process any remaining data in the buffer
+  if (buffer.trim() !== "") {
+    const dataMessage = buffer.trim();
 
+    if (dataMessage.startsWith("data:")) {
+      const dataStr = dataMessage.slice("data:".length).trim();
+
+      if (dataStr === "[DONE]") {
+        // Indicate that the final chunk has been received
+        onIncomingChunk("", "", null, true);
+        onCloseStream(beforeTimestamp);
+        return { content, role };
+      } else {
+        try {
+          const parsed = JSON.parse(dataStr);
+
+          const contentChunk = parsed.choices?.[0]?.delta?.content ?? "";
+          const roleChunk = parsed.choices?.[0]?.delta?.role ?? "";
+          const finishReason = parsed.choices?.[0]?.finish_reason ?? null;
+
+          if (contentChunk || roleChunk) {
+            content += contentChunk;
+            role += roleChunk;
+
+            // Introduce a small delay to simulate streaming animation
+            await delay(5); // Adjust the delay as needed (in milliseconds)
+
+            // Call the callback with the new data
+            onIncomingChunk(contentChunk, roleChunk, parsed, false);
+          }
+
+          // Check if this is the final chunk based on finish_reason
+          if (finishReason) {
+            // Indicate that the final chunk has been received
+            onIncomingChunk("", "", null, true);
+          }
+        } catch (error) {
+          console.error("Error parsing JSON:", error, "Data:", dataStr);
+          // Handle parsing error, perhaps ignore this line
+        }
+      }
+    }
+  }
+
+  // Indicate that the final chunk has been received
+  onIncomingChunk("", "", null, true);
   onCloseStream(beforeTimestamp);
-
-  console.log("done running");
-
   return { content, role };
 };
+
+/**
+ * Extracts complete JSON objects from a string buffer.
+ * @param {string} buffer - The string buffer containing JSON data.
+ * @returns {Array<{ jsonString: string, endIndex: number }>} - An array of complete JSON objects and their end positions in the buffer.
+ */
+function extractJSONObjects(buffer) {
+  const jsonObjects = [];
+  let startIndex = null;
+  let braceCount = 0;
+
+  for (let i = 0; i < buffer.length; i++) {
+    const char = buffer[i];
+
+    if (char === "{") {
+      if (braceCount === 0) {
+        startIndex = i;
+      }
+      braceCount++;
+    } else if (char === "}") {
+      braceCount--;
+      if (braceCount === 0 && startIndex !== null) {
+        const jsonString = buffer.substring(startIndex, i + 1);
+        jsonObjects.push({ jsonString, endIndex: i + 1 });
+        startIndex = null;
+      }
+    }
+  }
+
+  return jsonObjects;
+}
+
+/**
+ * Example usage of the openAiStreamingDataHandler function.
+ */
+async function exampleUsage() {
+  const requestOpts = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer YOUR_API_KEY`,
+    },
+    body: JSON.stringify({
+      // Your request payload
+    }),
+  };
+
+  const onIncomingChunk = (contentChunk, roleChunk, parsedData) => {
+    // Handle each incoming chunk (e.g., update the UI)
+    console.log("New chunk received:", contentChunk);
+  };
+
+  const onCloseStream = (timestamp) => {
+    // Handle the closing of the stream
+    console.log("Stream closed at:", new Date(timestamp).toISOString());
+  };
+
+  try {
+    const result = await openAiStreamingDataHandler(
+      requestOpts,
+      onIncomingChunk,
+      onCloseStream
+    );
+
+    console.log("Final content:", result.content);
+    console.log("Role:", result.role);
+  } catch (error) {
+    console.error("Error during streaming:", error);
+  }
+}
 
 const MILLISECONDS_PER_SECOND = 1000;
 
@@ -189,27 +316,35 @@ export const useChatCompletion = (apiParams) => {
   };
 
   // When new data comes in, add the incremental chunk of data to the last message with simulated delay
-  const handleNewData = async (chunkContent, chunkRole, chunkObject = null) => {
-    // console.log("chunkObject", chunkObject);
-    await delay(50); // Adjust the delay to make streaming feel more realistic
+  // When new data comes in, add the incremental chunk of data to the last message
+  const handleNewData = async (
+    chunkContent,
+    chunkRole,
+    chunkObject = null,
+    isFinal = false
+  ) => {
     _setMessages(
-      updateLastItem((msg) => ({
-        content: `${msg.content}${chunkContent}`,
-        role: `${msg.role}${chunkRole}`,
-        timestamp: 0,
-        meta: {
-          ...msg.meta,
-          chunks: [
-            ...msg.meta.chunks,
-            {
-              content: chunkContent,
-              role: chunkRole,
-              timestamp: Date.now(),
-              final: chunkObject.final ? chunkObject.final : false,
-            },
-          ],
-        },
-      }))
+      updateLastItem((msg) => {
+        const updatedChunks = [
+          ...msg.meta.chunks,
+          {
+            content: chunkContent,
+            role: chunkRole,
+            timestamp: Date.now(),
+            final: isFinal,
+          },
+        ];
+
+        return {
+          ...msg,
+          content: `${msg.content}${chunkContent}`,
+          role: msg.role || chunkRole,
+          meta: {
+            ...msg.meta,
+            chunks: updatedChunks,
+          },
+        };
+      })
     );
   };
 

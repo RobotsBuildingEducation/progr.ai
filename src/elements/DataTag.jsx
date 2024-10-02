@@ -5,6 +5,7 @@ export const DataTags = ({
   isPatreon,
   isRox,
   isProgramAI,
+  isNew,
   grade = null,
   userLanguage,
 }) => {
@@ -24,6 +25,17 @@ export const DataTags = ({
       {isProgramAI ? (
         <Tag size="sm" variant="solid" colorScheme="pink" m={1}>
           Program AI App
+        </Tag>
+      ) : null}
+      {isNew ? (
+        <Tag
+          size="sm"
+          variant="solid"
+          colorScheme="cyan"
+          m={1}
+          height="fit-content"
+        >
+          {translation[localStorage.getItem("userLanguage")]["label.new"]}
         </Tag>
       ) : null}
       {grade ? (

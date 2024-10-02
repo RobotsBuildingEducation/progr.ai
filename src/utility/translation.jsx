@@ -59,7 +59,7 @@ export let translation = {
     "app.button.answer": "Answer",
     "app.button.nextQuestion": "Next Question",
     "app.button.voiceToText": "Voice To Text",
-    "app.button.voiceToAI": "Voice To AI",
+    "app.button.voiceToAI": "Request Intelligent Assistance",
     "app.button.learn": "Learn",
     "app.listening": "Listening...",
     "app.input.placeholder": "Type your response or use voice",
@@ -276,6 +276,11 @@ export let translation = {
     "about.title.insights": "Insights",
     "about.title.ofi": "Old-fashioned Intelligence",
 
+    "about.title.smartCards": (
+      <div>
+        <DataTags isNew /> Smart Cards
+      </div>
+    ),
     "about.feature.decentralizedIdentity": (
       <div>
         <DataTags isRox isProgramAI />
@@ -287,6 +292,15 @@ export let translation = {
       </div>
     ),
     "about.title.decentralizedTranscripts": "Cross-platform Transcripts",
+    "about.feature.smartCards": (
+      <div>
+        <DataTags isProgramAI />
+        Smart card is an intelligent flashcard feature that creates new practice
+        questions based on your progress. You can keep practicing problems at
+        the same difficulty and knowledge level before continuing to the next
+        question.
+      </div>
+    ),
     "about.feature.decentralizedTranscripts": (
       <div>
         <DataTags isRox isProgramAI />
@@ -526,8 +540,38 @@ export let translation = {
     "prompt.passcode":
       "Enter the subscriber passcode in order to enable AI features. The subscription platform can be found in the settings menu.",
     "prompt.invalid_passcode": "Invalid passcode!",
+    "lockout.message": "You've reached the maximum number of attempts.",
+    "lockout.suggestion":
+      "Please take a 15-minute break or study the material before trying again.",
+    "lockout.timer": "Time remaining",
+    "lockout.toastTitle": "Locked Out",
+    "lockout.toastDescription":
+      "You've been locked out for 15 minutes due to multiple incorrect attempts.",
+    "lockout.attempts": "Incorrect attempts",
+    "lockout.outOf": "out of",
+    "lockout.message":
+      "We've gotten the problem wrong 5 times in a row! Let's slow down, take a quick 15 minute break and rethink our strategy.",
+    "ai.error": "Error formatting AI response",
+    "label.new": "New!",
+    confirm: "Confirm",
+    cancel: "Cancel",
   },
   es: {
+    confirm: "Confirmar",
+    cancel: "Cancelar",
+    "label.new": "¡Nuevo!",
+    "ai.error": "Error al formatear la respuesta de la IA",
+    "lockout.message":
+      "¡Nos hemos equivocado en el problema 5 veces seguidas! Tomémonos un descanso de 15 minutos para calmarnos y replantear nuestra estrategia.",
+    "lockout.attempts": "Intentos incorrectos",
+    "lockout.outOf": "de",
+    "lockout.message": "Has alcanzado el número máximo de intentos.",
+    "lockout.suggestion":
+      "Por favor, toma un descanso de 15 minutos o estudia el material antes de intentarlo de nuevo.",
+    "lockout.timer": "Tiempo restante",
+    "lockout.toastTitle": "Bloqueado",
+    "lockout.toastDescription":
+      "Has sido bloqueado durante 15 minutos debido a múltiples intentos incorrectos.",
     "prompt.invalid_passcode": "¡Código de acceso inválido!",
     "prompt.passcode":
       "Introduce el código de suscripción para habilitar las funciones de inteligencia artificial. La plataforma de suscripción se encuentra en el menú de configuración.",
@@ -648,7 +692,7 @@ export let translation = {
     "app.button.answer": "Responder",
     "app.button.nextQuestion": "Siguiente Pregunta",
     "app.button.voiceToText": "Voz a Texto",
-    "app.button.voiceToAI": "Voz a IA",
+    "app.button.voiceToAI": "Solicita Asistencia Inteligente",
     "app.button.learn": "Aprender",
     "app.listening": "Escuchando...",
     "app.input.placeholder": "Escriba su respuesta o use la voz",
@@ -863,6 +907,21 @@ export let translation = {
     "about.title.insights": "Percepciones",
     "about.title.ofi": "Inteligencia a la Antigüita",
     "about.title.decentralizedTranscripts": "Transcripciones Cruzadas",
+    "about.feature.smartCards": (
+      <div>
+        <DataTags isProgramAI />
+        La tarjeta inteligente es una función de tarjeta de memoria que crea
+        nuevas preguntas de práctica basadas en tu progreso. Puedes seguir
+        practicando problemas con el mismo nivel de dificultad y conocimiento
+        antes de continuar con la siguiente pregunta.
+      </div>
+    ),
+
+    "about.title.smartCards": (
+      <div style={{}}>
+        <DataTags isNew /> Tarjetas Inteligentes
+      </div>
+    ),
     "about.feature.decentralizedTranscripts": (
       <div>
         <DataTags isRox isProgramAI />

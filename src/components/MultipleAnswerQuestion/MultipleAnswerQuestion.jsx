@@ -8,6 +8,7 @@ const MultipleAnswerQuestion = ({
   setSelectedOptions,
   onLearnClick,
   userLanguage,
+  handleModalCheck,
 }) => {
   const handleOptionClick = (option) => {
     if (selectedOptions.includes(option)) {
@@ -20,24 +21,7 @@ const MultipleAnswerQuestion = ({
   return (
     <VStack spacing={4}>
       <Button
-        onMouseDown={() => {
-          if (
-            localStorage.getItem("passcode") !==
-            import.meta.env.VITE_PATREON_PASSCODE
-          ) {
-            let passcode = window.prompt(
-              translation[userLanguage]["prompt.passcode"]
-            );
-            if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
-              localStorage.setItem("passcode", passcode);
-              onLearnClick(); // Replace with your function if needed
-            } else {
-              alert(translation[userLanguage]["prompt.invalid_passcode"]);
-            }
-          } else {
-            onLearnClick();
-          }
-        }}
+        onMouseDown={() => handleModalCheck(onLearnClick)}
         colorScheme="purple"
       >
         {translation[userLanguage]["app.button.learn"]}

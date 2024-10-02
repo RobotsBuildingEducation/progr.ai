@@ -102,6 +102,18 @@ import AwardModal from "./components/AwardModal/AwardModal";
 import CodeCompletionQuestion from "./components/CodeCompletionQuestion/CodeCompletionQuestion";
 import useCashuStore from "./useCashuStore";
 import isEmpty from "lodash/isEmpty";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
+} from "@chakra-ui/react";
+import { useAlertStore } from "./useAlertStore";
+import CountdownTimer from "./elements/CountdownTimer";
+
+import { PasscodeModal } from "./components/PasscodeModal/PasscodeModal";
+import { usePasscodeModalStore } from "./usePasscodeModalStore";
 
 // logEvent(analytics, "page_view", {
 //   page_location: "https://program-ai.app/",
@@ -263,6 +275,7 @@ export const VoiceInput = ({
   currentStep,
   steps = [],
   isSingleLineText = false,
+  handleModalCheck,
 }) => {
   const {
     transcript,
@@ -292,6 +305,7 @@ export const VoiceInput = ({
   const [educationalContent, setEducationalContent] = useState([]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { alert, hideAlert, showAlert } = useAlertStore();
 
   const pauseTimeoutRef = useRef(null);
   const toast = useToast();
@@ -468,6 +482,7 @@ export const VoiceInput = ({
         let jsonResponse = {};
         try {
           jsonResponse = JSON.parse(lastMessage.content);
+          console.log("JSON", jsonResponse);
         } catch (error) {
           jsonResponse = lastMessage.content;
         }
@@ -522,19 +537,31 @@ export const VoiceInput = ({
 
   useEffect(() => {
     if (educationalMessages?.length > 0) {
-      const lastMessage = educationalMessages[educationalMessages.length - 1];
-      const isLastMessage =
-        lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+      try {
+        const lastMessage = educationalMessages[educationalMessages.length - 1];
+        const isLastMessage =
+          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-      if (isLastMessage) {
-        const jsonResponse = JSON.parse(lastMessage.content);
-        if (Array.isArray(jsonResponse.output)) {
-          setEducationalContent(jsonResponse.output);
+        if (isLastMessage) {
+          const jsonResponse = JSON.parse(lastMessage.content);
+          if (Array.isArray(jsonResponse.output)) {
+            setEducationalContent(jsonResponse.output);
+          } else {
+            setEducationalContent([]);
+          }
         } else {
           setEducationalContent([]);
         }
-      } else {
-        setEducationalContent([]);
+      } catch (error) {
+        resetEducationalMessages();
+        onClose();
+
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+        const delay = (ms) =>
+          new Promise((resolve) => setTimeout(resolve, 4000));
+        delay().then(() => {
+          hideAlert();
+        });
       }
     }
   }, [educationalMessages]);
@@ -545,14 +572,14 @@ export const VoiceInput = ({
     <VStack spacing={4} alignItems="center" width="100%" maxWidth={"600px"}>
       {useVoice || isTerminal ? (
         <HStack spacing={4} justifyContent={"center"} maxWidth={"400px"}>
-          <Button
+          {/* <Button
             onMouseDown={handleVoiceStart}
             colorScheme="purple"
             variant={"outline"}
             // isDisabled={isUnsupportedBrowser()}
           >
             {translation[userLanguage]["app.button.voiceToText"]}
-          </Button>
+          </Button> */}
           <Button
             onMouseDown={handleAiStart}
             colorScheme="purple"
@@ -564,28 +591,7 @@ export const VoiceInput = ({
           </Button>
           <Button
             colorScheme="purple"
-            onMouseDown={() => {
-              if (
-                localStorage.getItem("passcode") !==
-                import.meta.env.VITE_PATREON_PASSCODE
-              ) {
-                let passcode = window.prompt(
-                  translation[userLanguage]["prompt.passcode"]
-                );
-                if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
-                  localStorage.setItem("passcode", passcode);
-                  handleLearnClick(); // Replace with your function if needed
-                } else {
-                  alert(translation[userLanguage]["prompt.invalid_passcode"]);
-                }
-              } else {
-                handleLearnClick();
-              }
-            }}
-            // isDisabled={
-            //   localStorage.getItem("passcode") !==
-            //   import.meta.env.VITE_PATREON_PASSCODE
-            // }
+            onMouseDown={() => handleModalCheck(handleLearnClick)}
           >
             {translation[userLanguage]["app.button.learn"]}
           </Button>
@@ -807,6 +813,7 @@ function TerminalComponent({
   resetFeedbackMessages,
   step,
   userLanguage,
+  handleModalCheck,
 }) {
   const [structure, setStructure] = useState(fileSystem);
   const [history, setHistory] = useState([
@@ -1039,6 +1046,7 @@ function TerminalComponent({
   return (
     <>
       <VoiceInput
+        handleModalCheck={handleModalCheck}
         value={inputValue}
         onChange={setInputValue}
         isCodeEditor={false}
@@ -1089,6 +1097,7 @@ const Step = ({
   const [interval, setInterval] = useState(0);
   const { cashTap, loadWallet } = useCashuStore();
   const [grade, setGrade] = useState("");
+  const [isTimerExpired, setIsTimerExpired] = useState(true);
 
   const [step, setStep] = useState(steps[userLanguage][currentStep]);
 
@@ -1097,6 +1106,8 @@ const Step = ({
   });
 
   const navigate = useNavigate();
+  const { alert, hideAlert, showAlert } = useAlertStore();
+
   // const stepContent = steps[userLanguage][currentStep];
 
   // console.log("STEP xxx", step);
@@ -1104,6 +1115,8 @@ const Step = ({
   const [isPostingWithNostr, setIsPostingWithNostr] = useState(false);
 
   const [finalConversation, setFinalConversation] = useState([]);
+
+  const { openPasscodeModal } = usePasscodeModalStore();
 
   const {
     isOpen: isAwardModalOpen,
@@ -1117,6 +1130,10 @@ const Step = ({
   } = useChatCompletion({
     response_format: { type: "json_object" },
   });
+
+  useEffect(() => {
+    setStep(steps[userLanguage][currentStep]);
+  }, [userLanguage]);
 
   // Fetch user data and manage streaks and timers
   useEffect(() => {
@@ -1152,11 +1169,23 @@ const Step = ({
     };
 
     fetchUserData();
+
+    const expiryTime = localStorage.getItem("incorrectExpiry");
+    if (expiryTime) {
+      setIsTimerExpired(false);
+      const currentTime = new Date().getTime();
+      if (currentTime > parseInt(expiryTime)) {
+        // Expiry has passed, reset attempts
+        localStorage.removeItem("incorrectExpiry");
+        localStorage.setItem("incorrectAttempts", 0);
+      }
+    }
     // onAwardModalOpen();
   }, []);
 
   // Initialize items for Select Order question
   useEffect(() => {
+    console.log("runrunrunrunrunrun");
     if (step.isSelectOrder) {
       setItems(step.question.options.sort(() => Math.random() - 0.5));
     }
@@ -1173,6 +1202,7 @@ const Step = ({
 
   useEffect(() => {
     if (isCorrect) {
+      localStorage.setItem("incorrectAttempts", 0);
       cashTap();
 
       postNostrContent(
@@ -1224,6 +1254,7 @@ const Step = ({
     }
 
     if (step.isConversationReview) {
+      console.log("review");
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
       await submitPrompt(
@@ -1378,6 +1409,11 @@ const Step = ({
     // }
   };
 
+  const resetAttempts = () => {
+    localStorage.removeItem("incorrectAttempts");
+    localStorage.removeItem("incorrectExpiry");
+  };
+
   // Store correct answers in the database
   const storeCorrectAnswer = async (step, feedback) => {
     const userId = localStorage.getItem("local_npub");
@@ -1413,24 +1449,50 @@ const Step = ({
     if (messages?.length > 0) {
       // console.log("messages", messages);
       // console.log("messages", messages);
-      const lastMessage = messages[messages.length - 1];
+      try {
+        const lastMessage = messages[messages.length - 1];
 
-      const isLastMessage =
-        lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+        const isLastMessage =
+          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+        console.log("is last?");
 
-      // if (!lastMessage.meta.loading) {
-      if (isLastMessage) {
-        console.log("LAST MESSAGE", lastMessage);
-        const jsonResponse =
-          JSON?.parse(lastMessage?.content) || lastMessage.conent;
-        // const jsonResponse = newQuestionMessages;
+        console.log("isLastMessage", isLastMessage);
+        // if (!lastMessage.meta.loading) {
+        if (isLastMessage) {
+          console.log("LAST MESSAGE", lastMessage);
+          const jsonResponse =
+            JSON?.parse(lastMessage?.content) || lastMessage.conent;
+          // const jsonResponse = newQuestionMessages;
+          console.log("JSONxyz", jsonResponse);
+          setIsCorrect(jsonResponse.isCorrect);
+          setFeedback(jsonResponse.feedback);
 
-        setIsCorrect(jsonResponse.isCorrect);
-        setFeedback(jsonResponse.feedback);
+          if (jsonResponse.isCorrect) {
+            setGrade(jsonResponse.grade);
+          } else {
+            localStorage.setItem(
+              "incorrectAttempts",
+              parseInt(localStorage.getItem("incorrectAttempts")) + 1 || 1
+            );
 
-        if (jsonResponse.isCorrect) {
-          setGrade(jsonResponse.grade);
+            if (localStorage.getItem("incorrectAttempts") >= 5) {
+              // Set expiration time 15 minutes ahead
+              setIsTimerExpired(false);
+              const expiryTime = new Date().getTime() + 15 * 60 * 1000;
+              localStorage.setItem("incorrectExpiry", expiryTime);
+            }
+          }
         }
+      } catch (error) {
+        console.log("JSON");
+        console.log("error", error);
+        console.log("error", { error });
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+        const delay = (ms) =>
+          new Promise((resolve) => setTimeout(resolve, 4000));
+        delay().then(() => {
+          hideAlert();
+        });
       }
     }
   }, [messages]);
@@ -1532,20 +1594,32 @@ const Step = ({
 
   useEffect(() => {
     if (educationalMessages?.length > 0) {
-      const lastMessage = educationalMessages[educationalMessages.length - 1];
-      const isLastMessage =
-        lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+      try {
+        const lastMessage = educationalMessages[educationalMessages.length - 1];
+        const isLastMessage =
+          lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-      if (!lastMessage.meta.loading) {
-        // if (isLastMessage) {
-        const jsonResponse = JSON.parse(lastMessage.content);
-        if (Array.isArray(jsonResponse.output)) {
-          setEducationalContent(jsonResponse.output);
+        if (!lastMessage.meta.loading) {
+          // if (isLastMessage) {
+          const jsonResponse = JSON.parse(lastMessage.content);
+          if (Array.isArray(jsonResponse.output)) {
+            setEducationalContent(jsonResponse.output);
+          } else {
+            setEducationalContent([]);
+          }
         } else {
           setEducationalContent([]);
         }
-      } else {
-        setEducationalContent([]);
+      } catch (error) {
+        resetEducationalMessages();
+        onClose();
+
+        showAlert("warning", translation[userLanguage]["ai.error"]);
+        const delay = (ms) =>
+          new Promise((resolve) => setTimeout(resolve, 4000));
+        delay().then(() => {
+          hideAlert();
+        });
       }
     }
   }, [educationalMessages]);
@@ -1609,20 +1683,32 @@ const Step = ({
   const [generatedQuestion, setGeneratedQuestion] = useState(null); // For holding the new generated question
 
   useEffect(() => {
-    if (newQuestionMessages?.length > 0) {
-      const lastMessage = newQuestionMessages[newQuestionMessages.length - 1];
-      // const isLastMessage =
-      //   lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
+    try {
+      if (newQuestionMessages?.length > 0) {
+        const lastMessage = newQuestionMessages[newQuestionMessages.length - 1];
+        // const isLastMessage =
+        //   lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
-      if (!lastMessage.meta.loading) {
-        console.log("THE FINAL", lastMessage);
-        const jsonResponse = JSON.parse(lastMessage.content);
+        if (!lastMessage.meta.loading) {
+          console.log("THE FINAL", lastMessage);
+          const jsonResponse = JSON.parse(lastMessage.content);
 
-        console.log("NEW QUESTION FINAL JSON", jsonResponse);
-        setGeneratedQuestion(jsonResponse);
-        setStep(jsonResponse);
-        resetNewQuestionMessages();
+          console.log("NEW QUESTION FINAL JSON", jsonResponse);
+          setGeneratedQuestion(jsonResponse);
+          setStep(jsonResponse);
+          resetNewQuestionMessages();
+        }
       }
+    } catch (error) {
+      console.log("error", error);
+      console.log("error", { error });
+      resetNewQuestionMessages();
+
+      showAlert("warning", translation[userLanguage]["ai.error"]);
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, 4000));
+      delay().then(() => {
+        hideAlert();
+      });
     }
   }, [newQuestionMessages]);
 
@@ -1691,6 +1777,23 @@ const Step = ({
       console.error("Error generating new question:", error);
     }
   };
+
+  const handleTimerExpire = () => {
+    console.log("Timer expired!");
+    localStorage.removeItem("incorrectAttempts");
+    localStorage.removeItem("incorrectExpiry");
+    setIsTimerExpired(true); // Update state or perform any action
+  };
+
+  const handleModalCheck = (functionCall) => {
+    const storedPasscode = localStorage.getItem("features_passcode");
+    if (storedPasscode !== import.meta.env.VITE_PATREON_FEATURES_PASSCODE) {
+      openPasscodeModal();
+    } else {
+      functionCall();
+    }
+  };
+  const emojiMap = ["😖", "😩", "😅", "😱", "🪦"];
 
   return (
     <VStack spacing={4} width="100%" mt={6}>
@@ -1764,26 +1867,9 @@ const Step = ({
                   icon={<RepeatIcon padding="4px" fontSize="18px" />}
                   mr={2}
                   mt="-2"
-                  onMouseDown={() => {
-                    if (
-                      localStorage.getItem("passcode") !==
-                      import.meta.env.VITE_PATREON_PASSCODE
-                    ) {
-                      let passcode = window.prompt(
-                        translation[userLanguage]["prompt.passcode"]
-                      );
-                      if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
-                        localStorage.setItem("passcode", passcode);
-                        handleGenerateNewQuestion(); // Replace with your function if needed
-                      } else {
-                        alert(
-                          translation[userLanguage]["prompt.invalid_passcode"]
-                        );
-                      }
-                    } else {
-                      handleGenerateNewQuestion();
-                    }
-                  }}
+                  onMouseDown={() =>
+                    handleModalCheck(handleGenerateNewQuestion)
+                  }
                 />{" "}
                 {currentStep}. {step.title}
               </b>
@@ -1820,6 +1906,7 @@ const Step = ({
 
           {step.isSingleLineText && (
             <VoiceInput
+              handleModalCheck={handleModalCheck}
               value={inputValue}
               onChange={setInputValue}
               isCodeEditor={false}
@@ -1836,6 +1923,7 @@ const Step = ({
           )}
           {step.isText && (
             <VoiceInput
+              handleModalCheck={handleModalCheck}
               value={inputValue}
               onChange={setInputValue}
               isCodeEditor={false}
@@ -1857,10 +1945,12 @@ const Step = ({
               setSelectedOption={setSelectedOption}
               onLearnClick={handleLearnClick}
               userLanguage={userLanguage}
+              handleModalCheck={handleModalCheck}
             />
           )}
           {step.isCode && !step.isTerminal && (
             <VoiceInput
+              handleModalCheck={handleModalCheck}
               value={inputValue}
               onChange={setInputValue}
               isCodeEditor={true}
@@ -1895,6 +1985,7 @@ const Step = ({
                 resetFeedbackMessages={resetMessages}
                 step={step}
                 userLanguage={userLanguage}
+                handleModalCheck={handleModalCheck}
               />
             </Box>
           )}
@@ -1905,6 +1996,7 @@ const Step = ({
               setSelectedOption={setSelectedOption}
               userLanguage={userLanguage}
               onLearnClick={handleLearnClick}
+              handleModalCheck={handleModalCheck}
             />
           )}
           {step.isMultipleAnswerChoice && (
@@ -1914,6 +2006,7 @@ const Step = ({
               setSelectedOptions={setSelectedOptions}
               onLearnClick={handleLearnClick}
               userLanguage={userLanguage}
+              handleModalCheck={handleModalCheck}
             />
           )}
           {step.isSelectOrder && (
@@ -1923,6 +2016,7 @@ const Step = ({
               onLearnClick={handleLearnClick}
               userLanguage={userLanguage}
               step={step}
+              handleModalCheck={handleModalCheck}
             />
           )}
           {step.isConversationReview && (
@@ -1934,12 +2028,51 @@ const Step = ({
               onSubmit={handleAnswerClick} // Or any other relevant logic
               setFinalConversation={setFinalConversation}
               finalConversation={finalConversation}
+              handleModalCheck={handleModalCheck}
             />
           )}
           {isPostingWithNostr ? (
             <SunsetCanvas />
           ) : (
             <>
+              {localStorage.getItem("incorrectAttempts") &&
+              parseInt(localStorage.getItem("incorrectAttempts")) > 0 ? (
+                <Text
+                  fontSize={"smaller"}
+                  background={"#ececec"}
+                  borderRadius={12}
+                  padding={4}
+                >
+                  {translation[userLanguage]["lockout.attempts"]} &nbsp;
+                  {localStorage.getItem("incorrectAttempts")} / 5{" "}
+                  {
+                    emojiMap[
+                      parseInt(localStorage.getItem("incorrectAttempts")) - 1
+                    ]
+                  }
+                </Text>
+              ) : null}
+              {parseInt(localStorage.getItem("incorrectAttempts")) >= 5 &&
+              !isTimerExpired ? (
+                <>
+                  <div style={{ maxWidth: 600 }}>
+                    <Text
+                      fontSize="smaller"
+                      background={"white"}
+                      borderRadius={12}
+                      padding={4}
+                    >
+                      {translation[userLanguage]["lockout.message"]} <br />
+                      <br />
+                      <CountdownTimer
+                        onTimerExpire={handleTimerExpire}
+                        userLanguage={userLanguage}
+                      />
+                    </Text>
+                  </div>
+                  <RandomCharacter />
+                </>
+              ) : null}
               {messages.length > 0 && !feedback && (
                 <Box
                   mt={0}
@@ -1999,7 +2132,11 @@ const Step = ({
                 </div>
               )}
               <HStack spacing={4}>
-                {step.question && !isCorrect && !isSending ? (
+                {step.question &&
+                !isCorrect &&
+                !isSending &&
+                !(parseInt(localStorage.getItem("incorrectAttempts")) >= "5") &&
+                isTimerExpired ? (
                   <Button
                     fontSize="sm"
                     onMouseDown={handleAnswerClick}
@@ -2047,6 +2184,8 @@ const Step = ({
               step={step}
               isCorrect={isCorrect}
             />
+
+            <PasscodeModal userLanguage={userLanguage} />
           </>
         </>
       )}
@@ -2553,6 +2692,7 @@ function App({ isShutDown }) {
   const navigate = useNavigate();
   const location = useLocation();
   const topRef = useRef();
+  const { alert, hideAlert, showAlert } = useAlertStore();
 
   const {
     generateNostrKeys,
@@ -2585,42 +2725,48 @@ function App({ isShutDown }) {
     const initializeApp = async () => {
       const npub = localStorage.getItem("local_npub");
       if (npub && window.location.pathname !== "/dashboard") {
-        auth(localStorage.getItem("local_nsec"));
-        setIsSignedIn(true);
         const step = await getUserStep(npub); // Fetch the current step
 
-        setCurrentStep(step);
-
-        // Fetch user language preference
-        const userDoc = doc(database, "users", npub);
-        const userSnapshot = await getDoc(userDoc);
-        if (userSnapshot.exists()) {
-          const userData = userSnapshot.data();
-          console.log("userData.userLanguage", userData.language);
-          setUserLanguage(userData.userLanguage || "en"); // Set user language preference
-          localStorage.setItem("userLanguage", userData.language);
-        }
-
-        if (location.pathname === "/about") {
-        } else if (
-          step === "subscription" ||
-          (step > 9 &&
-            localStorage.getItem("passcode") !==
-              import.meta.env.VITE_PATREON_PASSCODE)
-        ) {
-          navigate("/subscription");
-        } else if (step === "award") {
-          navigate("/award");
+        if (step == 0) {
+          localStorage.clear();
+          navigate("/");
         } else {
-          topRef.current?.scrollIntoView();
-          navigate(`/q/${step}`);
-        }
-      }
+          auth(localStorage.getItem("local_nsec"));
+          setIsSignedIn(true);
+          setCurrentStep(step);
+          // Fetch user language preference
+          const userDoc = doc(database, "users", npub);
+          const userSnapshot = await getDoc(userDoc);
+          if (userSnapshot.exists()) {
+            const userData = userSnapshot.data();
+            console.log("userData.userLanguage", userData.language);
+            setUserLanguage(userData.userLanguage || "en"); // Set user language preference
+            localStorage.setItem("userLanguage", userData.language);
+          }
 
-      if (localStorage.getItem("userLanguage")) {
-        setUserLanguage(localStorage.getItem("userLanguage") || "en");
-      } else {
-        localStorage.setItem("userLanguage", "en");
+          if (location.pathname === "/about") {
+          } else if (
+            step === "subscription" ||
+            (step > 9 &&
+              localStorage.getItem("passcode") !==
+                import.meta.env.VITE_PATREON_PASSCODE)
+          ) {
+            navigate("/subscription");
+          } else if (step === "award") {
+            navigate("/award");
+          } else {
+            if (step !== 0) {
+              topRef.current?.scrollIntoView();
+              navigate(`/q/${step}`);
+            }
+          }
+        }
+
+        if (localStorage.getItem("userLanguage")) {
+          setUserLanguage(localStorage.getItem("userLanguage") || "en");
+        } else {
+          localStorage.setItem("userLanguage", "en");
+        }
       }
       setLoading(false);
     };
@@ -2663,6 +2809,34 @@ function App({ isShutDown }) {
 
   return (
     <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
+      {alert.isOpen && (
+        <Alert
+          status={alert.status}
+          variant="subtle"
+          position="fixed"
+          // top="20px"
+          width="100%"
+          maxWidth="100%"
+          zIndex={1000}
+          borderRadius={24}
+          border={"1px solid #ececec"}
+          display="flex"
+          justifyContent={"center"}
+          top={0}
+        >
+          <AlertIcon />
+          {/* <AlertTitle textAlign={"center"}>{alert.status}</AlertTitle> */}
+          <AlertDescription>{alert.message}</AlertDescription>
+          <CloseButton
+            ml={2}
+            border="1px solid black"
+            // position="absolute"
+            right="8px"
+            top="8px"
+            onClick={hideAlert}
+          />
+        </Alert>
+      )}
       {isSignedIn && (
         <SettingsMenu
           isSignedIn={isSignedIn}
@@ -2749,91 +2923,91 @@ export const AppWrapper = () => {
   // );
   // const isBroken = true;
   const [isShutDown, setIsShutDown] = useState(false);
-  const [isBroken, setIsBroken] = useState(true);
+  const [isBroken, setIsBroken] = useState(false);
 
-  useEffect(() => {
-    if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
-      setIsBroken(false);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
+  //     setIsBroken(false);
+  //   }
+  // }, []);
 
-  if (isBroken) {
-    return (
-      <div
-        style={{
-          padding: 50,
-          maxWidth: "600px",
-          height: "100vh",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          textAlign: "left",
-        }}
-      >
-        The app is currently down taken down due to malicious behavior. The app
-        will not work as intended.
-        <br />
-        <br />
-        If you are the person attacking my small education business, please
-        accept the apology for whatever grievance I have created and allow folks
-        to continue accessing resources they seek.
-        <br />
-        <br />
-        <Input
-          onChange={(event) => {
-            localStorage.setItem("security", event.target.value);
-            if (
-              localStorage.getItem("security") === import.meta.env.VITE_SECURITY
-            ) {
-              setIsBroken(false);
-            }
-          }}
-        />
-        {/* Currently try to contact with OpenAI and my bank in order to handle this
-        😔 */}
-        {/* <Button onMouseDown={() => setIsShutDown(false)}>Enter anyway</Button> */}
-        {/* "Why are AI features disabled?"{" "}
-        <b>
-          There seems to be something seriously wrong with the account owner's
-          billing and I'm being charged thousands of dollars for something that
-          shouldn't cost that much.
-        </b>
-        <br />
-        <br /> */}
-        <br />
-        In the meantime, you can create a decentralized identity and get started
-        with the hand-crafted tutoring app 😊! The lecture series and patreon
-        content are still very valuable and will save you time, energy and money
-        when it comes to learning so I encourage you to go through them during
-        this down time!! Thank you for your patience D:
-        <br /> <br />
-        <a
-          href="https://robotsbuildingeducation.com"
-          target="_blank"
-          style={{ textDecoration: "underline" }}
-        >
-          Rox the tutor
-        </a>
-        <br />
-        <a
-          href="https://chatgpt.com/g/g-09h5uQiFC-robots-building-education"
-          target="_blank"
-          style={{ textDecoration: "underline" }}
-        >
-          Robots Building Education GPT
-        </a>
-        <div style={{ display: "flex" }}>
-          <RandomCharacter />
-          <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
-          <RandomCharacter /> <RandomCharacter />
-          <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
-          <RandomCharacter /> <RandomCharacter />
-        </div>
-      </div>
-    );
-  }
+  // if (isBroken) {
+  //   return (
+  //     <div
+  //       style={{
+  //         padding: 50,
+  //         maxWidth: "600px",
+  //         height: "100vh",
+  //         width: "100%",
+  //         display: "flex",
+  //         flexDirection: "column",
+  //         justifyContent: "center",
+  //         alignItems: "center",
+  //         textAlign: "left",
+  //       }}
+  //     >
+  //       The app is currently down taken down due to malicious behavior. The app
+  //       will not work as intended.
+  //       <br />
+  //       <br />
+  //       If you are the person attacking my small education business, please
+  //       accept the apology for whatever grievance I have created and allow folks
+  //       to continue accessing resources they seek.
+  //       <br />
+  //       <br />
+  //       <Input
+  //         onChange={(event) => {
+  //           localStorage.setItem("security", event.target.value);
+  //           if (
+  //             localStorage.getItem("security") === import.meta.env.VITE_SECURITY
+  //           ) {
+  //             setIsBroken(false);
+  //           }
+  //         }}
+  //       />
+  //       {/* Currently try to contact with OpenAI and my bank in order to handle this
+  //       😔 */}
+  //       {/* <Button onMouseDown={() => setIsShutDown(false)}>Enter anyway</Button> */}
+  //       {/* "Why are AI features disabled?"{" "}
+  //       <b>
+  //         There seems to be something seriously wrong with the account owner's
+  //         billing and I'm being charged thousands of dollars for something that
+  //         shouldn't cost that much.
+  //       </b>
+  //       <br />
+  //       <br /> */}
+  //       <br />
+  //       In the meantime, you can create a decentralized identity and get started
+  //       with the hand-crafted tutoring app 😊! The lecture series and patreon
+  //       content are still very valuable and will save you time, energy and money
+  //       when it comes to learning so I encourage you to go through them during
+  //       this down time!! Thank you for your patience D:
+  //       <br /> <br />
+  //       <a
+  //         href="https://robotsbuildingeducation.com"
+  //         target="_blank"
+  //         style={{ textDecoration: "underline" }}
+  //       >
+  //         Rox the tutor
+  //       </a>
+  //       <br />
+  //       <a
+  //         href="https://chatgpt.com/g/g-09h5uQiFC-robots-building-education"
+  //         target="_blank"
+  //         style={{ textDecoration: "underline" }}
+  //       >
+  //         Robots Building Education GPT
+  //       </a>
+  //       <div style={{ display: "flex" }}>
+  //         <RandomCharacter />
+  //         <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
+  //         <RandomCharacter /> <RandomCharacter />
+  //         <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
+  //         <RandomCharacter /> <RandomCharacter />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <Router>
@@ -2847,6 +3021,9 @@ export const AppWrapper = () => {
       >
         If you see this message, it means you're using an unstable release of
         the app. Check back later for a better user experience.
+      </div> */}
+      {/* <div>
+        <b>Test Version 0.9.1</b>
       </div> */}
       <App isShutDown={isShutDown} />
     </Router>

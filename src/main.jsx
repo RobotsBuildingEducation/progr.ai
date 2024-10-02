@@ -43,7 +43,7 @@ const theme = extendTheme({
   },
 });
 
-let statement = "hello";
+localStorage.setItem("features_passcode", "TESTING1234");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider theme={theme}>

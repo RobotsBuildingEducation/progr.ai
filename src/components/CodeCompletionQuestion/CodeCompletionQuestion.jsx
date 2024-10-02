@@ -14,6 +14,7 @@ const CodeCompletionQuestion = ({
   setSelectedOption,
   onLearnClick,
   userLanguage,
+  handleModalCheck,
 }) => {
   // Colors for background, border, and hover effects
   const backgroundColor = "#faf3e0"; // Light beige background color
@@ -40,27 +41,7 @@ const CodeCompletionQuestion = ({
       >
         {question.questionText}
       </Text> */}
-      <Button
-        onMouseDown={() => {
-          if (
-            localStorage.getItem("passcode") !==
-            import.meta.env.VITE_PATREON_PASSCODE
-          ) {
-            let passcode = window.prompt(
-              translation[userLanguage]["prompt.passcode"]
-            );
-            if (passcode === import.meta.env.VITE_PATREON_PASSCODE) {
-              localStorage.setItem("passcode", passcode);
-              onLearnClick(); // Replace with your function if needed
-            } else {
-              alert(translation[userLanguage]["prompt.invalid_passcode"]);
-            }
-          } else {
-            onLearnClick();
-          }
-        }}
-        colorScheme="purple"
-      >
+      <Button onMouseDown={() => handleModalCheck(onLearnClick)}>
         {translation[userLanguage]["app.button.learn"]}
       </Button>
 

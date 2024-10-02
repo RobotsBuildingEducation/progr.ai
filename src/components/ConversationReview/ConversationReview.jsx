@@ -34,6 +34,7 @@ const ConversationReview = ({
   step,
   setFinalConversation,
   finalConversation,
+  handleModalCheck,
 }) => {
   const [response, setResponse] = useState("");
   const [conversation, setConversation] = useState([]);
@@ -252,6 +253,7 @@ const ConversationReview = ({
 
       {/* Integrate VoiceInput here */}
       <VoiceInput
+        handleModalCheck={handleModalCheck}
         value={response}
         onChange={setResponse}
         isCodeEditor={false}

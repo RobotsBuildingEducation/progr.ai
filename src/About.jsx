@@ -71,6 +71,7 @@ export const About = ({ userLanguage, handleToggle }) => {
       <br />
       <Accordion allowToggle>
         {[
+          "smartCards",
           "programAiApp",
           "rox",
           "roxGPT",
