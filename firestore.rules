@@ -2,8 +2,14 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /users/{userId} {
+      // Allow read/write only if the request has a custom ID that matches the document's ID
+      allow read, write: if request.resource.id == request.auth.token.customId;
+    }
+
     match /{document=**} {
-      allow read, write;
+      // Further restrict access to other collections based on custom logic
+      allow read, write: if resource.data.ownerId == request.auth.token.customId;
     }
   }
 }

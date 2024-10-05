@@ -2984,18 +2984,24 @@ export const AppWrapper = () => {
         <br />
         <br /> */}
         <br />
-        In the meantime, you can create a decentralized identity and get started
-        with the hand-crafted tutoring app 😊! The lecture series and patreon
-        content are still very valuable and will save you time, energy and money
-        when it comes to learning so I encourage you to go through them during
-        this down time!! Thank you for your patience D:
+        In the meantime, the lecture series and patreon content are still very
+        valuable and will save you time, energy and money when it comes to
+        learning so I encourage you to go through them during this down time!!
+        Thank you for your patience D:
         <br /> <br />
-        <a
+        {/* <a
           href="https://robotsbuildingeducation.com"
           target="_blank"
           style={{ textDecoration: "underline" }}
         >
           Rox the tutor
+        </a> */}
+        <a
+          href="https://patreon.com/robotsbuildingeducation"
+          target="_blank"
+          style={{ textDecoration: "underline" }}
+        >
+          Patreon
         </a>
         <br />
         <a
