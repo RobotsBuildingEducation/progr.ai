@@ -431,7 +431,7 @@ export const VoiceInput = ({
           {
             content:
               aiTranscript +
-              `The JSON format should be minified as { "input": "${aiTranscript}", "output": "your_answer" }. Do not include any line breaks and make certain the JSON is valid and parsable. The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)}. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
+              `The JSON format should be minified as { "input": "${aiTranscript}", "output": "your_answer" }. Do not include any line breaks and make certain the JSON is valid and parsable. The user is working on a review of the subjects studied: ${JSON.stringify(relevantSteps)}. The output should strictly answer what is requested in javascript and should include newline characters and white space for formatting because it will be parsed and rendered for display. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
                 userLanguage === "en" ? "english" : "spanish"
               }`,
             role: "user",
@@ -442,7 +442,7 @@ export const VoiceInput = ({
           {
             content:
               aiTranscript +
-              ` The JSON format should be minified as { "input": "${aiTranscript}", "output": "your_answer" }. Do not include any line breaks and make certain the JSON is valid and parsable. The output should strictly answer what is requested in javascript. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
+              ` The JSON format should be minified as { "input": "${aiTranscript}", "output": "your_answer" }. Do not include any line breaks and make certain the JSON is valid and parsable. The output should strictly answer what is requested in javascript and should include newline characters and white space for formatting because it will be parsed and rendered for display. Absolutely no other text or data should be included or communicated. Lastly the user is speaking in ${
                 userLanguage === "en" ? "english" : "spanish"
               }`,
             role: "user",
@@ -474,6 +474,7 @@ export const VoiceInput = ({
   useEffect(() => {
     if (messages?.length > 0) {
       const lastMessage = messages[messages.length - 1];
+
       const isLastMessage =
         lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
@@ -502,7 +503,7 @@ export const VoiceInput = ({
         {
           content: `Generate educational material about ${JSON.stringify(
             step
-          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks and formatting because it will be formatted after completion. Lastly the user is speaking in ${
+          )} with code examples and explanations. Make it enriching and create a useful flow where the ideas build off of each other to encourage challenge and learning. The JSON format should be { output: [{ code: "code_example", explanation: "explanation" }] }. Additionally the code should consider line breaks, whitespace and formatting in the JSON because it will be formatted and rendered after completion. Lastly the user is speaking in ${
             userLanguage === "en" ? "english" : "spanish"
           }`,
           role: "user",
@@ -709,7 +710,8 @@ export const VoiceInput = ({
             language="javascript"
             theme="light"
             value={
-              generateResponse ? translation[userLanguage]["thinking"] : value
+              // generateResponse ? translation[userLanguage]["thinking"] :
+              value
             }
             onChange={(value) => onChange(value, resetMessages)}
             options={{
@@ -719,7 +721,7 @@ export const VoiceInput = ({
               // wordWrapColumn: 80, // Adjust the column for wrapping
               // wordWrapMinified: true, // Word wrap also for minified code
               // scrollBeyondLastLine: false,
-              // automaticLayout: true,
+              automaticLayout: true,
               // minimap: {
               //   enabled: false,
               // },
@@ -730,7 +732,8 @@ export const VoiceInput = ({
         <Input
           type="text"
           value={
-            generateResponse ? translation[userLanguage]["thinking"] : value
+            // generateResponse ? translation[userLanguage]["thinking"] :
+            value
           }
           onChange={(e) => onChange(e.target.value)}
           placeholder={translation[userLanguage]["app.input.placeholder"]}
@@ -746,11 +749,10 @@ export const VoiceInput = ({
           maxWidth={"100%"}
           minHeight={isTerminal ? "100px" : "400px"}
           value={
-            generateResponse
-              ? translation[userLanguage]["thinking"]
-              : aiListening
-                ? aiTranscript
-                : value
+            // generateResponse
+            //   ? translation[userLanguage]["thinking"]
+            //   :
+            aiListening ? aiTranscript : value
           }
           onChange={(e) => {
             onChange(e.target.value);
@@ -1185,16 +1187,16 @@ const Step = ({
 
   // Initialize items for Select Order question
   useEffect(() => {
-    console.log("runrunrunrunrunrun");
+    // console.log("runrunrunrunrunrun");
     if (step.isSelectOrder) {
       setItems(step.question.options.sort(() => Math.random() - 0.5));
     }
-    console.log("newQuestionMessages", newQuestionMessages);
-    console.log("generatedQuestion", generatedQuestion);
+    // console.log("newQuestionMessages", newQuestionMessages);
+    // console.log("generatedQuestion", generatedQuestion);
 
     if (isEmpty(generatedQuestion) && isEmpty(newQuestionMessages)) {
       // alert("it doesnt exist");
-      console.log("running loop?");
+      // console.log("running loop?");
       const stepContent = steps[userLanguage][currentStep];
       setStep(stepContent);
     }
@@ -1254,7 +1256,7 @@ const Step = ({
     }
 
     if (step.isConversationReview) {
-      console.log("review");
+      // console.log("review");
       const relevantSteps = getObjectsByGroup(step?.group, steps[userLanguage]);
 
       await submitPrompt(
@@ -1290,8 +1292,8 @@ const Step = ({
         true
       );
     } else if (step.isMultipleChoice || step.isCodeCompletion) {
-      console.log("ANSWER", answer);
-      console.log("    step.question.answer", step.question.answer);
+      // console.log("ANSWER", answer);
+      // console.log("    step.question.answer", step.question.answer);
       await submitPrompt([
         {
           content: `The user is answering the following question "${
@@ -1454,16 +1456,14 @@ const Step = ({
 
         const isLastMessage =
           lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
-        console.log("is last?");
-
-        console.log("isLastMessage", isLastMessage);
+        // console.log("last message", lastMessage);
         // if (!lastMessage.meta.loading) {
         if (isLastMessage) {
-          console.log("LAST MESSAGE", lastMessage);
+          // console.log("LAST MESSAGE", lastMessage);
           const jsonResponse =
             JSON?.parse(lastMessage?.content) || lastMessage.conent;
           // const jsonResponse = newQuestionMessages;
-          console.log("JSONxyz", jsonResponse);
+          // console.log("JSONxyz", jsonResponse);
           setIsCorrect(jsonResponse.isCorrect);
           setFeedback(jsonResponse.feedback);
 
@@ -1484,9 +1484,9 @@ const Step = ({
           }
         }
       } catch (error) {
-        console.log("JSON");
-        console.log("error", error);
-        console.log("error", { error });
+        // console.log("JSON");
+        // console.log("error", error);
+        // console.log("error", { error });
         showAlert("warning", translation[userLanguage]["ai.error"]);
         const delay = (ms) =>
           new Promise((resolve) => setTimeout(resolve, 4000));
@@ -1508,8 +1508,8 @@ const Step = ({
 
   // Navigate to the next step
   const handleNextClick = async () => {
-    console.log("currentStep...", currentStep);
-    console.log("fSTEPS", steps);
+    // console.log("currentStep...", currentStep);
+    // console.log("fSTEPS", steps);
     setGeneratedQuestion([]);
     resetNewQuestionMessages();
     if (currentStep === 9) {
@@ -1690,10 +1690,10 @@ const Step = ({
         //   lastMessage.meta.chunks[lastMessage.meta.chunks.length - 1]?.final;
 
         if (!lastMessage.meta.loading) {
-          console.log("THE FINAL", lastMessage);
+          // console.log("THE FINAL", lastMessage);
           const jsonResponse = JSON.parse(lastMessage.content);
 
-          console.log("NEW QUESTION FINAL JSON", jsonResponse);
+          // console.log("NEW QUESTION FINAL JSON", jsonResponse);
           setGeneratedQuestion(jsonResponse);
           setStep(jsonResponse);
           resetNewQuestionMessages();
@@ -1749,14 +1749,14 @@ const Step = ({
 
         The request: Create/invent a completely new and custom adaptive question and feel free to explore creativity using the same interface with group, title, description, <question_type> and the custom question object interface. Here are the types of question_types (e.g isMultipleChoice, isCodeCompletion) and their respective question objects that we've used in the tutorial group, so that you can understand how questions are designed to encourage variance in learning: ${JSON.stringify(getObjectsByGroup("tutorial", steps[userLanguage]))}. It is extremely important to understand that the data types used in the "answer" field are specific and must not change under any circumstance, or else the request will fail due to unexpected data type.
         
-        Remember to design and inspire an new question, you must select a different but valid question_type than the one you've received, strictly based on the interfaces ive provided with the tutorials. Do not deviate and create a new question type or else the UI will fail with your response. 
+        Remember to design and inspire a new question, you must select a different but valid question_type than the one you've received, strictly based on the interfaces ive provided with the tutorials. Do not deviate and create a new question type or else the UI will fail with your response. 
         
         Remember, the types are things like isText, isTerminal, isMultipleChoice, isCodeCompletion, etc. But it must strictly be a different UI type than the step that the user started you off with. For example, if the user is sending you an isText: true question, you can't respond with an isText: true output.
         
         Return the question in the proper JSON format as guided.}
       `;
 
-      console.log("PROMPT", prompt);
+      // console.log("PROMPT", prompt);
       // Submit the prompt to the chat completion API
       await submitNewQuestionMessages([
         {
@@ -2246,12 +2246,12 @@ const Home = ({
       currentTime, // Start time
       endTime // End time, 48 hours from start time
     );
-    console.log("run analytics");
+    // console.log("run analytics");
     // logEvent(analytics, "select_content", {
     //   content_type: "button",
     //   item_id: "account_created",
     // });
-    console.log("end analytics");
+    // console.log("end analytics");
     setIsSignedIn(true);
 
     setView("created");
@@ -2392,6 +2392,11 @@ const Home = ({
             />
             <VStack>
               <Button
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleCreateAccount();
+                  }
+                }}
                 onMouseDown={handleCreateAccount}
                 colorScheme="cyan"
                 variant={"outline"}
@@ -2600,7 +2605,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
 
   const checkPasscode = async () => {
     if (input === correctPasscode) {
-      console.log("we did it");
+      // console.log("we did it");
       localStorage.setItem("passcode", input);
 
       // Assuming you have the user's unique identifier stored in local storage
@@ -2609,11 +2614,11 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
       const userSnapshot = await getDoc(userDocRef);
 
       if (userSnapshot.exists()) {
-        console.log("User document exists");
+        // console.log("User document exists");
         const userData = userSnapshot.data();
         const userStep = isOldAccount ? userData.step : userData.previousStep; // Default to 0 if no previousStep
 
-        console.log("User step:", userStep);
+        // console.log("User step:", userStep);
 
         // Navigate to the next step
 
@@ -2623,7 +2628,7 @@ const PasscodePage = ({ isOldAccount, userLanguage }) => {
         });
 
         navigate(`/q/${isOldAccount ? userStep : userStep + 1}`);
-        console.log("Updated user step to:", userStep + 1);
+        // console.log("Updated user step to:", userStep + 1);
       } else {
         console.log("User document not found");
       }
@@ -2739,7 +2744,7 @@ function App({ isShutDown }) {
           const userSnapshot = await getDoc(userDoc);
           if (userSnapshot.exists()) {
             const userData = userSnapshot.data();
-            console.log("userData.userLanguage", userData.language);
+            // console.log("userData.userLanguage", userData.language);
             setUserLanguage(userData.userLanguage || "en"); // Set user language preference
             localStorage.setItem("userLanguage", userData.language);
           }
@@ -2807,6 +2812,8 @@ function App({ isShutDown }) {
     JSON.stringify(steps?.["en"]?.[currentStep] || {})
   );
 
+  console.log("userLanguage", userLanguage);
+
   return (
     <Box textAlign="center" fontSize="xl" p={4} ref={topRef}>
       {alert.isOpen && (
@@ -2847,7 +2854,7 @@ function App({ isShutDown }) {
           currentStep={currentStep} // Pass current step to SettingsMenu
           view={view}
           setView={setView}
-          step={steps[userLanguage][currentStep]}
+          step={steps?.[userLanguage]?.[currentStep]}
         />
       )}
 
@@ -2923,91 +2930,91 @@ export const AppWrapper = () => {
   // );
   // const isBroken = true;
   const [isShutDown, setIsShutDown] = useState(false);
-  const [isBroken, setIsBroken] = useState(false);
+  const [isBroken, setIsBroken] = useState(true);
 
-  // useEffect(() => {
-  //   if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
-  //     setIsBroken(false);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (localStorage.getItem("security") === import.meta.env.VITE_SECURITY) {
+      setIsBroken(false);
+    }
+  }, []);
 
-  // if (isBroken) {
-  //   return (
-  //     <div
-  //       style={{
-  //         padding: 50,
-  //         maxWidth: "600px",
-  //         height: "100vh",
-  //         width: "100%",
-  //         display: "flex",
-  //         flexDirection: "column",
-  //         justifyContent: "center",
-  //         alignItems: "center",
-  //         textAlign: "left",
-  //       }}
-  //     >
-  //       The app is currently down taken down due to malicious behavior. The app
-  //       will not work as intended.
-  //       <br />
-  //       <br />
-  //       If you are the person attacking my small education business, please
-  //       accept the apology for whatever grievance I have created and allow folks
-  //       to continue accessing resources they seek.
-  //       <br />
-  //       <br />
-  //       <Input
-  //         onChange={(event) => {
-  //           localStorage.setItem("security", event.target.value);
-  //           if (
-  //             localStorage.getItem("security") === import.meta.env.VITE_SECURITY
-  //           ) {
-  //             setIsBroken(false);
-  //           }
-  //         }}
-  //       />
-  //       {/* Currently try to contact with OpenAI and my bank in order to handle this
-  //       😔 */}
-  //       {/* <Button onMouseDown={() => setIsShutDown(false)}>Enter anyway</Button> */}
-  //       {/* "Why are AI features disabled?"{" "}
-  //       <b>
-  //         There seems to be something seriously wrong with the account owner's
-  //         billing and I'm being charged thousands of dollars for something that
-  //         shouldn't cost that much.
-  //       </b>
-  //       <br />
-  //       <br /> */}
-  //       <br />
-  //       In the meantime, you can create a decentralized identity and get started
-  //       with the hand-crafted tutoring app 😊! The lecture series and patreon
-  //       content are still very valuable and will save you time, energy and money
-  //       when it comes to learning so I encourage you to go through them during
-  //       this down time!! Thank you for your patience D:
-  //       <br /> <br />
-  //       <a
-  //         href="https://robotsbuildingeducation.com"
-  //         target="_blank"
-  //         style={{ textDecoration: "underline" }}
-  //       >
-  //         Rox the tutor
-  //       </a>
-  //       <br />
-  //       <a
-  //         href="https://chatgpt.com/g/g-09h5uQiFC-robots-building-education"
-  //         target="_blank"
-  //         style={{ textDecoration: "underline" }}
-  //       >
-  //         Robots Building Education GPT
-  //       </a>
-  //       <div style={{ display: "flex" }}>
-  //         <RandomCharacter />
-  //         <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
-  //         <RandomCharacter /> <RandomCharacter />
-  //         <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
-  //         <RandomCharacter /> <RandomCharacter />
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (isBroken) {
+    return (
+      <div
+        style={{
+          padding: 50,
+          maxWidth: "600px",
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "left",
+        }}
+      >
+        The app is currently down taken down due to malicious behavior. The app
+        will not work as intended.
+        <br />
+        <br />
+        If you are the person attacking my small education business, please
+        accept the apology for whatever grievance I have created and allow folks
+        to continue accessing resources they seek.
+        <br />
+        <br />
+        <Input
+          onChange={(event) => {
+            localStorage.setItem("security", event.target.value);
+            if (
+              localStorage.getItem("security") === import.meta.env.VITE_SECURITY
+            ) {
+              setIsBroken(false);
+            }
+          }}
+        />
+        {/* Currently try to contact with OpenAI and my bank in order to handle this
+        😔 */}
+        {/* <Button onMouseDown={() => setIsShutDown(false)}>Enter anyway</Button> */}
+        {/* "Why are AI features disabled?"{" "}
+        <b>
+          There seems to be something seriously wrong with the account owner's
+          billing and I'm being charged thousands of dollars for something that
+          shouldn't cost that much.
+        </b>
+        <br />
+        <br /> */}
+        <br />
+        In the meantime, you can create a decentralized identity and get started
+        with the hand-crafted tutoring app 😊! The lecture series and patreon
+        content are still very valuable and will save you time, energy and money
+        when it comes to learning so I encourage you to go through them during
+        this down time!! Thank you for your patience D:
+        <br /> <br />
+        <a
+          href="https://robotsbuildingeducation.com"
+          target="_blank"
+          style={{ textDecoration: "underline" }}
+        >
+          Rox the tutor
+        </a>
+        <br />
+        <a
+          href="https://chatgpt.com/g/g-09h5uQiFC-robots-building-education"
+          target="_blank"
+          style={{ textDecoration: "underline" }}
+        >
+          Robots Building Education GPT
+        </a>
+        <div style={{ display: "flex" }}>
+          <RandomCharacter />
+          <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
+          <RandomCharacter /> <RandomCharacter />
+          <RandomCharacter /> <RandomCharacter /> <RandomCharacter />{" "}
+          <RandomCharacter /> <RandomCharacter />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Router>
